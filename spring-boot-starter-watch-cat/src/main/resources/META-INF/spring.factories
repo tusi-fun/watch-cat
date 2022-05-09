@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.cat.watchcat.WatchCatConfiguration,\
+  com.cat.watchcat.converter.LocalDateTimeSerializerConfig
