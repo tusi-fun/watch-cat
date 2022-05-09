@@ -1,4 +1,4 @@
-package com.cat.watchcat.area.annotation;//package com.cat.watchcat.area.annotation;
+//package com.cat.watchcat.area.annotation;
 //
 //import java.lang.annotation.ElementType;
 //import java.lang.annotation.Retention;
