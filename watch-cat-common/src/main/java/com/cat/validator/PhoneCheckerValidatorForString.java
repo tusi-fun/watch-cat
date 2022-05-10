@@ -1,0 +1,35 @@
+package com.cat.validator;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * 自定义参数校验器（验证参数值是否为手机号格式）
+ * @author hudongshan
+ * @version 20210831
+ */
+public class PhoneCheckerValidatorForString implements ConstraintValidator<PhoneChecker, String> {
+
+    private static final Pattern LOCAL_PART_PATTERN = Pattern.compile("^1\\d{10}$");
+
+    @Override
+    public void initialize(PhoneChecker parameters) {
+
+    }
+
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+
+        if(value==null) {
+
+            return true;
+        }
+
+        Matcher m = LOCAL_PART_PATTERN.matcher(value);
+
+        return m.matches();
+
+    }
+}

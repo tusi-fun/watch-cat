@@ -1,7 +1,7 @@
 package com.cat.watchcat.secret.aspect;
 
 import cn.hutool.crypto.SecureUtil;
-import com.cat.watchcat.log.config.JsonUtils;
+import com.cat.util.JsonUtils;
 import com.cat.watchcat.secret.annotation.SecretCat;
 import com.cat.watchcat.secret.service.DataEncryptService;
 import com.cat.watchcat.secret.service.SecretCatException;

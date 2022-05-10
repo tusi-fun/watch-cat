@@ -1,7 +1,7 @@
 package com.cat.watchcat.log.aspect;
 
+import com.cat.util.JsonUtils;
 import com.cat.watchcat.log.annotation.LogCat;
-import com.cat.watchcat.log.config.JsonUtils;
 import com.cat.watchcat.log.event.LogCatEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
