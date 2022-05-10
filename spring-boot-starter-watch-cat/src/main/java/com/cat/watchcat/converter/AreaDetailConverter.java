@@ -4,7 +4,6 @@ import com.cat.common.AreaDetail;
 import com.cat.watchcat.area.service.AreaResolverException;
 import com.cat.watchcat.area.service.AreaService;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,7 +23,7 @@ import java.util.Map;
 public class AreaDetailConverter implements Converter<String, AreaDetail> {
 
     @Autowired
-    private ApplicationContext applicationContext;
+    ApplicationContext applicationContext;
 
     @Override
     public AreaDetail convert(String areaCodeStr) {
@@ -44,7 +43,7 @@ public class AreaDetailConverter implements Converter<String, AreaDetail> {
             return null;
         }
 
-        AreaService areaService;
+        AreaService areaService = null;
 
         try {
 
@@ -56,9 +55,7 @@ public class AreaDetailConverter implements Converter<String, AreaDetail> {
 
         Map<String,String> areas = areaService.parseAreaCodes(areaCodes);
 
-//        log.info("areas = {}", areas);
-//
-//        Map<String,String> areas = commonRpcService.listAreaByIds(areaCodes, SecureUtil.md5(areaCodeStr));
+        log.info("areas = {}", areas);
 
         if(areas==null || areas.size()==0) {
             log.error("参数 areaCodes = {} 查询失败",areaCodeStr);

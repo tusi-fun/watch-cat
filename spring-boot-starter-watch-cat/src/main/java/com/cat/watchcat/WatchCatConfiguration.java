@@ -1,10 +1,7 @@
 package com.cat.watchcat;
 
 
-import com.cat.watchcat.converter.String2LocalDateConverter;
-import com.cat.watchcat.converter.String2LocalDateTimeConverter;
-import com.cat.watchcat.converter.String2LocalTimeConverter;
-import com.cat.watchcat.converter.StringTrimConverter;
+import com.cat.watchcat.converter.*;
 import com.cat.watchcat.limit.aspect.LimitCatAspect;
 import com.cat.watchcat.limit.aspect.LimitCatsAspect;
 import com.cat.watchcat.limit.config.LimitCatProperties;
@@ -74,6 +71,12 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
         return new LimitCatService();
     }
 
+    @ConditionalOnMissingBean
+    @Bean
+    public AreaDetailConverter areaDetailConverter(){
+        return new AreaDetailConverter();
+    }
+
 //    @ConditionalOnMissingBean
 //    @Bean
 //    public AreaArgumentResolver areaArgumentResolver(){
@@ -95,6 +98,7 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(areaDetailConverter());
         registry.addConverter(new StringTrimConverter());
         registry.addConverter(new String2LocalDateConverter());
         registry.addConverter(new String2LocalDateTimeConverter());
