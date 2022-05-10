@@ -2,7 +2,7 @@ package com.cat.example.web;
 
 import com.cat.example.bean.Aa;
 import com.cat.example.bean.User;
-import com.cat.example.result.ResultData;
+import com.cat.result.ResultData;
 import com.cat.watchcat.log.annotation.LogCat;
 import com.cat.watchcat.secret.annotation.SecretCat;
 import com.cat.watchcat.sensitive.annotation.SensitiveCat;

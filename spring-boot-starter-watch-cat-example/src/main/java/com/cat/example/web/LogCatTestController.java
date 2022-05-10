@@ -1,6 +1,6 @@
 package com.cat.example.web;
 
-import com.cat.example.result.Result;
+import com.cat.result.Result;
 import com.cat.watchcat.log.annotation.LogCat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
