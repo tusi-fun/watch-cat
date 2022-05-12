@@ -1,7 +1,7 @@
-package com.cat.watchcat.log.aspect;
+package com.cat.common;
 
+import com.cat.util.StringUtils;
 import lombok.Data;
-import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

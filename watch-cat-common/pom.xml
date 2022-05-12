@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cat</groupId>
     <artifactId>watch-cat-common</artifactId>
-    <version>1.0.7</version>
+    <version>${revision}</version>
     <name>watch-cat-common</name>
     <description>watch-cat-common</description>
 
     <parent>
         <groupId>com.cat</groupId>
         <artifactId>watch-cat</artifactId>
-        <version>1.0.7</version>
+        <version>${revision}</version>
     </parent>
 
     <properties>

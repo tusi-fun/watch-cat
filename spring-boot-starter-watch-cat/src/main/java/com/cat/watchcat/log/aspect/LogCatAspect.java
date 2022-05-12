@@ -1,5 +1,6 @@
 package com.cat.watchcat.log.aspect;
 
+import com.cat.common.RequestInfo;
 import com.cat.util.JsonUtils;
 import com.cat.watchcat.log.annotation.LogCat;
 import com.cat.watchcat.log.event.LogCatEvent;

@@ -1,7 +1,7 @@
 package com.cat.validator;
 
 import cn.hutool.core.util.EnumUtil;
-import org.springframework.util.StringUtils;
+import com.cat.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

@@ -1,6 +1,6 @@
 package com.cat.watchcat.log.event;
 
-import com.cat.watchcat.log.aspect.RequestInfo;
+import com.cat.common.RequestInfo;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
