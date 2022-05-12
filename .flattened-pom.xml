@@ -26,7 +26,7 @@
     <module>watch-cat-common</module>
   </modules>
   <properties>
-    <hutool.version>5.7.13</hutool.version>
+    <hutool.version>5.7.22</hutool.version>
     <revision>1.0.8</revision>
     <java.version>1.8</java.version>
   </properties>

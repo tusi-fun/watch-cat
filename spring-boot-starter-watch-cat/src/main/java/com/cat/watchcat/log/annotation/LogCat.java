@@ -31,7 +31,7 @@ public @interface LogCat {
     String action() default "default";
 
     /**
-     * 是否启用日志事件（用于持久化日志等）
+     * 是否启用日志事件通知（用于持久化日志等）
      * @return
      */
     boolean enableEvent() default true;
@@ -40,6 +40,6 @@ public @interface LogCat {
      * 是否启用日志打印
      * @return
      */
-    boolean printLog() default true;
+    boolean print() default true;
 
 }

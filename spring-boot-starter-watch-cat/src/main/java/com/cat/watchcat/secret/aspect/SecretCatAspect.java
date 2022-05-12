@@ -75,10 +75,11 @@ public class SecretCatAspect {
             throw new SecretCatException("encryptData不能为空");
         }
 
-        String hash = SecureUtil.sha1(encryptKey+encryptData);
-
         // 是否启用重复提交验证
-        if(secretCat.enableReplay()) {
+        if(secretCat.preventReplay()) {
+
+            String hash = SecureUtil.sha1(encryptKey+encryptData);
+
             // 验证缓存是否存在相同提交数据
             if (!dataEncryptService.cacheEncryptHash(hash)) {
                 throw new SecretCatException("不能重复提交加密数据");
@@ -104,7 +105,7 @@ public class SecretCatAspect {
                 BeanUtils.copyProperties(JsonUtils.toBean(data, o.getClass()),o);
 
                 // 是否启用参数验证
-                if(secretCat.enableValid()) {
+                if(secretCat.plainTextValid()) {
                     // 执行参数验证
                     validParam(o);
                 }
@@ -115,7 +116,7 @@ public class SecretCatAspect {
         Object proceedResult = proceedingJoinPoint.proceed(args);
 
         // 返回值是否需要加密
-        if(secretCat.pongEncrypt()) {
+        if(secretCat.encryptedPong()) {
             encryptResult(aeskey,proceedResult,secretCat.pongEncryptField());
         }
 
@@ -130,7 +131,7 @@ public class SecretCatAspect {
      */
     private void validParam(Object o){
 
-        log.info("验证原文参数");
+        log.info("验证原文参数是否合法");
 
         // 执行参数验证
         Set<ConstraintViolation<Object>> constraintViolationSet = applicationContext.getBean(Validator.class).validate(o);

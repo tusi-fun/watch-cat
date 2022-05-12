@@ -85,7 +85,7 @@ public class LogCatAspect {
         requestInfo.setEndTime(LocalDateTime.now());
         requestInfo.setTimeCost(Duration.between(requestInfo.getStartTime(),requestInfo.getEndTime()).toMillis());
 
-        if(logCat.printLog()) {
+        if(logCat.print()) {
             String reqMsg =
                     "\r\n-----------------------" +
                     "\r\n【Request URI    】:" + requestInfo.getIp() + " > " + requestInfo.getHttpMethod() + " " + requestInfo.getUrl() +
@@ -137,7 +137,7 @@ public class LogCatAspect {
         requestInfo.setEndTime(LocalDateTime.now());
         requestInfo.setTimeCost(Duration.between(requestInfo.getStartTime(),requestInfo.getEndTime()).toMillis());
 
-        if(logCat.printLog()) {
+        if(logCat.print()) {
             String reqMsg =
                     "\r\n-----------------------" +
                     "\r\n【Request URI    】:" + requestInfo.getIp() + " > " + requestInfo.getHttpMethod() + " " + requestInfo.getUrl() +
@@ -226,7 +226,7 @@ public class LogCatAspect {
     }
 
     /**
-     * 获取频率限制场景 key
+     * 获取 bid 的值
      * @param joinPoint
      * @param key
      * @return

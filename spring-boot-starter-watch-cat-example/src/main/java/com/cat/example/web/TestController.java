@@ -1,10 +1,8 @@
 package com.cat.example.web;
 
-import com.cat.example.bean.Aa;
 import com.cat.example.bean.User;
 import com.cat.result.ResultData;
 import com.cat.watchcat.log.annotation.LogCat;
-import com.cat.watchcat.secret.annotation.SecretCat;
 import com.cat.watchcat.sensitive.annotation.SensitiveCat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -25,24 +23,6 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "example", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TestController {
-
-    @LogCat(actionGroup = "example", action = "logCatExample", enableEvent = false)
-    @PostMapping("logCatExample")
-    public String logCatExample(String a) {
-        return "ok1";
-    }
-
-    @LogCat(actionGroup = "example", action = "secretCatExample", enableEvent = false)
-    @SecretCat(pongEncrypt = true, enableValid = true, enableReplay = false)
-    @PostMapping("secretCatExample")
-    public ResultData secretCatExample(String a, String b, Aa aa) {
-        aa.setPhone("18582461287");
-        aa.setAddress("成都市武侯区广安大厦185号7楼708");
-        aa.setEmail("524712128@qq.com");
-        aa.setName("流畅度");
-        aa.setIdCard("511234520119652147");
-        return new ResultData(200, "操作成功").data(aa);
-    }
 
     @LogCat(actionGroup = "example", action = "sensitiveCatExample", enableEvent = false)
     @PostMapping("sensitiveCatExample")

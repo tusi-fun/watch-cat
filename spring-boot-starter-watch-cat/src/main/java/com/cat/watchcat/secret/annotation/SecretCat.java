@@ -13,10 +13,10 @@ import java.lang.annotation.*;
 public @interface SecretCat {
 
     /**
-     * 响应数据是否需要加密
+     * 是否启用响应加密
      * @return
      */
-    boolean pongEncrypt() default false;
+    boolean encryptedPong() default false;
 
     /**
      * 响应参数解密结果填充字段
@@ -25,15 +25,15 @@ public @interface SecretCat {
     String pongEncryptField() default "data";
 
     /**
-     * 是否启用防重验证
+     * 是否启用防止重放
      * @return
      */
-    boolean enableReplay() default true;
+    boolean preventReplay() default true;
 
     /**
-     * 是否启用参数验证
+     * 是否启用原文参数验证
      * @return
      */
-    boolean enableValid() default true;
+    boolean plainTextValid() default true;
 
 }
