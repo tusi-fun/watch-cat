@@ -24,8 +24,9 @@
     </modules>
 
     <properties>
-        <revision>1.0.8</revision>
         <java.version>1.8</java.version>
+        <revision>1.0.8</revision>
+        <hutool.version>5.7.13</hutool.version>
     </properties>
 
     <dependencyManagement>
@@ -41,6 +42,18 @@
                 <groupId>com.cat</groupId>
                 <artifactId>watch-cat-common</artifactId>
                 <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
 
 <!--            <dependency>-->

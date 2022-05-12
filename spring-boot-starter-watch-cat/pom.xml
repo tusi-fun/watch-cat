@@ -71,7 +71,6 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-crypto</artifactId>
-            <version>5.7.13</version>
         </dependency>
 
     </dependencies>
