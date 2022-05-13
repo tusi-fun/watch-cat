@@ -19,7 +19,7 @@ public @interface SecretCat {
     boolean encryptedPong() default false;
 
     /**
-     * 响应参数解密结果填充字段
+     * 响应加密结果填充字段
      * @return
      */
     String pongEncryptField() default "data";

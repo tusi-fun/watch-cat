@@ -55,17 +55,19 @@ public class SecretCatAspect {
     @Around("pointCut(secretCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, SecretCat secretCat) throws Throwable {
 
-        log.info("请求参数解密");
-
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpServletRequest request = sra.getRequest();
 
-        String encryptKey = request.getParameter("encryptKey");
-        String encryptData = request.getParameter("encryptData");
+        String encryptKey = request.getParameter("encryptKey"), encryptData = request.getParameter("encryptData");
 
-        log.info("encryptKey = " + encryptKey);
-        log.info("encryptData = " + encryptData);
+        String reqMsg =
+                "\r\n-----------------------" +
+                "\r\n【SecretCat   】:" + secretCat +
+                "\r\n【encryptKey  】:" + encryptKey +
+                "\r\n【encryptData 】:" + encryptData;
+
+        log.info(reqMsg);
 
         if (!StringUtils.hasText(encryptKey)) {
             throw new SecretCatException("encryptKey不能为空");
@@ -90,7 +92,8 @@ public class SecretCatAspect {
         byte[] aeskey = dataEncryptService.decryptAesKey(encryptKey);
         String data = dataEncryptService.decryptData(aeskey,encryptData);
 
-        log.info("plainText = {}",data);
+        log.info("\r\n【plainText   】:" + data + "\r\n-----------------------");
+
 
         // 将解密后的参数传递给方法
         Object[] args = proceedingJoinPoint.getArgs();
@@ -129,9 +132,7 @@ public class SecretCatAspect {
      * 请求原文参数验证
      * @param o
      */
-    private void validParam(Object o){
-
-        log.info("验证原文参数是否合法");
+    private void validParam(Object o) {
 
         // 执行参数验证
         Set<ConstraintViolation<Object>> constraintViolationSet = applicationContext.getBean(Validator.class).validate(o);
@@ -171,8 +172,6 @@ public class SecretCatAspect {
      * @throws IllegalAccessException
      */
     private void encryptResult(byte[] aeskey,Object proceedResult,String pongEncryptField) throws IllegalAccessException {
-
-        log.info("加密响应参数");
 
         Field dataField = ReflectionUtils.findField(proceedResult.getClass(),pongEncryptField);
 

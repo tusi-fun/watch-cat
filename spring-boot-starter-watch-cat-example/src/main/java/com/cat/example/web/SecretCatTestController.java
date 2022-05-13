@@ -23,7 +23,19 @@ public class SecretCatTestController {
     @LogCat(actionGroup = "secret-cat", action = "case1", enableEvent = false)
     @SecretCat(encryptedPong = true, plainTextValid = true, preventReplay = true)
     @PostMapping("case1")
-    public ResultData secretCatExample(String a, String b, Aa aa) {
+    public ResultData secretCatCase1(String a, String b, Aa aa) {
+        aa.setPhone("18582461287");
+        aa.setAddress("成都市武侯区广安大厦185号7楼708");
+        aa.setEmail("524712128@qq.com");
+        aa.setName("流畅度");
+        aa.setIdCard("511234520119652147");
+        return new ResultData(200, "操作成功").data(aa);
+    }
+
+    @LogCat(actionGroup = "secret-cat", action = "case2", enableEvent = false)
+    @SecretCat(encryptedPong = true, plainTextValid = true, preventReplay = false)
+    @PostMapping("case2")
+    public ResultData secretCatCase2(String a, String b, Aa aa) {
         aa.setPhone("18582461287");
         aa.setAddress("成都市武侯区广安大厦185号7楼708");
         aa.setEmail("524712128@qq.com");
