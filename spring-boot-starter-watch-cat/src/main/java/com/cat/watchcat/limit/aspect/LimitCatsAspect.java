@@ -32,15 +32,19 @@ import java.util.List;
  * @version 20210608
  */
 @Slf4j
-@Order(2)
+@Order(-99)
 @Aspect
 public class LimitCatsAspect {
 
     @Autowired
     private LimitCatService limitCatService;
 
-    @Pointcut("@annotation(limitCats)")
-    public void pointCut(LimitCats limitCats) {}
+// 20220514 切换为  @annotation(com.cat.watchcat.limit.annotation.LimitCats) 方式获取，用于兼容  单个 和 多个 @LimitCat一起使用的场景
+//    @Pointcut("@annotation(limitCats)")
+//    public void pointCut1(LimitCats limitCats) {}
+
+    @Pointcut("@annotation(com.cat.watchcat.limit.annotation.LimitCats) || @annotation(com.cat.watchcat.limit.annotation.LimitCat)")
+    public void pointCut() {}
 
     /**
      * 响应正常
@@ -48,30 +52,36 @@ public class LimitCatsAspect {
      * @return
      * @throws Throwable
      */
-    @Around("pointCut(limitCats)")
-    public Object doAround(ProceedingJoinPoint proceedingJoinPoint, LimitCats limitCats) throws Throwable {
+    @Around("pointCut()")
+    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        Arrays.stream(limitCats.value()).forEach(item -> {
+        log.info("-> LimitCatsAspect");
 
-            log.info("limitCat -> {}",item.scene());
+        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
-            String scene = StringUtils.hasText(item.scene())?item.scene():proceedingJoinPoint.getSignature().getName();
-            String key = getKey(proceedingJoinPoint,scene,item.key());
+        Method method = methodSignature.getMethod();
 
-            // 调用频率验证
-            limitCatService.checkFrequency(scene,key,item);
-        });
+        LimitCats limitCats = method.getAnnotation(LimitCats.class);
+
+        if(limitCats!=null) {
+            Arrays.stream(limitCats.value()).forEach(item -> {
+                check(proceedingJoinPoint,item);
+            });
+        } else {
+            LimitCat limitCat = method.getAnnotation(LimitCat.class);
+            check(proceedingJoinPoint,limitCat);
+        }
 
         Object proceed = proceedingJoinPoint.proceed();
 
-        Arrays.stream(limitCats.value()).forEach(item -> {
-
-            String scene = StringUtils.hasText(item.scene())?item.scene():proceedingJoinPoint.getSignature().getName();
-            String key = getKey(proceedingJoinPoint,scene,item.key());
-
-            // 更新调用频率
-            limitCatService.updateFrequency(scene,key,item.rules());
-        });
+        if(limitCats!=null) {
+            Arrays.stream(limitCats.value()).forEach(item -> {
+                update(proceedingJoinPoint,item);
+            });
+        } else {
+            LimitCat limitCat = method.getAnnotation(LimitCat.class);
+            update(proceedingJoinPoint,limitCat);
+        }
 
         return proceed;
     }
@@ -81,23 +91,51 @@ public class LimitCatsAspect {
      * @param joinPoint
      * @param e
      */
-    @AfterThrowing(pointcut = "pointCut(limitCats)", throwing = "e")
-    public void doAfterThrow(JoinPoint joinPoint, RuntimeException e, LimitCats limitCats) {
+    @AfterThrowing(pointcut = "pointCut()", throwing = "e")
+    public void doAfterThrow(JoinPoint joinPoint, RuntimeException e) {
 
-        Arrays.stream(limitCats.value()).forEach(item -> {
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
-            log.info("e.getMessage() = {}, e.getClass() = {}, triggerFor = {},triggerForCode = {}", e.getMessage(),e.getClass(),item.triggerFor(),item.triggerForCode());
+        Method method = methodSignature.getMethod();
 
+        LimitCats limitCats = method.getAnnotation(LimitCats.class);
+
+        if(limitCats!=null) {
+            Arrays.stream(limitCats.value()).forEach(item -> {
+                log.info("e.getMessage() = {}, e.getClass() = {}, triggerFor = {},triggerForCode = {}", e.getMessage(),e.getClass(),item.triggerFor(),item.triggerForCode());
+                // 根据异常类型来判断是否触发计数
+                if(instanceofOneof(item,e)) {
+                    update(joinPoint, item);
+                }
+            });
+        } else {
+            LimitCat limitCat = method.getAnnotation(LimitCat.class);
+            log.info("e.getMessage() = {}, e.getClass() = {}, triggerFor = {},triggerForCode = {}", e.getMessage(),e.getClass(),limitCat.triggerFor(),limitCat.triggerForCode());
             // 根据异常类型来判断是否触发计数
-            if(instanceofOneof(item,e)) {
-
-                String scene = StringUtils.hasText(item.scene())?item.scene():joinPoint.getSignature().getName();
-                String key = getKey(joinPoint,scene,item.key());
-
-                limitCatService.updateFrequency(scene,key,item.rules());
+            if(instanceofOneof(limitCat,e)) {
+                update(joinPoint, limitCat);
             }
-        });
+        }
+    }
 
+    private void check(JoinPoint joinPoint,LimitCat limitCat){
+        log.info("limitCat -> {}",limitCat.scene());
+
+        String scene = StringUtils.hasText(limitCat.scene())?limitCat.scene():joinPoint.getSignature().getName();
+        String key = getKey(joinPoint,scene,limitCat.key());
+
+        // 调用频率验证
+        limitCatService.checkFrequency(scene,key,limitCat);
+    }
+
+    private void update(JoinPoint joinPoint,LimitCat limitCat) {
+        log.info("limitCat -> {}",limitCat.scene());
+
+        String scene = StringUtils.hasText(limitCat.scene())?limitCat.scene():joinPoint.getSignature().getName();
+        String key = getKey(joinPoint,scene,limitCat.key());
+
+        // 更新调用频率
+        limitCatService.updateFrequency(scene,key,limitCat.rules());
     }
 
     /**

@@ -15,9 +15,6 @@ public class StringTrimConverter implements Converter<String, String> {
 
 	@Override
 	public String convert(String source) {
-
-		log.info("StringTrimConverter->{}",source);
-
 		return source!=null?source.trim():null;
 	}
 

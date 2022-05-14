@@ -40,7 +40,7 @@ import java.util.Map;
  * @version 20210608
  */
 @Slf4j
-@Order(1)
+@Order(-100)
 @Aspect
 @Component
 public class LogCatAspect {
@@ -59,6 +59,8 @@ public class LogCatAspect {
      */
     @Around("pointCut(logCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, LogCat logCat) throws Throwable {
+
+        log.info("-> LogCatAspect");
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
@@ -102,6 +104,8 @@ public class LogCatAspect {
             // 产生记录日志事件
             applicationContext.publishEvent(new LogCatEvent(this,requestInfo));
         }
+
+        log.info("LogCatAspect ->");
 
         return proceed;
     }

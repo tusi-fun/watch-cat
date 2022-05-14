@@ -2,7 +2,6 @@ package com.cat.watchcat;
 
 
 import com.cat.watchcat.converter.*;
-import com.cat.watchcat.limit.aspect.LimitCatAspect;
 import com.cat.watchcat.limit.aspect.LimitCatsAspect;
 import com.cat.watchcat.limit.config.LimitCatProperties;
 import com.cat.watchcat.limit.service.LimitCatService;
@@ -33,12 +32,6 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
     @Bean
     public LimitCatsAspect limitCatsAspect(){
         return new LimitCatsAspect();
-    }
-
-    @ConditionalOnMissingBean
-    @Bean
-    public LimitCatAspect limitCatAspect(){
-        return new LimitCatAspect();
     }
 
     @ConditionalOnMissingBean
@@ -76,21 +69,6 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
     public AreaDetailConverter areaDetailConverter(){
         return new AreaDetailConverter();
     }
-
-//    @ConditionalOnMissingBean
-//    @Bean
-//    public AreaArgumentResolver areaArgumentResolver(){
-//        return new AreaArgumentResolver();
-//    }
-//
-//    /**
-//     * 注册自定义参数解析器
-//     * @param argumentResolvers
-//     */
-//    @Override
-//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-//        argumentResolvers.add(areaArgumentResolver());
-//    }
 
     /**
      * 注册自定义 convert

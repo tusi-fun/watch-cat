@@ -28,7 +28,7 @@ public class AreaDetailConverter implements Converter<String, AreaDetail> {
     @Override
     public AreaDetail convert(String areaCodeStr) {
 
-        log.info("AreaDetailConverter->{}",areaCodeStr);
+        log.info("AreaDetailConverter -> {}",areaCodeStr);
 
         if(!StringUtils.hasText(areaCodeStr)) {
             log.error("参数 areaCodes 不能为空");

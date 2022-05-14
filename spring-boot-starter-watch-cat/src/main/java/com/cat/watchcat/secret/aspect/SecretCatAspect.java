@@ -13,6 +13,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -30,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 请求加密控制切面
+ * 请求解密、响应加密控制切面
  *
  * @author hudongshan
  * @version 20200227
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Aspect
+@Order(-98)
 @Component
 public class SecretCatAspect {
 
@@ -54,6 +56,8 @@ public class SecretCatAspect {
 
     @Around("pointCut(secretCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, SecretCat secretCat) throws Throwable {
+
+        log.info("-> SecretCatAspect");
 
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
@@ -122,6 +126,8 @@ public class SecretCatAspect {
         if(secretCat.encryptedPong()) {
             encryptResult(aeskey,proceedResult,secretCat.pongEncryptField());
         }
+
+        log.info("SecretCatAspect ->");
 
 //     * 反射修改属性
 //     * https://blog.csdn.net/u011402896/article/details/79550913

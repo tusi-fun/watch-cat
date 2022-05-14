@@ -1,17 +1,20 @@
 # watch-cat（看家猫）
 * 封装-请求中 字符串格式的时间戳 转对应格式（LocalDateTime 、Localdate、LocalTime）
-* @AreaCat：请求中地区（省、市、县、社区、街道）参数解析器，支持多参数
-* @LimitCat：api 流控
+* ------------------------------
 * @LogCat：api 请求和响应日志打印、持久化
+* @LimitCat：api 流控
 * @SecretCat：api 请求参数解密 和 响应加密
 * @SensitiveCat：响应中的敏感参数脱敏
+* ------------------------------
+* AreaDetailConverter：将请求中的地区（省市县区）code，解析为地区对象
+* StringTrimConverter：对请求中的String参数前后去空格
 
 ### 引入依赖
 ```xml
 <dependency>
     <groupId>com.cat</groupId>
     <artifactId>spring-boot-starter-watch-cat</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.8</version>
 </dependency>
 ```
 
