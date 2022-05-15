@@ -7,6 +7,7 @@ import com.cat.watchcat.limit.config.LimitCatProperties;
 import com.cat.watchcat.limit.service.LimitCatService;
 import com.cat.watchcat.log.aspect.LogCatAspect;
 import com.cat.watchcat.secret.aspect.SecretCatAspect;
+import com.cat.watchcat.secret.aspect.VictoriasSecretAspect;
 import com.cat.watchcat.secret.config.SecretCatProperties;
 import com.cat.watchcat.secret.service.DataEncryptService;
 import com.cat.watchcat.sensitive.aspect.SensitiveAspect;
@@ -50,6 +51,12 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
     @Bean
     public SecretCatAspect secretCatAspect(){
         return new SecretCatAspect();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public VictoriasSecretAspect victoriasSecretAspect(){
+        return new VictoriasSecretAspect();
     }
 
     @ConditionalOnMissingBean
