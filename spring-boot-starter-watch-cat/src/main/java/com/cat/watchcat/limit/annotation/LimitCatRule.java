@@ -15,7 +15,7 @@ public @interface LimitCatRule {
      * 时间间隔（秒）
      * @return
      */
-    long intervalSeconds();
+    long interval();
 
     /**
      * 允许执行次数

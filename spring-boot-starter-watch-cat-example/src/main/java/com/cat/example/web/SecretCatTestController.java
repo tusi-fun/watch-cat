@@ -1,11 +1,11 @@
 package com.cat.example.web;
 
 import com.cat.example.bean.Aa;
+import com.cat.example.bean.SecretCatObj;
 import com.cat.result.ResultData;
 import com.cat.watchcat.limit.annotation.LimitCat;
 import com.cat.watchcat.log.annotation.LogCat;
 import com.cat.watchcat.secret.annotation.SecretCat;
-import com.cat.watchcat.secret.annotation.VictoriasSecret;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,16 +60,16 @@ public class SecretCatTestController {
 //        return new ResultData(200, "操作成功").data(aa);
 //    }
 
+    @SecretCat(encryptedPong = true, plainTextValid = true, preventReplay = false)
     @LogCat(actionGroup = "secret-cat", action = "case4", enableEvent = false)
     @PostMapping("case4")
-    public ResultData secretCatCase4(String a, String b,
-                                     @VictoriasSecret(plainTextValid = true, preventReplay = true) Aa aa) {
-        aa.setPhone("18582461287");
-        aa.setAddress("成都市武侯区广安大厦185号7楼708");
-        aa.setEmail("524712128@qq.com");
-        aa.setName("流畅度");
-        aa.setIdCard("511234520119652147");
-        return new ResultData(200, "操作成功").data(aa);
+    public ResultData secretatCase4(String a, String b, SecretCatObj secretCatObj) {
+        secretCatObj.setPhone("18582461287");
+        secretCatObj.setAddress("成都市武侯区广安大厦185号7楼708");
+        secretCatObj.setEmail("524712128@qq.com");
+        secretCatObj.setName("流畅度");
+        secretCatObj.setIdCard("511234520119652147");
+        return ResultData.ok().data(secretCatObj);
     }
 
 }

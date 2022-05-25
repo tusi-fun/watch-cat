@@ -1,7 +1,6 @@
 package com.cat.example.bean;
 
 import cn.hutool.core.util.DesensitizedUtil.DesensitizedType;
-import com.cat.watchcat.secret.aspect.PingSecretBasic;
 import com.cat.watchcat.sensitive.annotation.SensitiveField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -15,8 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Aa extends PingSecretBasic implements Serializable {
-
+public class Aa implements Serializable {
 
     private static final long serialVersionUID = 659863927348642929L;
 

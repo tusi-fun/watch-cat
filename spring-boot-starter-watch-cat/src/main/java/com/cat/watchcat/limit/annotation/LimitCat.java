@@ -25,22 +25,22 @@ public @interface LimitCat {
     String key() default "";
 
     /**
-     * 只在指定的 Exception 下执行频率计数
+     * 指定的 RuntimeException 下执行频率计数
      * @return
      */
     Class<? extends RuntimeException>[] triggerFor() default {};
-
-    /**
-     * 只在指定的 Exception 且 异常标记（code、errcode、status等）满足等情况下执行频率计数
-     * @return
-     */
-    String[] triggerForCode() default {};
 
     /**
      * 异常标记 字段（默认为getCode）
      * @return
      */
     String triggerForCodeField() default "getCode";
+
+    /**
+     * 指定的 Exception 且 异常标记（code、errcode、status等）满足等情况下执行频率计数
+     * @return
+     */
+    String[] triggerForCode() default {};
 
     /**
      * 频率超限提示内容

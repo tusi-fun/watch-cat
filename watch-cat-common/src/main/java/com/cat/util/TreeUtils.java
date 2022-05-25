@@ -115,7 +115,7 @@ public class TreeUtils<T> {
 //	public static void main(String[] args) {
 //		TimeInterval timer = DateUtil.timer();
 //		for (int i = 0; i < 1000000; i++) {
-//			List<Menu> tree = new ArraysToTreeUtil<Menu>()
+//			List<Menu> tree = new TreeUtils<Menu>()
 //					.code(Menu::getId)
 //					.parent(Menu::getPid)
 //					.children(menu -> {

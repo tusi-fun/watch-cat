@@ -7,10 +7,7 @@ import com.cat.watchcat.limit.service.LimitCatService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
@@ -39,9 +36,9 @@ public class LimitCatsAspect {
     @Autowired
     private LimitCatService limitCatService;
 
-// 20220514 切换为  @annotation(com.cat.watchcat.limit.annotation.LimitCats) 方式获取，用于兼容  单个 和 多个 @LimitCat一起使用的场景
-//    @Pointcut("@annotation(limitCats)")
-//    public void pointCut1(LimitCats limitCats) {}
+    // 20220514 切换为  @annotation(com.cat.watchcat.limit.annotation.LimitCats) 方式获取，用于兼容 单个 和 多个 @LimitCat一起使用的场景
+    // @Pointcut("@annotation(limitCats)")
+    // public void pointCut1(LimitCats limitCats) {}
 
     @Pointcut("@annotation(com.cat.watchcat.limit.annotation.LimitCats) || @annotation(com.cat.watchcat.limit.annotation.LimitCat)")
     public void pointCut() {}
@@ -55,7 +52,7 @@ public class LimitCatsAspect {
     @Around("pointCut()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        log.info("-> LimitCatsAspect");
+        log.info("LimitCatsAspect -> doAround");
 
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
@@ -94,6 +91,8 @@ public class LimitCatsAspect {
     @AfterThrowing(pointcut = "pointCut()", throwing = "e")
     public void doAfterThrow(JoinPoint joinPoint, RuntimeException e) {
 
+        log.info("LimitCatsAspect -> doAfterThrow");
+
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
         Method method = methodSignature.getMethod();
@@ -118,8 +117,8 @@ public class LimitCatsAspect {
         }
     }
 
-    private void check(JoinPoint joinPoint,LimitCat limitCat){
-        log.info("limitCat -> {}",limitCat.scene());
+    private void check(JoinPoint joinPoint,LimitCat limitCat) {
+        log.info("limitCat:check -> {}",limitCat.scene());
 
         String scene = StringUtils.hasText(limitCat.scene())?limitCat.scene():joinPoint.getSignature().getName();
         String key = getKey(joinPoint,scene,limitCat.key());
@@ -129,7 +128,7 @@ public class LimitCatsAspect {
     }
 
     private void update(JoinPoint joinPoint,LimitCat limitCat) {
-        log.info("limitCat -> {}",limitCat.scene());
+        log.info("limitCat:update -> {}",limitCat.scene());
 
         String scene = StringUtils.hasText(limitCat.scene())?limitCat.scene():joinPoint.getSignature().getName();
         String key = getKey(joinPoint,scene,limitCat.key());
