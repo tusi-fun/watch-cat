@@ -66,7 +66,7 @@ watchcat.limit.scenes.smsWrong.5m=3
   - triggerForCode 触发流控计数的异常 Code 数组（与 triggerFor 同时使用）
   - rules 流控规则配置（代码方式使用）
 
-### @LogCat 使用说明
+### @LogCat 使用说明（参数验证异常、参数类型转换异常等无法获取日志，因为 LocCat 使用 AOP 方式获取请求和响应参数）
 
 * 在代码中使用
 ```java
