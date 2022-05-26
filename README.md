@@ -53,8 +53,8 @@ watchcat.limit.scenes.smsWrong.5m=3
 // 指定异常触发
 @LimitCat(scene = "smsWrong", key = "#loginSmsCodeVO.outId+'-'+#loginSmsCodeVO.smsCode", triggerFor = BusinessException.class, 
         rules = {
-		@LimitCatRule(intervalSeconds = 60,frequency = 1,msg = "1分钟只能错误验证1次"), 
-                @LimitCatRule(intervalSeconds = 300,frequency = 10,msg = "5分钟只能错误验证10次")
+		    @LimitCatRule(interval = 60 ,frequency = 1 ,message = "1分钟只能错误验证1次"),
+            @LimitCatRule(interval = 300,frequency = 10,message = "5分钟只能错误验证10次")
         }
 )
 ```

@@ -4,6 +4,7 @@ import com.cat.example.exception.LimitCatCase3Exception;
 import com.cat.example.exception.LimitCatCase4Exception;
 import com.cat.result.Result;
 import com.cat.watchcat.limit.annotation.LimitCat;
+import com.cat.watchcat.limit.annotation.LimitCatRule;
 import com.cat.watchcat.log.annotation.LogCat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -98,7 +99,7 @@ public class LimitCatTestController {
      * @return
      */
     @LogCat(actionGroup = "limit-cat", action = "case5", enableEvent = false)
-    @LimitCat(scene ="case4", key = "#a", msg = "不要乱搞")
+    @LimitCat(scene ="case5", key = "#a", msg = "不要乱搞")
     @PostMapping("case5")
     public Result case5(Integer a) {
 
@@ -119,6 +120,26 @@ public class LimitCatTestController {
         if(a==1) {
             throw new IllegalArgumentException("异常触发测试");
         }
+
+        return Result.ok();
+    }
+
+    /**
+     * 场景（scene）为空，取方法名
+     * @param a
+     * @return
+     */
+    @LogCat(actionGroup = "limit-cat", action = "case7", enableEvent = false)
+    @LimitCat(key = "#a",rules = {
+            @LimitCatRule(interval = 60, frequency = 1, message = "1分钟只能错误验证1次"),
+            @LimitCatRule(interval = 300,frequency = 10,message = "5分钟只能错误验证10次")
+    })
+    @PostMapping("case7")
+    public Result case7Name(Integer a) {
+
+//        if(a==1) {
+//            throw new IllegalArgumentException("异常触发测试");
+//        }
 
         return Result.ok();
     }

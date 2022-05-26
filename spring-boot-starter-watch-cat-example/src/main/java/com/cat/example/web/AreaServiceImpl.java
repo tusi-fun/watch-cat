@@ -15,7 +15,6 @@ import java.util.Map;
 @Component
 public class AreaServiceImpl implements AreaService {
 
-
 	/**
 	 * 解析 省、市、县、社区名称
 	 * @param areaCodes 格式：省|市|县|社区
