@@ -6,11 +6,13 @@ import com.cat.watchcat.limit.annotation.LimitCatRule;
 import com.cat.watchcat.limit.config.LimitCatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -33,6 +35,20 @@ public class LimitCatService {
 
     public static final String FREQUENCY_KEY = "watch-cat:limit:%s:%s:%s";
 
+    DefaultRedisScript<Long> limitUpdateScript;
+    DefaultRedisScript<Long> limitGetScript;
+
+    @PostConstruct
+    public void initLuaScript() {
+        limitUpdateScript = new DefaultRedisScript<>();
+        limitUpdateScript.setResultType(Long.class);
+        limitUpdateScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit_update.lua")));
+
+        limitGetScript = new DefaultRedisScript<>();
+        limitGetScript.setResultType(Long.class);
+        limitGetScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit_get.lua")));
+    }
+
     /**
      * 业务执行前验证
      * @param scene
@@ -48,7 +64,7 @@ public class LimitCatService {
             log.info("频率验证(代码指定频率规则)，scene：{}，key：{}",scene,key);
 
             for(LimitCatRule limitCatRule :rules) {
-                checkCache(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS), limitCatRule.frequency(),limitCatRule.msg());
+                checkCache2(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS), limitCatRule.frequency(),limitCatRule.message());
             }
 
         } else {
@@ -62,7 +78,7 @@ public class LimitCatService {
             }
 
             for (Map.Entry<Duration, Long> entry : frequencySceneList.entrySet()) {
-                checkCache(scene, key, entry.getKey(), entry.getValue(),limitCat.msg());
+                checkCache2(scene, key, entry.getKey(), entry.getValue(),limitCat.msg());
             }
         }
     }
@@ -80,7 +96,7 @@ public class LimitCatService {
             log.info("频率更新(代码指定频率规则)，scene：{}，key：{}",scene,key);
 
             for(LimitCatRule limitCatRule :rules) {
-                updateCache(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS));
+                updateCache2(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS));
             }
 
         } else {
@@ -100,7 +116,7 @@ public class LimitCatService {
             }
 
             for (Map.Entry<Duration, Long> entry : frequencySceneList.entrySet()) {
-                updateCache(scene,key,entry.getKey());
+                updateCache2(scene,key,entry.getKey());
             }
         }
     }
@@ -121,6 +137,27 @@ public class LimitCatService {
         log.info("频率验证，scene：{}，key：{}，限制{}执行{}次，已执行{}次",scene,key,duration,frequency,object);
 
         if(object!=null && Long.valueOf(object.toString())>=frequency) {
+            throw new LimitCatException(StringUtils.hasText(msg)?msg:String.format("操作太频繁，请稍后再试。（场景 %s 限制%s执行%s次）",scene, duration,frequency));
+        }
+    }
+
+    /**
+     * 检查缓存
+     * @param scene
+     * @param key
+     * @param duration
+     * @param frequency
+     */
+    private void checkCache2(String scene,String key,Duration duration,Long frequency,String msg) {
+
+        String frequencyKey = String.format(FREQUENCY_KEY,scene,SecureUtil.md5(key),duration.toString());
+
+        List<String> keys = new ArrayList<>();
+        keys.add(frequencyKey);
+
+        Long isValid = redisTemplate.execute(limitGetScript,keys,frequency);
+
+        if(isValid==0) {
             throw new LimitCatException(StringUtils.hasText(msg)?msg:String.format("操作太频繁，请稍后再试。（场景 %s 限制%s执行%s次）",scene, duration,frequency));
         }
     }
@@ -154,42 +191,13 @@ public class LimitCatService {
 
         List<String> keys = new ArrayList<>();
         keys.add(frequencyKey);
-        RedisScript<Long> redisScript = new DefaultRedisScript<>(buildLuaScript(),Long.class);
-        Long count = redisTemplate.execute(redisScript,keys,10,10000);
 
-        log.info( "Access try count is {} for key={}", count, frequencyKey );
-        if (count != null && count == 0) {
-            log.debug("令牌桶={}，获取令牌失败",key);
-            throw new LimitCatException("令牌桶="+key+"，获取令牌失败");
-        }
+        redisTemplate.execute(limitUpdateScript,keys,duration.toMillis()/1000);
     }
 
-    /**
-     * lua 脚本操作令牌桶
-     * @return
-     */
-    private String buildLuaScript() {
-        StringBuilder luaString = new StringBuilder();
-        luaString.append("local key = KEYS[1]");
-        // 获取ARGV内参数Limit
-        luaString.append("\nlocal limit = tonumber(ARGV[1])");
-        // 获取key的次数
-        luaString.append("\nlocal curentLimit = tonumber(redis.call('get', key) or \"0\")");
-        luaString.append("\nif curentLimit + 1 > limit then");
-        luaString.append("\nreturn 0");
-        luaString.append("\nelse");
-        // 自增长 1
-        luaString.append("\nredis.call(\"INCRBY\", key, 1)");
-        // 设置过期时间
-        luaString.append("\nredis.call(\"EXPIRE\", key, ARGV[2])");
-        luaString.append("\nreturn curentLimit + 1");
-        luaString.append("\nend");
-        return luaString.toString();
-    }
-
-    public static void main(String[] args) {
-        String a = "[{\"lineLyric\":\"光的方向 (《长歌行》电视剧片头主题曲) - 张碧晨\",\"time\":\"0.0\"},{\"lineLyric\":\"词：萨吉\",\"time\":\"3.25\"},{\"lineLyric\":\"曲：金大洲\",\"time\":\"3.36\"},{\"lineLyric\":\"编曲：金大洲D-Jin\",\"time\":\"3.49\"},{\"lineLyric\":\"制作人：金大洲D-Jin\",\"time\":\"3.68\"},{\"lineLyric\":\"吉他：D-Jin\",\"time\":\"3.92\"},{\"lineLyric\":\"哨笛/风笛：Eric Rigler\",\"time\":\"4.03\"},{\"lineLyric\":\"弦乐编写/监制：D-Jin/胡静成\",\"time\":\"4.24\"},{\"lineLyric\":\"弦乐：国际首席爱乐乐团\",\"time\":\"4.6\"},{\"lineLyric\":\"弦乐录音：王小四@金田录音棚\",\"time\":\"4.95\"},{\"lineLyric\":\"人声录音：李宗远@Studio21A\",\"time\":\"5.36\"},{\"lineLyric\":\"配唱：赵贝尔\",\"time\":\"5.62\"},{\"lineLyric\":\"合声编写：D-Jin\",\"time\":\"5.79\"},{\"lineLyric\":\"合声：赵贝尔\",\"time\":\"5.95\"},{\"lineLyric\":\"混音/母带：George Dum@Liquid Fish Studio LA\",\"time\":\"6.12\"},{\"lineLyric\":\"OP：D-Jin Music(北京翊辰文化传媒有限公司）\",\"time\":\"6.45\"},{\"lineLyric\":\"音乐出品：华策音乐（天津）有限公司\",\"time\":\"6.95\"},{\"lineLyric\":\"无处可逃\",\"time\":\"8.56\"},{\"lineLyric\":\"无枝可靠\",\"time\":\"11.5\"},{\"lineLyric\":\"逆行着微笑\",\"time\":\"14.39\"},{\"lineLyric\":\"不屈不挠\",\"time\":\"20.29\"},{\"lineLyric\":\"忘了年少\",\"time\":\"23.34\"},{\"lineLyric\":\"不曾畏寂寞成行\",\"time\":\"30.21\"},{\"lineLyric\":\"泪与憾成双\",\"time\":\"33.44\"},{\"lineLyric\":\"心已滚烫 （向着远方）\",\"time\":\"36.33\"},{\"lineLyric\":\"过往风霜成刻刀\",\"time\":\"42.24\"},{\"lineLyric\":\"折裂了翅膀\",\"time\":\"45.08\"},{\"lineLyric\":\"还要 飞翔\",\"time\":\"47.89\"},{\"lineLyric\":\"循着光照的方向 把你遗忘\",\"time\":\"57.03\"},{\"lineLyric\":\"回忆折旧成我倔强的模样\",\"time\":\"62.88\"},{\"lineLyric\":\"我要凭这暗夜里的光\",\"time\":\"68.770004\"},{\"lineLyric\":\"还它与⼀曲长歌相望\",\"time\":\"71.66\"},{\"lineLyric\":\"踏着生命之河 不枉痴狂\",\"time\":\"74.72\"},{\"lineLyric\":\"独行的寥\",\"time\":\"91.479996\"},{\"lineLyric\":\"疲倦的傲\",\"time\":\"94.39\"},{\"lineLyric\":\"还剩下多少\",\"time\":\"97.2\"},{\"lineLyric\":\"心若泥沼\",\"time\":\"103.14\"},{\"lineLyric\":\"谁会知道\",\"time\":\"106.21\"},{\"lineLyric\":\"不曾畏寂寞成行\",\"time\":\"113.43\"},{\"lineLyric\":\"泪与憾成双\",\"time\":\"116.34\"},{\"lineLyric\":\"心已滚烫 （向着远方）\",\"time\":\"119.1\"},{\"lineLyric\":\"过往风霜成刻刀\",\"time\":\"125.1\"},{\"lineLyric\":\"折裂了翅膀\",\"time\":\"128.02\"},{\"lineLyric\":\"还要 飞翔\",\"time\":\"130.84\"},{\"lineLyric\":\"循着光照的方向 把你遗忘\",\"time\":\"139.8\"},{\"lineLyric\":\"回忆折旧成我倔强的模样\",\"time\":\"145.75\"},{\"lineLyric\":\"我要凭这暗夜里的光\",\"time\":\"151.64\"},{\"lineLyric\":\"还它与⼀曲长歌相望\",\"time\":\"154.7\"},{\"lineLyric\":\"踏着生命之河 不枉痴狂\",\"time\":\"157.66\"}]";
-        System.out.println(a.replaceAll("\\\\n", "\n"));
-
-    }
+//    public static void main(String[] args) {
+//        String a = "[by:用户5788]\\n[00:00.80]曾经有一艘船出海\\n[00:03.27]这艘船的名字叫 Billy o' Tea\\n[00:05.70]随着风吹起，她扬帆起航\\n[00:08.21]吹吧，使劲吹\\n[00:10.75]过不了多久，“茶壶号”就要来了\\n[00:13.22]给我们带来糖、茶和朗姆酒\\n[00:15.75]当捕捉的鲸鱼被处理完\\n[00:18.14]我们走吧，再度出发\\n[00:20.53]她离开海岸还不到两星期\\n[00:23.14]正好有一只鲸鱼在她下方钻来钻去\\n[00:25.71]船长对所有船员发誓\\n[00:28.16]他将把鲸鱼捕捞上岸\\n[00:30.82]过不了多久，“茶壶号”就要来了\\n[00:32.98]给我们带来糖、茶和朗姆酒\\n[00:35.85]当捕捉的鲸鱼被处理完\\n[00:38.13]我们走吧，再度出发\\n[00:40.60]涌起的海浪拍打着船身\\n[00:43.27]船员抓住了鲸鱼的尾巴\\n[00:45.72]所有船员都到船边，手持鱼叉和她搏斗\\n[00:48.34]鲸鱼深深地潜入海中\\n[00:50.81]过不了多久，“茶壶号”就要来了\\n[00:53.11]给我们带来糖、茶和朗姆酒\\n[00:55.81]当捕捉的鲸鱼被处理完\\n[00:58.01]我们走吧，再度出发\\n[01:00.63]绳子不会断裂，鲸鱼不会被释放\\n[01:03.18]船长的心思并不贪婪\\n[01:05.70]但他有属于捕鲸人的信仰\\n[01:08.07]她把船拖着向前\\n[01:10.81]过不了多久，“茶壶号”就要来了\\n[01:13.13]给我们带来糖、茶和朗姆酒\\n[01:15.78]当捕捉的鲸鱼被处理完\\n[01:18.00]我们走吧，再度出发\\n[01:20.57]过了四十天，甚至不只四十天\\n[01:23.07]拴住鲸鱼的绳子时紧时松\\n[01:25.72]我们只剩下四只船，其他船都不知去向\\n[01:28.09]但鲸鱼还在\\n[01:30.73]过不了多久，“茶壶号”就要来了\\n[01:33.12]给我们带来糖、茶和朗姆酒\\n[01:35.66]当捕捉的鲸鱼被处理完\\n[01:38.01]我们走吧，再度出发\\n[01:40.53]据我所知，战斗还在进行中\\n[01:43.22]绳子还没剪断，鲸鱼还没离开\\n[01:45.65]“茶壶号”不断鸣号\\n[01:48.12]鼓励着船长、船员和所有一切\\n[01:50.78]过不了多久，“茶壶号”就要来了\\n[01:53.26]给我们带来糖、茶和朗姆酒\\n[01:55.80]当捕捉的鲸鱼被处理完\\n[01:58.09]我们走吧，再度出发\\n[02:00.72]过不了多久，“茶壶号”就要来了\\n[02:03.22]给我们带来糖、茶和朗姆酒\\n[02:05.80]当捕捉的鲸鱼被处理完\\n[02:08.12]我们走吧，再度出发";
+//        System.out.println(a.replaceAll("\\\\n", "\n"));
+//
+//    }
 }

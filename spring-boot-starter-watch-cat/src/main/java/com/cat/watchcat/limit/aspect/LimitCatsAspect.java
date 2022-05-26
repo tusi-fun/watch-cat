@@ -55,8 +55,6 @@ public class LimitCatsAspect {
     @Around("pointCut()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        log.info("LimitCatsAspect -> doAround");
-
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
         Method method = methodSignature.getMethod();
@@ -93,8 +91,6 @@ public class LimitCatsAspect {
      */
     @AfterThrowing(pointcut = "pointCut()", throwing = "e")
     public void doAfterThrow(JoinPoint joinPoint, RuntimeException e) {
-
-        log.info("LimitCatsAspect -> doAfterThrow");
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 

@@ -27,5 +27,5 @@ public @interface LimitCatRule {
      * 频率超限提示
      * @return
      */
-    String msg() default "";
+    String message() default "";
 }
