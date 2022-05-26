@@ -64,7 +64,7 @@ public class LimitCatService {
             log.info("频率验证(代码指定频率规则)，scene：{}，key：{}",scene,key);
 
             for(LimitCatRule limitCatRule :rules) {
-                checkCache2(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS), limitCatRule.frequency(),limitCatRule.message());
+                checkCache(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS), limitCatRule.frequency(),limitCatRule.message());
             }
 
         } else {
@@ -78,7 +78,7 @@ public class LimitCatService {
             }
 
             for (Map.Entry<Duration, Long> entry : frequencySceneList.entrySet()) {
-                checkCache2(scene, key, entry.getKey(), entry.getValue(),limitCat.msg());
+                checkCache(scene, key, entry.getKey(), entry.getValue(),limitCat.msg());
             }
         }
     }
@@ -96,7 +96,7 @@ public class LimitCatService {
             log.info("频率更新(代码指定频率规则)，scene：{}，key：{}",scene,key);
 
             for(LimitCatRule limitCatRule :rules) {
-                updateCache2(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS));
+                updateCache(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS));
             }
 
         } else {
@@ -116,7 +116,7 @@ public class LimitCatService {
             }
 
             for (Map.Entry<Duration, Long> entry : frequencySceneList.entrySet()) {
-                updateCache2(scene,key,entry.getKey());
+                updateCache(scene,key,entry.getKey());
             }
         }
     }
@@ -142,7 +142,25 @@ public class LimitCatService {
     }
 
     /**
-     * 检查缓存
+     * 更新缓存
+     * @param scene
+     * @param key
+     * @param duration
+     */
+    private void updateCache(String scene,String key,Duration duration) {
+
+        String frequencyKey = String.format(FREQUENCY_KEY,scene,SecureUtil.md5(key),duration.toString());
+
+        Long currentValue = redisTemplate.opsForValue().increment(frequencyKey);
+
+        if(currentValue==1) {
+            redisTemplate.expire(frequencyKey,duration);
+        }
+    }
+
+    /**
+     * 检查缓存(lua脚本)，这里未使用lua脚本方式来实现，主要是check 和 update 操作都是单命令，本身就能保证原子性，不需要使用lua脚本来确保
+     * Redis的单个命令都是原子性的，有时候我们希望能够组合多个Redis命令，并让这个组合也能够原子性的执行，甚至可以重复使用
      * @param scene
      * @param key
      * @param duration
@@ -163,24 +181,8 @@ public class LimitCatService {
     }
 
     /**
-     * 更新缓存
-     * @param scene
-     * @param key
-     * @param duration
-     */
-    private void updateCache(String scene,String key,Duration duration) {
-
-        String frequencyKey = String.format(FREQUENCY_KEY,scene,SecureUtil.md5(key),duration.toString());
-
-        Long currentValue = redisTemplate.opsForValue().increment(frequencyKey);
-
-        if(currentValue==1) {
-            redisTemplate.expire(frequencyKey,duration);
-        }
-    }
-
-    /**
-     * 更新缓存
+     * 更新缓存(lua脚本)，这里未使用lua脚本方式来实现，主要是check 和 update 操作都是单命令，本身就能保证原子性，不需要使用lua脚本来确保
+     * Redis的单个命令都是原子性的，有时候我们希望能够组合多个Redis命令，并让这个组合也能够原子性的执行，甚至可以重复使用
      * @param scene
      * @param key
      * @param duration
