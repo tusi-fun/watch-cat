@@ -26,7 +26,7 @@
     <properties>
         <java.version>1.8</java.version>
         <revision>1.0.9</revision>
-        <hutool.version>5.7.22</hutool.version>
+        <hutool.version>5.8.3</hutool.version>
     </properties>
 
     <dependencyManagement>
