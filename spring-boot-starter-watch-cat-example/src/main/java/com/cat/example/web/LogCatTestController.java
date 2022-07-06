@@ -1,5 +1,6 @@
 package com.cat.example.web;
 
+import com.cat.example.bean.logcat.Gh;
 import com.cat.result.Result;
 import com.cat.watchcat.log.annotation.LogCat;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,12 @@ public class LogCatTestController {
     @LogCat(actionGroup = "log-cat", action = "case1", enableEvent = false)
     @PostMapping("case1")
     public Result case1(String a) {
+        return Result.ok();
+    }
+
+    @LogCat(actionGroup = "log-cat", action = "case2", enableEvent = false)
+    @PostMapping("case2")
+    public Result case2(Gh gh) {
         return Result.ok();
     }
 }
