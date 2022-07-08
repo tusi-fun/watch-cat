@@ -2,6 +2,7 @@ package com.cat.example.web;
 
 
 import com.cat.common.AreaDetail;
+import com.cat.example.bean.convert.JsonStrToLocalDate;
 import com.cat.watchcat.log.annotation.LogCat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -57,5 +58,18 @@ public class ConvertTestController {
         return "ok";
     }
 
+    /**
+     * 这里实际上没有用到 convert 的功能，纯靠在接收对象中增加注解（@JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "GMT+8", pattern="yyyy-MM-dd")）实现
+     * @param a
+     * @return
+     */
+    @LogCat(actionGroup = "convert", action = "convertExample", enableEvent = false)
+    @PostMapping("jsonStrToLocalDateTime")
+    public String jsonStrToLocalDateTime(@RequestBody JsonStrToLocalDate a) {
+
+        log.info("a={}",a);
+
+        return "ok";
+    }
 
 }
