@@ -45,7 +45,7 @@ public class JsonUtils {
         OM.setSerializationInclusion(Include.NON_NULL);
 
         /**
-         * 是否多行缩进输出（美化输出），默认false
+         * 是否多行缩进输出（美化输出），默认 false
          */
         //objectMapper.configure(SerializationFeature.INDENT_OUTPUT, Boolean.TRUE);
 
@@ -86,15 +86,16 @@ public class JsonUtils {
      * @return
      */
     public static String toJson(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return null;
+        } else {
+            try {
+                return obj instanceof String ? (String)obj : OM.writeValueAsString(obj);
+            } catch (JsonProcessingException var2) {
+                var2.printStackTrace();
+                return null;
+            }
         }
-        try {
-            return obj instanceof String ? (String) obj : OM.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**
@@ -105,13 +106,14 @@ public class JsonUtils {
     public static String toJsonPretty(Object obj) {
         if (obj == null) {
             return null;
+        } else {
+            try {
+                return obj instanceof String ? (String)obj : OM.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+            } catch (Exception var2) {
+                var2.printStackTrace();
+                return null;
+            }
         }
-        try {
-            return obj instanceof String ? (String) obj : OM.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**
@@ -125,17 +127,16 @@ public class JsonUtils {
      * @return
      */
     public static <T> T toBean(String jsonStr, Class<T> clazz) {
-
-        if(!StringUtils.hasText(jsonStr) || clazz == null){
+        if (StringUtils.hasText(jsonStr) && clazz != null) {
+            try {
+                return clazz.equals(String.class) ? (T) jsonStr : OM.readValue(jsonStr, clazz);
+            } catch (IOException var3) {
+                var3.printStackTrace();
+                return null;
+            }
+        } else {
             return null;
         }
-
-        try {
-            return  clazz.equals(String.class) ? (T) jsonStr : OM.readValue(jsonStr, clazz);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**
@@ -149,20 +150,18 @@ public class JsonUtils {
      * @return
      */
     public static <T> List<T> toList(String jsonStr, Class<T> clazz) {
+        if (StringUtils.hasText(jsonStr) && clazz != null) {
+            JavaType javaType = OM.getTypeFactory().constructParametricType(ArrayList.class, new Class[]{clazz});
 
-        if(!StringUtils.hasText(jsonStr) || clazz == null){
+            try {
+                return (List)OM.readValue(jsonStr, javaType);
+            } catch (IOException var4) {
+                var4.printStackTrace();
+                return null;
+            }
+        } else {
             return null;
         }
-
-        JavaType javaType = OM.getTypeFactory().constructParametricType(ArrayList.class, clazz);
-
-        try {
-            return OM.readValue(jsonStr, javaType);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     /**
@@ -178,16 +177,15 @@ public class JsonUtils {
      * @return
      */
     public static <T> T toBean4TypeReference(String jsonStr, TypeReference<T> typeReference) {
-
-        if(!StringUtils.hasText(jsonStr) || typeReference == null){
+        if (StringUtils.hasText(jsonStr) && typeReference != null) {
+            try {
+                return OM.readValue(jsonStr, typeReference);
+            } catch (IOException var3) {
+                var3.printStackTrace();
+                return null;
+            }
+        } else {
             return null;
         }
-
-        try {
-            return OM.readValue(jsonStr, typeReference);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
