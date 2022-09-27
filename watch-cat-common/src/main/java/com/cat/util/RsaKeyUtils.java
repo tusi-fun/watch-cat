@@ -13,6 +13,11 @@ public class RsaKeyUtils {
 	private static final String PUBLIC_KEY_BEGIN = "-----BEGIN PUBLIC KEY-----";
 	private static final String PUBLIC_KEY_END = "-----END PUBLIC KEY-----";
 
+	/**
+	 * 移除公私钥前后分隔符以及换行符、回车符、前后空格
+	 * @param original
+	 * @return
+	 */
 	public static String cleanToSingleLine(String original) {
 		return original.replace(PUBLIC_KEY_BEGIN, "")
 				.replace(PUBLIC_KEY_END,"")
