@@ -19,11 +19,17 @@ public class RsaKeyUtils {
 	 * @return
 	 */
 	public static String cleanToSingleLine(String original) {
+
+		if(!StringUtils.hasText(original)) {
+			return "";
+		}
+
 		return original.replace(PUBLIC_KEY_BEGIN, "")
-				.replace(PUBLIC_KEY_END,"")
-				.replace(PRIVATE_KEY_BEGIN,"")
-				.replace(PRIVATE_KEY_END,"")
-				.replaceAll("\\n","")
-				.replaceAll("\\r","").trim();
+				.replace(PUBLIC_KEY_END, "")
+				.replace(PRIVATE_KEY_BEGIN, "")
+				.replace(PRIVATE_KEY_END, "")
+				.replaceAll("\\n", "")
+				.replaceAll("\\r", "").trim();
+
 	}
 }
