@@ -23,6 +23,6 @@ public class BusinessStatusValidator implements ConstraintValidator<BusinessStat
         if(value == null) {
             return true;
         }
-        return Arrays.stream(businessStatusList).anyMatch(i -> value.equals(i));
+        return Arrays.stream(businessStatusList).anyMatch(value::equals);
     }
 }
