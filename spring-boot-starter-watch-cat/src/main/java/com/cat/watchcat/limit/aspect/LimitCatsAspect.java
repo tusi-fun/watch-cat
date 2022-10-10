@@ -124,20 +124,28 @@ public class LimitCatsAspect {
 
         if(limitCats!=null) {
             Arrays.stream(limitCats.value()).forEach(item -> {
-                // 触发计数
-                log.info("limitCat:update -> {}",item.scene());
-                String scene = StringUtils.hasText(item.scene())?item.scene():joinPoint.getSignature().getName();
-                String key = getKey(joinPoint,scene,item.key());
-                limitCatService.updateFrequency(scene,key,item.rules());
+
+                // 排除异常触发的规则
+                if(item.triggerFor().length==0){
+                    // 触发计数
+                    log.info("limitCat:update -> {}",item.scene());
+                    String scene = StringUtils.hasText(item.scene())?item.scene():joinPoint.getSignature().getName();
+                    String key = getKey(joinPoint,scene,item.key());
+                    limitCatService.updateFrequency(scene,key,item.rules());
+                }
 
             });
         } else {
             LimitCat limitCat = method.getAnnotation(LimitCat.class);
-            // 触发计数
-            log.info("limitCat:update -> {}",limitCat.scene());
-            String scene = StringUtils.hasText(limitCat.scene())?limitCat.scene():joinPoint.getSignature().getName();
-            String key = getKey(joinPoint,scene,limitCat.key());
-            limitCatService.updateFrequency(scene, key, limitCat.rules());
+
+            // 排除异常触发的规则
+            if(limitCat.triggerFor().length==0){
+                // 触发计数
+                log.info("limitCat:update -> {}", limitCat.scene());
+                String scene = StringUtils.hasText(limitCat.scene()) ? limitCat.scene() : joinPoint.getSignature().getName();
+                String key = getKey(joinPoint, scene, limitCat.key());
+                limitCatService.updateFrequency(scene, key, limitCat.rules());
+            }
 
         }
     }

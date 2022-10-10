@@ -30,7 +30,10 @@ public class LimitCatTestController {
     @LogCat(actionGroup = "limit-cat", action = "case1", enableEvent = false)
     @LimitCat(scene ="case1", key = "#a")
     @PostMapping("case1")
-    public Result case1(String a) {
+    public Result case1(Integer a) {
+        if(a==1) {
+            throw new IllegalArgumentException("异常触发测试");
+        }
         return Result.ok();
     }
 

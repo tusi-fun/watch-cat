@@ -61,7 +61,7 @@ public class LimitCatService {
 
         if(rules!=null && rules.length>0) {
 
-            log.info("频率验证(代码指定频率规则)，scene：{}，key：{}",scene,key);
+            log.info("频率验证(规则由代码指定)，scene：{}，key：{}",scene,key);
 
             for(LimitCatRule limitCatRule :rules) {
                 checkCache(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS), limitCatRule.frequency(),limitCatRule.message());
@@ -69,7 +69,7 @@ public class LimitCatService {
 
         } else {
 
-            log.info("频率验证(配置指定频率规则)，scene：{}，key：{}",scene,key);
+            log.info("频率验证(规则由配置指定)，scene：{}，key：{}",scene,key);
 
             Map<Duration,Long> frequencySceneList = limitCatProperties.getScenes().get(scene);
 
@@ -93,7 +93,7 @@ public class LimitCatService {
 
         if(rules!=null && rules.length>0) {
 
-            log.info("频率更新(代码指定频率规则)，scene：{}，key：{}",scene,key);
+            log.info("频率更新(规则由代码指定)，scene：{}，key：{}",scene,key);
 
             for(LimitCatRule limitCatRule :rules) {
                 updateCache(scene,key,Duration.of(limitCatRule.interval(), ChronoUnit.SECONDS));
@@ -101,7 +101,7 @@ public class LimitCatService {
 
         } else {
 
-            log.info("频率更新(配置指定频率规则)，scene：{}，key：{}",scene,key);
+            log.info("频率更新(规则由配置指定)，scene：{}，key：{}",scene,key);
 
             Map<String,Map<Duration,Long>> scenes = limitCatProperties.getScenes();
 
