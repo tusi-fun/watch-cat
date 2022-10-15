@@ -16,6 +16,6 @@ public class BaseUser implements Serializable {
 	private static final long serialVersionUID = -1284296471023223393L;
 
 	@SensitiveField(type = DesensitizedUtil.DesensitizedType.CHINESE_NAME)
-	private String RealName;
+	private String realName;
 
 }

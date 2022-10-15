@@ -99,7 +99,7 @@ public class GlobalExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result exceptionHandler(TypeMismatchException e) {
         log.error("TypeMismatchException >> {}",e.getMessage());
-        return Result.fail(SysDefaultEnum.BAD_REQUEST, String.format("参数类型异常"));
+        return Result.fail(SysDefaultEnum.BAD_REQUEST, "参数类型异常");
     }
 
     /**

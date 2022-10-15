@@ -10,7 +10,7 @@ public class LimitCatCase3Exception extends RuntimeException implements Serializ
 
 	private static final long serialVersionUID = -1041148006846583767L;
 
-	private int code;
+	private final int code;
 
 	private String message;
 
