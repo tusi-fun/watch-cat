@@ -144,7 +144,7 @@ public class SecretCatAspect {
 
         if (!constraintViolationSet.isEmpty()) {
 
-            Map<String,String> errMsgMap = new HashMap();
+            Map<String,String> errMsgMap = new HashMap<>();
 
             // 验证对象
             for (ConstraintViolation violation: constraintViolationSet) {

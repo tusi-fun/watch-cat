@@ -245,12 +245,10 @@ public class LimitCatsAspect {
 
         // 获取方法签名(通过此签名获取目标方法信息)
         MethodSignature ms = (MethodSignature)joinPoint.getSignature();
-        Method method = ms.getMethod();
-        Object[] args = joinPoint.getArgs();
 
         // 获取被拦截方法参数名列表(使用Spring支持类库)
         LocalVariableTableParameterNameDiscoverer localVariableTable = new LocalVariableTableParameterNameDiscoverer();
-        String[] paraNameArr = localVariableTable.getParameterNames(method);
+        String[] paraNameArr = localVariableTable.getParameterNames(ms.getMethod());
 
         // 使用SPEL进行key的解析
         ExpressionParser parser = new SpelExpressionParser();
@@ -260,7 +258,8 @@ public class LimitCatsAspect {
         EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
 
         //把方法参数放入SPEL上下文中
-        for(int i=0;i<paraNameArr.length;i++) {
+        Object[] args = joinPoint.getArgs();
+        for(int i=0; i<paraNameArr.length; i++) {
             context.setVariable(paraNameArr[i], args[i]);
         }
 
