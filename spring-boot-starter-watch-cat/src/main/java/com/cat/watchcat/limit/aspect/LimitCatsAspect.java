@@ -74,7 +74,10 @@ public class LimitCatsAspect {
         update(joinPoint,e);
     }
 
-
+    /**
+     * 检查频率计数
+     * @param joinPoint
+     */
     private void check(JoinPoint joinPoint) {
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
