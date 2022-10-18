@@ -1,6 +1,5 @@
 package com.cat.watchcat.secret.aspect;
 
-import cn.hutool.crypto.SecureUtil;
 import com.cat.util.JsonUtils;
 import com.cat.watchcat.secret.annotation.SecretCat;
 import com.cat.watchcat.secret.service.DataEncryptService;
@@ -10,6 +9,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.lang.reflect.Field;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -58,72 +60,62 @@ public class SecretCatAspect {
 
         log.info("-> SecretCatAspect");
 
+        MethodSignature methodSignature = ((MethodSignature)proceedingJoinPoint.getSignature());
+        Parameter[] parameters = methodSignature.getMethod().getParameters();
+
+        Parameter plaintextParameter = Arrays.stream(parameters).filter(p -> p.getName().equals(secretCat.plaintextParameter())).findFirst()
+                .orElseThrow(() -> new SecretCatException("解密结果接收参数 plaintextParameter 未设置"));
+
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpServletRequest request = sra.getRequest();
 
-        String encryptKey = request.getParameter("encryptKey"), encryptData = request.getParameter("encryptData");
+        String encryptKey = request.getParameter(secretCat.encryptPingKeyField()),
+               encryptData = request.getParameter(secretCat.encryptPingDataField());
 
         String reqMsg =
                 "\r\n-----------------------" +
-                "\r\n【SecretCat   】:" + secretCat +
+                "\r\n【@SecretCat  】:" + secretCat +
                 "\r\n【encryptKey  】:" + encryptKey +
                 "\r\n【encryptData 】:" + encryptData;
 
         log.info(reqMsg);
 
         if (!StringUtils.hasText(encryptKey)) {
-            throw new SecretCatException("encryptKey不能为空");
+            throw new SecretCatException(secretCat.encryptPingKeyField()+"不能为空");
         }
 
         if (!StringUtils.hasText(encryptData)) {
-            throw new SecretCatException("encryptData不能为空");
-        }
-
-        // 是否启用重复提交验证
-        if(secretCat.preventReplay()) {
-
-            String hash = SecureUtil.sha1(encryptKey+encryptData);
-
-            // 验证缓存是否存在相同提交数据
-            if (!dataEncryptService.cacheEncryptHash(hash)) {
-                throw new SecretCatException("不能重复提交加密数据");
-            }
+            throw new SecretCatException(secretCat.encryptPingDataField()+"不能为空");
         }
 
         // 解密参数和值
         byte[] aeskey = dataEncryptService.decryptAesKey(encryptKey);
+
         String data = dataEncryptService.decryptData(aeskey,encryptData);
 
         log.info("\r\n【plainText   】:" + data + "\r\n-----------------------");
 
-
         // 将解密后的参数传递给方法
         Object[] args = proceedingJoinPoint.getArgs();
 
-        for (int i=0;i<args.length;i++) {
+        Object targetObj = Arrays.stream(args).filter(arg -> plaintextParameter.getType().isInstance(arg)).findFirst()
+                .orElseThrow(() -> new SecretCatException("解密结果接收参数 plaintextParameter 未设置"));
 
-            Object o = args[i];
+        // 将解密后的结果 copy 到指定对象
+        BeanUtils.copyProperties(JsonUtils.toBean(data, targetObj.getClass()),targetObj);
 
-            if(o instanceof PingSecretBasic) {
-
-                // 将解密后的结果 copy 到指定对象
-                BeanUtils.copyProperties(JsonUtils.toBean(data, o.getClass()),o);
-
-                // 是否启用参数验证
-                if(secretCat.plainTextValid()) {
-                    // 执行参数验证
-                    validParam(o);
-                }
-                break;
-            }
+        // 是否启用参数验证
+        if(secretCat.verifyPlaintext()) {
+            // 执行参数验证
+            validParam(targetObj);
         }
 
         Object proceedResult = proceedingJoinPoint.proceed(args);
 
-        // 返回值是否需要加密
-        if(secretCat.encryptedPong()) {
-            encryptResult(aeskey,proceedResult,secretCat.pongEncryptField());
+        // 响应加密
+        if(secretCat.encryptPong()) {
+            encryptResult(aeskey,proceedResult,secretCat.encryptPongField());
         }
 
         log.info("SecretCatAspect ->");
@@ -176,7 +168,7 @@ public class SecretCatAspect {
      * @param pongEncryptField
      * @throws IllegalAccessException
      */
-    private void encryptResult(byte[] aeskey,Object proceedResult,String pongEncryptField) throws IllegalAccessException {
+    private void encryptResult(byte[] aeskey, Object proceedResult, String pongEncryptField) throws IllegalAccessException {
 
         Field dataField = ReflectionUtils.findField(proceedResult.getClass(),pongEncryptField);
 
@@ -192,5 +184,6 @@ public class SecretCatAspect {
             }
         }
     }
+
 
 }

@@ -3,7 +3,7 @@ package com.cat.watchcat.secret.annotation;
 import java.lang.annotation.*;
 
 /**
- * 参数加解密注解
+ * 参数加解密注解 (目前仅支持 AES + RSA 方式)
  * @author hudongshan
  * @version 20211122
  */
@@ -13,27 +13,39 @@ import java.lang.annotation.*;
 public @interface SecretCat {
 
     /**
-     * 是否启用响应加密
+     * 启用响应加密（默认禁用）
      * @return
      */
-    boolean encryptedPong() default false;
+    boolean encryptPong() default false;
 
     /**
      * 响应加密结果填充字段
      * @return
      */
-    String pongEncryptField() default "data";
+    String encryptPongField() default "data";
 
     /**
-     * 是否启用防止重放
+     * 请求加密结果填充字段
      * @return
      */
-    boolean preventReplay() default true;
+    String encryptPingKeyField() default "encryptKey";
 
     /**
-     * 是否启用原文参数验证
+     * 请求加密结果填充字段
      * @return
      */
-    boolean plainTextValid() default true;
+    String encryptPingDataField() default "encryptData";
+
+    /**
+     * 启用原文验证（默认启用）
+     * @return
+     */
+    boolean verifyPlaintext() default true;
+
+    /**
+     * 原文填充目标
+     * @return
+     */
+    String plaintextParameter();
 
 }

@@ -161,7 +161,7 @@ public class LogCatAspect {
     }
 
     /**
-     * 获取入参
+     * 获取请求参数
      * @param proceedingJoinPoint
      *
      * @return
@@ -175,6 +175,11 @@ public class LogCatAspect {
         return buildRequestParam(paramNames, paramValues);
     }
 
+    /**
+     * 获取请求参数
+     * @param joinPoint
+     * @return
+     */
     private Map<String, Object> getRequestParamsByJoinPoint(JoinPoint joinPoint) {
         //参数名
         String[] paramNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();

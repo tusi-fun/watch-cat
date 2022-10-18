@@ -19,7 +19,7 @@ public @interface LimitCat {
     String scene() default "";
 
     /**
-     * 频率 key（手机号、uid、ip、token等）
+     * 频率 key（SpEL）
      * @return
      */
     String key() default "";

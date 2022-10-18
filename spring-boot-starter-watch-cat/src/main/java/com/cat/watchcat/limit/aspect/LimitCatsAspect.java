@@ -238,10 +238,11 @@ public class LimitCatsAspect {
         }
 
         String fullKey = parser.parseExpression(key).getValue(context, String.class);
+
         if(!StringUtils.hasText(fullKey)) {
             throw new LimitCatException("频率限制场景 "+ scene +" 的key "+ key +" 不能为空");
         }
 
-        return parser.parseExpression(key).getValue(context, String.class);
+        return fullKey;
     }
 }

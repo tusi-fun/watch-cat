@@ -2,6 +2,7 @@ package com.cat.example.web;
 
 import com.cat.example.bean.Aa;
 import com.cat.example.bean.SecretCatObj;
+import com.cat.example.bean.secret.SecurityCode;
 import com.cat.result.ResultData;
 import com.cat.watchcat.limit.annotation.LimitCat;
 import com.cat.watchcat.log.annotation.LogCat;
@@ -22,10 +23,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "example/secretCatExample", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecretCatTestController {
 
+//    @LogCat(actionGroup = "secret-cat", action = "case1", enableEvent = false)
+//    @SecretCat(encryptPong = true, verifyPlaintext = true, plaintextParameter = "#testPing.securityCode")
+//    @PostMapping("case0")
+//    public ResultData secretCatCase0(String a, String b, TestPing testPing) {
+//        Aa aa = new Aa();
+//        aa.setPhone("18582461287");
+//        aa.setAddress("成都市武侯区广安大厦185号7楼708");
+//        aa.setEmail("524712128@qq.com");
+//        aa.setName("流畅度");
+//        aa.setIdCard("511234520119652147");
+//        return new ResultData(200, "操作成功").data(aa);
+//    }
+
     @LogCat(actionGroup = "secret-cat", action = "case1", enableEvent = false)
-    @SecretCat(encryptedPong = true, plainTextValid = true, preventReplay = true)
+    @SecretCat(encryptPong = true, verifyPlaintext = true, plaintextParameter = "securityCode")
     @PostMapping("case1")
-    public ResultData secretCatCase1(String a, String b, Aa aa) {
+    public ResultData secretCatCase1(String a, String b, SecurityCode securityCode) {
+        Aa aa = new Aa();
         aa.setPhone("18582461287");
         aa.setAddress("成都市武侯区广安大厦185号7楼708");
         aa.setEmail("524712128@qq.com");
@@ -36,7 +51,7 @@ public class SecretCatTestController {
 
     @LogCat(actionGroup = "secret-cat", action = "case2", enableEvent = false)
     @LimitCat(scene ="case1", key = "#a")
-    @SecretCat(encryptedPong = true, plainTextValid = true, preventReplay = false)
+    @SecretCat(encryptPong = true, verifyPlaintext = true, plaintextParameter = "aa")
     @PostMapping("case2")
     public ResultData secretCatCase2(String a, String b, Aa aa) {
         aa.setPhone("18582461287");
@@ -60,7 +75,7 @@ public class SecretCatTestController {
 //        return new ResultData(200, "操作成功").data(aa);
 //    }
 
-    @SecretCat(encryptedPong = true, plainTextValid = true, preventReplay = false)
+    @SecretCat(encryptPong = true, verifyPlaintext = true, plaintextParameter = "")
     @LogCat(actionGroup = "secret-cat", action = "case4", enableEvent = false)
     @PostMapping("case4")
     public ResultData secretatCase4(String a, String b, SecretCatObj secretCatObj) {

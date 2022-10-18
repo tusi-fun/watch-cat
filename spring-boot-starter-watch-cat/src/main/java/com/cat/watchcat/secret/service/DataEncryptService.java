@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 敏感数据加密处理入口
  * @author hudongshan
@@ -30,19 +28,19 @@ public class DataEncryptService {
     @Autowired
     RedisTemplate<String,Object> redisTemplate;
 
-    /**
-     * api安全相关缓存，对加密参数做hash缓存，防止重放攻击
-     * ========================================
-     */
-    public static final String SAFETY_API_ENCRYPT_HASH_KEY = "watch-cat:encrypt:data_hash:%s";
-    public static final Long SAFETY_API_ENCRYPT_HASH_TOLERANT = 30L;
-
-    /**
-     * 验证安全hash值是否存在
-     */
-    public Boolean cacheEncryptHash(String hash) {
-        return redisTemplate.opsForValue().setIfAbsent(String.format(SAFETY_API_ENCRYPT_HASH_KEY,hash),hash,SAFETY_API_ENCRYPT_HASH_TOLERANT, TimeUnit.MINUTES);
-    }
+//    /**
+//     * api安全相关缓存，对加密参数做hash缓存，防止重放攻击
+//     * ========================================
+//     */
+//    public static final String SAFETY_API_ENCRYPT_HASH_KEY = "watch-cat:encrypt:data_hash:%s";
+//    public static final Long SAFETY_API_ENCRYPT_HASH_TOLERANT = 30L;
+//
+//    /**
+//     * 验证安全hash值是否存在
+//     */
+//    public Boolean cacheEncryptHash(String hash) {
+//        return redisTemplate.opsForValue().setIfAbsent(String.format(SAFETY_API_ENCRYPT_HASH_KEY,hash),hash,SAFETY_API_ENCRYPT_HASH_TOLERANT, TimeUnit.MINUTES);
+//    }
 
     /**
      * 解密客户端的 aes key
