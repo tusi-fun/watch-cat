@@ -32,7 +32,7 @@ import java.util.List;
  * @version 20210608
  */
 @Slf4j
-@Order(-99)
+@Order(-100)
 @Aspect
 public class LimitCatsAspect {
 

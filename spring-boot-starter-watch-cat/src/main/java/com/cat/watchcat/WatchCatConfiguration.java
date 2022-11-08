@@ -1,6 +1,5 @@
 package com.cat.watchcat;
 
-
 import com.cat.watchcat.converter.*;
 import com.cat.watchcat.limit.aspect.LimitCatsAspect;
 import com.cat.watchcat.limit.config.LimitCatProperties;
@@ -10,6 +9,12 @@ import com.cat.watchcat.secret.aspect.SecretCatAspect;
 import com.cat.watchcat.secret.config.SecretCatProperties;
 import com.cat.watchcat.secret.service.DataEncryptService;
 import com.cat.watchcat.sensitive.aspect.SensitiveAspect;
+import com.cat.watchcat.sign.aspect.SignCatAspect;
+import com.cat.watchcat.sign.config.SignShaProperties;
+import com.cat.watchcat.sign.config.SignSymmetricProperties;
+import com.cat.watchcat.sign.service.ApiSignUtils4Asymmetric;
+import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
+import com.cat.watchcat.sign.service.CacheService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,13 +30,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @ConditionalOnMissingBean，它是修饰bean的一个注解，主要实现的是，当bean被注册之后，再注册相同类型的bean，就不会成功，它会保证你的bean只有一个，即你的实例只有一个，当你注册多个相同的bean时，会出现异常
  */
 @Configuration
-@EnableConfigurationProperties({LimitCatProperties.class, SecretCatProperties.class})
+@EnableConfigurationProperties({
+        LimitCatProperties.class,
+        SecretCatProperties.class,
+        SignShaProperties.class,
+        SignSymmetricProperties.class})
 public class WatchCatConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean
     @Bean
     public LimitCatsAspect limitCatsAspect(){
         return new LimitCatsAspect();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public LimitCatService limitCatService(){
+        return new LimitCatService();
     }
 
     @ConditionalOnMissingBean
@@ -52,12 +67,6 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
         return new SecretCatAspect();
     }
 
-//    @ConditionalOnMissingBean
-//    @Bean
-//    public VictoriasSecretAspect victoriasSecretAspect(){
-//        return new VictoriasSecretAspect();
-//    }
-
     @ConditionalOnMissingBean
     @Bean
     public DataEncryptService dataEncryptService(){
@@ -66,14 +75,32 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean
     @Bean
-    public LimitCatService limitCatService(){
-        return new LimitCatService();
+    public AreaDetailConverter areaDetailConverter(){
+        return new AreaDetailConverter();
     }
 
     @ConditionalOnMissingBean
     @Bean
-    public AreaDetailConverter areaDetailConverter(){
-        return new AreaDetailConverter();
+    public SignCatAspect signCatAspect(){
+        return new SignCatAspect();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public ApiSignUtils4Asymmetric apiSignUtils4Asymmetric(){
+        return new ApiSignUtils4Asymmetric();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public ApiSignUtils4Sha apiSignUtils4Sha(){
+        return new ApiSignUtils4Sha();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public CacheService cacheService(){
+        return new CacheService();
     }
 
     /**

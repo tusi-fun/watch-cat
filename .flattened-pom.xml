@@ -26,9 +26,10 @@
     <module>watch-cat-common</module>
   </modules>
   <properties>
-    <hutool.version>5.8.3</hutool.version>
-    <revision>1.1.0</revision>
     <java.version>1.8</java.version>
+    <hutool.version>5.8.3</hutool.version>
+    <guava.version>31.1-jre</guava.version>
+    <revision>1.1.0</revision>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -51,6 +52,11 @@
         <groupId>cn.hutool</groupId>
         <artifactId>hutool-crypto</artifactId>
         <version>${hutool.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
