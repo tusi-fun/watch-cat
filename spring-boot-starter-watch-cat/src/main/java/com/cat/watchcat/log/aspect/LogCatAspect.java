@@ -62,6 +62,8 @@ public class LogCatAspect {
 
         log.info("-> LogCatAspect");
 
+        LocalDateTime startTime = LocalDateTime.now();
+
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         HttpServletRequest request = attributes.getRequest();
@@ -74,7 +76,7 @@ public class LogCatAspect {
         if(StringUtils.hasText(logCat.bid())) {
             requestInfo.setBid(getKey(proceedingJoinPoint, logCat.bid()));
         }
-        requestInfo.setStartTime(LocalDateTime.now());
+        requestInfo.setStartTime(startTime);
         requestInfo.setActionGroup(logCat.actionGroup());
         requestInfo.setAction(logCat.action());
         requestInfo.setIp(request.getRemoteAddr());
@@ -85,7 +87,7 @@ public class LogCatAspect {
         requestInfo.setRequestParams(getRequestParamsByProceedingJoinPoint(proceedingJoinPoint));
         requestInfo.setResult(proceed);
         requestInfo.setEndTime(LocalDateTime.now());
-        requestInfo.setTimeCost(Duration.between(requestInfo.getStartTime(),requestInfo.getEndTime()).toMillis());
+        requestInfo.setTimeCost(Duration.between(startTime,requestInfo.getEndTime()).toMillis());
 
         if(logCat.print()) {
             String reqMsg =
