@@ -2,7 +2,6 @@ package com.cat.example.web;
 
 import com.cat.example.bean.validator.ValidatorCheckerVO;
 import com.cat.result.Result;
-import com.cat.validator.DomainChecker;
 import com.cat.watchcat.limit.annotation.LimitCat;
 import com.cat.watchcat.log.annotation.LogCat;
 import lombok.extern.slf4j.Slf4j;

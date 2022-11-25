@@ -1,7 +1,10 @@
 package com.cat.validator;
 
+import com.google.common.collect.Lists;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -26,6 +29,12 @@ public class DomainCheckerValidator implements ConstraintValidator<DomainChecker
         }
 
         return LOCAL_PART_PATTERN.matcher(value).matches();
+
+    }
+
+    public static void main(String[] args) {
+        List<String> domains = Lists.newArrayList("www.a.com","www.b.com","www.c.com");
+        System.out.println(domains.stream().allMatch(item -> LOCAL_PART_PATTERN.matcher(item).matches()));
 
     }
 }

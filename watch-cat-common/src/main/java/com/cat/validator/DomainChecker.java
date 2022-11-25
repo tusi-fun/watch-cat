@@ -21,8 +21,8 @@ public @interface DomainChecker {
     /**
      * 使用示例：
      * @NotBlank
-     * @PhoneChecker
-     * String phone;
+     * @DomainChecker
+     * String domain;
      */
 
     String message() default "{com.xx.validator.PhoneChecker.message}";

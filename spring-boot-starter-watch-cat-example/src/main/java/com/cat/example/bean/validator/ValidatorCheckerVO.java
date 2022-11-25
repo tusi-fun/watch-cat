@@ -1,8 +1,6 @@
 package com.cat.example.bean.validator;
 
-import cn.hutool.core.util.DesensitizedUtil.DesensitizedType;
 import com.cat.validator.DomainChecker;
-import com.cat.watchcat.sensitive.annotation.SensitiveField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
