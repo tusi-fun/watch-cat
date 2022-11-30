@@ -19,6 +19,7 @@
     </license>
   </licenses>
   <properties>
+    <smart-doc.version>2.6.2</smart-doc.version>
     <java.version>1.8</java.version>
   </properties>
   <dependencies>
@@ -65,6 +66,27 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.github.shalousun</groupId>
+        <artifactId>smart-doc-maven-plugin</artifactId>
+        <version>${smart-doc.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>html</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <configFile>./src/main/resources/smart-doc.json</configFile>
+          <excludes>
+            <exclude>com.alibaba:.*</exclude>
+          </excludes>
+          <includes>
+            <include>org.springframework.data:spring-data-commons</include>
+          </includes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
