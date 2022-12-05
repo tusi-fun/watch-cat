@@ -90,6 +90,7 @@
                 </configuration>
             </plugin>
 
+            <!-- 源代码打包（smart-doc等需要源码依赖等程序需要用到） -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -104,6 +105,7 @@
                 </executions>
             </plugin>
 
+            <!-- 统一版本号 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
