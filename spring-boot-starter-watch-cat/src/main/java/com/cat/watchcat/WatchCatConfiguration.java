@@ -32,11 +32,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 它会保证你的bean只有一个，即你的实例只有一个，当你注册多个相同的bean时，会出现异常
  */
 @Configuration
-@EnableConfigurationProperties({
-        LimitCatProperties.class,
-        SecretCatProperties.class,
-        SignShaProperties.class,
-        SignSymmetricProperties.class})
+@EnableConfigurationProperties({LimitCatProperties.class, SecretCatProperties.class, SignShaProperties.class, SignSymmetricProperties.class})
 public class WatchCatConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean
