@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,11 +49,12 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
 
     /**
      * WatchCat RedisTemplate 配置
+     * 20221208 不能使用 @ConditionalOnMissingBean 注解修饰，应该使用者的项目中很可能存在自定义 RedisTemplate
      * @param factory
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean
+//    @ConditionalOnMissingBean
     public RedisTemplate<String, Object> wcRedisTemplate(RedisConnectionFactory factory) {
 
         ObjectMapper om = new ObjectMapper();
@@ -65,15 +67,15 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
 
         RedisSerializer<String> stringSerializer = new StringRedisSerializer();
 
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(factory);
-        redisTemplate.setKeySerializer(stringSerializer);
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
-        redisTemplate.setHashKeySerializer(stringSerializer);
-        redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
-        redisTemplate.afterPropertiesSet();
+        RedisTemplate<String, Object> wcRedisTemplate = new RedisTemplate<>();
+        wcRedisTemplate.setConnectionFactory(factory);
+        wcRedisTemplate.setKeySerializer(stringSerializer);
+        wcRedisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+        wcRedisTemplate.setHashKeySerializer(stringSerializer);
+        wcRedisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
+        wcRedisTemplate.afterPropertiesSet();
 
-        return redisTemplate;
+        return wcRedisTemplate;
     }
 
     @ConditionalOnMissingBean

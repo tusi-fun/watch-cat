@@ -18,11 +18,10 @@ import org.springframework.stereotype.Component;
  * @version 20191218
  */
 @Slf4j
-@Component
 public class DataEncryptService {
 
-    final RedisTemplate wcRedisTemplate;
-    final SecretCatProperties encryptCatProperties;
+    private final RedisTemplate wcRedisTemplate;
+    private final SecretCatProperties encryptCatProperties;
 
     public DataEncryptService(RedisTemplate wcRedisTemplate,SecretCatProperties encryptCatProperties) {
         this.wcRedisTemplate = wcRedisTemplate;
