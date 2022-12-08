@@ -15,10 +15,21 @@ import com.cat.watchcat.sign.config.SignSymmetricProperties;
 import com.cat.watchcat.sign.service.ApiSignUtils4Asymmetric;
 import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
 import com.cat.watchcat.sign.service.CacheService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -35,6 +46,36 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableConfigurationProperties({LimitCatProperties.class, SecretCatProperties.class, SignShaProperties.class, SignSymmetricProperties.class})
 public class WatchCatConfiguration implements WebMvcConfigurer {
 
+    /**
+     * WatchCat RedisTemplate 配置
+     * @param factory
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public RedisTemplate<String, Object> wcRedisTemplate(RedisConnectionFactory factory) {
+
+        ObjectMapper om = new ObjectMapper();
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY);
+
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+
+        RedisSerializer<String> stringSerializer = new StringRedisSerializer();
+
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(factory);
+        redisTemplate.setKeySerializer(stringSerializer);
+        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+        redisTemplate.setHashKeySerializer(stringSerializer);
+        redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
+        redisTemplate.afterPropertiesSet();
+
+        return redisTemplate;
+    }
+
     @ConditionalOnMissingBean
     @Bean
     public LimitCatsAspect limitCatsAspect(){
@@ -43,19 +84,15 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean
     @Bean
-    public LimitCatService limitCatService(){
-        return new LimitCatService();
+    public LimitCatService limitCatService(RedisTemplate wcRedisTemplate,LimitCatProperties limitCatProperties){
+        return new LimitCatService(wcRedisTemplate, limitCatProperties);
     }
-
-
 
     @ConditionalOnMissingBean
     @Bean
     public LogCatAspect logCatAspect(){
         return new LogCatAspect();
     }
-
-
 
     @ConditionalOnMissingBean
     @Bean
@@ -69,23 +106,17 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
         return new SecretCatAspect();
     }
 
-
-
     @ConditionalOnMissingBean
     @Bean
     public DataEncryptService dataEncryptService(){
         return new DataEncryptService();
     }
 
-
-
     @ConditionalOnMissingBean
     @Bean
     public AreaDetailConverter areaDetailConverter(){
         return new AreaDetailConverter();
     }
-
-
 
     @ConditionalOnMissingBean
     @Bean
@@ -105,12 +136,10 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
         return new ApiSignUtils4Sha();
     }
 
-
-
     @ConditionalOnMissingBean
     @Bean
-    public CacheService cacheService(){
-        return new CacheService();
+    public CacheService cacheService(RedisTemplate wcRedisTemplate){
+        return new CacheService(wcRedisTemplate);
     }
 
     /**
