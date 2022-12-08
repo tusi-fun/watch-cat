@@ -49,12 +49,11 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
 
     /**
      * WatchCat RedisTemplate 配置
-     * 20221208 不能使用 @ConditionalOnMissingBean 注解修饰，应该使用者的项目中很可能存在自定义 RedisTemplate
+     * 20221208 不能使用 @ConditionalOnMissingBean 注解修饰，使用者的项目中很可能存在自定义 RedisTemplate
      * @param factory
      * @return
      */
     @Bean
-//    @ConditionalOnMissingBean
     public RedisTemplate<String, Object> wcRedisTemplate(RedisConnectionFactory factory) {
 
         ObjectMapper om = new ObjectMapper();
