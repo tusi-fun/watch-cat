@@ -108,8 +108,8 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean
     @Bean
-    public DataEncryptService dataEncryptService(){
-        return new DataEncryptService();
+    public DataEncryptService dataEncryptService(RedisTemplate wcRedisTemplate,SecretCatProperties secretCatProperties){
+        return new DataEncryptService(wcRedisTemplate,secretCatProperties);
     }
 
     @ConditionalOnMissingBean

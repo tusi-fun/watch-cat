@@ -9,7 +9,6 @@ import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.cat.util.JsonUtils;
 import com.cat.watchcat.secret.config.SecretCatProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +21,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataEncryptService {
 
-    @Autowired
-    SecretCatProperties encryptCatProperties;
+    final RedisTemplate wcRedisTemplate;
+    final SecretCatProperties encryptCatProperties;
 
-    @Autowired
-    RedisTemplate<String,Object> redisTemplate;
+    public DataEncryptService(RedisTemplate wcRedisTemplate,SecretCatProperties encryptCatProperties) {
+        this.wcRedisTemplate = wcRedisTemplate;
+        this.encryptCatProperties = encryptCatProperties;
+    }
 
 //    /**
 //     * api安全相关缓存，对加密参数做hash缓存，防止重放攻击
