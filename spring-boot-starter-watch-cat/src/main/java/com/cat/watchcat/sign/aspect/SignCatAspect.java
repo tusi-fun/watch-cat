@@ -8,7 +8,6 @@ import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
 import com.cat.watchcat.sign.service.AppService;
 import com.cat.watchcat.sign.service.SignCatException;
 import com.cat.watchcat.sign.service.SignKeyEnum;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
