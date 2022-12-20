@@ -80,24 +80,31 @@ public class ApiSignUtils4Sha {
                           String sign,
                           String nonce,
                           String timestamp,
-                          Map<String, String> requestParams) {
+                          Map<String, String> params) {
 
-        log.info("验证签名：secret = " + secret + ", sign = " + sign + ", nonce = " + nonce + ", timestamp = " + timestamp + ", requestParams = " + requestParams);
+        log.info("验证签名：secret = " + secret + ", sign = " + sign + ", nonce = " + nonce + ", timestamp = " + timestamp + ", params = " + params);
 
         Assert.isTrue(StringUtils.hasText(sign),"验证签名："+SignKeyEnum.SIGN_KEY+"不合法");
         Assert.isTrue(StringUtils.hasText(nonce),"验证签名："+SignKeyEnum.NONCE_KEY+"不合法");
+
+        // 验证时间戳是否合法（在宽容时间内）
         Assert.isTrue(SignUtils.verifyTimestamp(timestamp,signShaProperties.getTolerant()), "验证签名："+SignKeyEnum.TIMESTAMP_KEY+"不合法");
-        // 验证签名值是否被使用过，存在则抛异常
+
+        // 验证签名值是否合法（在一定周期内是否已使用过）
         Assert.isTrue(cacheService.cacheSign(sign,signShaProperties.getTolerant()),"签名验证：sign 已经使用过");
 
         log.info("验证签名：构建签名体");
 
-        Map<String, String> signBody = Maps.newHashMap(requestParams);
+        Map<String, String> signBody = Maps.newHashMap(params);
         signBody.put(NONCE_KEY,nonce);
         signBody.put(TIMESTAMP_KEY,timestamp);
 
         // 验证签名
-        return sign.equals(genSign(secret,signBody));
+        String _sign = genSign(secret,signBody);
+
+        log.info("验证签名：计算得到sign={}",_sign);
+
+        return sign.equals(_sign);
     }
 
 

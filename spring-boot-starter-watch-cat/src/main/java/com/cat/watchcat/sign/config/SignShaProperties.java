@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "sign.sha")
+@ConfigurationProperties(prefix = "watchcat.sign.sha")
 public class SignShaProperties {
 
     /**

@@ -1,7 +1,7 @@
 package com.cat.example.web;
 
 import com.cat.example.bean.Aa;
-import com.cat.example.bean.secret.SecurityCode;
+import com.cat.example.bean.sign.SignPing;
 import com.cat.result.ResultData;
 import com.cat.watchcat.log.annotation.LogCat;
 import com.cat.watchcat.sign.annotation.SignCat;
@@ -24,7 +24,7 @@ public class SignCatTestController {
     @LogCat(actionGroup = "sign-cat", action = "case1", enableEvent = false)
     @SignCat
     @PostMapping("case1")
-    public ResultData signCatCase1(String a, String b, SecurityCode securityCode) {
+    public ResultData signCatCase1(String a, String b) {
         Aa aa = new Aa();
         aa.setPhone("18582461287");
         aa.setAddress("成都市武侯区广安大厦185号7楼708");
@@ -34,5 +34,10 @@ public class SignCatTestController {
         return new ResultData(200, "操作成功").data(aa);
     }
 
-
+    @LogCat(actionGroup = "sign-cat", action = "case2", enableEvent = false)
+    @SignCat
+    @PostMapping("case2")
+    public ResultData signCatCase2(SignPing signPing) {
+        return new ResultData(200, "操作成功").data("");
+    }
 }

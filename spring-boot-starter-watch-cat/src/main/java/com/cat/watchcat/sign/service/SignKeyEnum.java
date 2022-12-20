@@ -6,14 +6,14 @@ package com.cat.watchcat.sign.service;
  */
 
 public enum SignKeyEnum {
-    APPID_KEY("xx-appid"),
-    SECRET_KEY("token"),
-    PATH_KEY("xx-path"),
-    CONTENT_MD5_KEY("xx-content-md5"),
-    METHOD_KEY("xx-method"),
-    TIMESTAMP_KEY("xx-timestamp"),
-    NONCE_KEY("xx-nonce"),
-    SIGN_KEY("xx-sign");
+    APPID_KEY("appid"),
+    SECRET_KEY("secret"),
+    PATH_KEY("path"),
+    CONTENT_MD5_KEY("content-md5"),
+    METHOD_KEY("method"),
+    TIMESTAMP_KEY("timestamp"),
+    NONCE_KEY("nonce"),
+    SIGN_KEY("sign");
 
     public String value;
 
