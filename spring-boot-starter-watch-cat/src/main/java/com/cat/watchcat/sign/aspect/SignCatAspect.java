@@ -1,11 +1,14 @@
 package com.cat.watchcat.sign.aspect;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import com.cat.watchcat.area.service.AreaResolverException;
 import com.cat.watchcat.sign.annotation.SignCat;
 import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
 import com.cat.watchcat.sign.service.AppService;
 import com.cat.watchcat.sign.service.SignCatException;
 import com.cat.watchcat.sign.service.SignKeyEnum;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -55,38 +58,28 @@ public class SignCatAspect {
         log.info("-> SignCatAspect");
 
         Object proceed = proceedingJoinPoint.proceed();
-
-//        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        // 获取请求头
-//        Map<String, String> requestHeaders = getRequestHeaders(request);
-
+        // 获取请求头签名元数据（appid、nonce、timestamp、sign）
         String appId = request.getHeader(SignKeyEnum.APPID_KEY.value),
                 nonce = request.getHeader(SignKeyEnum.NONCE_KEY.value),
                 timestamp = request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
                 sign = request.getHeader(SignKeyEnum.SIGN_KEY.value);
-
 
         // 验证签名元参数是否传递
         if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
             throw new SignCatException("签名参数不完整（appId、nonce、timestamp、sign）");
         }
 
-        MediaType mediaType = MediaType.parseMediaType(request.getContentType());
+        // 附加 请求参数 到签名参数
+        Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(Collectors.toMap(
+                    item -> item.getKey(),
+                    item -> item.getValue()!=null&&item.getValue().length>0?item.getValue()[0]:""
+            ));
 
-        // 提交 json 内容
-        if(mediaType.includes(MediaType.APPLICATION_JSON)) {
-
-            String contentMd5 = request.getHeader(SignKeyEnum.CONTENT_MD5_KEY.value);
-
-            // 验证提交Json内容时，是否传递了 contentMd5
-            if(!StringUtils.hasText(contentMd5)) {
-                throw new SignCatException("签名参数不完整（json类型参数，需提交 contentMd5 参数）");
-            }
-        }
+        // 附加 json 请求参数
+        signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,checkJson(request));
 
         AppService appService = null;
         try {
@@ -97,14 +90,7 @@ public class SignCatAspect {
 
         String appSecret = appService.getAppSecret(appId);
 
-        log.info("SignCatAspect:签名 appSecret -> {}",appSecret);
-
-        // 构建签名参数
-        // 附加 请求参数 到签名参数
-        Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(Collectors.toMap(
-                item -> item.getKey(),
-                item -> item.getValue()!=null&&item.getValue().length>0?item.getValue()[0]:""
-        ));
+        log.info("SignCatAspect:验签，appSecret -> {}",appSecret);
 
         // 附加 请求头元参数 到签名参数
         signDataMap.put(SignKeyEnum.APPID_KEY.value,appId);
@@ -115,7 +101,7 @@ public class SignCatAspect {
         signDataMap.put(SignKeyEnum.NONCE_KEY.value,nonce);
         signDataMap.put(SignKeyEnum.TIMESTAMP_KEY.value,timestamp);
 
-        log.info("SignCatAspect:签名 signDataMap -> {}",signDataMap);
+        log.info("SignCatAspect:验签，签名体 -> {}",signDataMap);
 
         Boolean isPassed = apiSignUtils4Sha.verify(
                 appSecret,
@@ -131,6 +117,45 @@ public class SignCatAspect {
         }
 
         return proceed;
+    }
+
+    /**
+     * 验证 json 提交（非json请求，返空字符串）
+     * @param request
+     * @return
+     */
+    private String checkJson(HttpServletRequest request) {
+
+        MediaType mediaType = MediaType.parseMediaType(request.getContentType());
+
+        if(mediaType.includes(MediaType.APPLICATION_JSON)) {
+
+            String contentMd5 = request.getHeader(SignKeyEnum.CONTENT_MD5_KEY.value);
+
+            // 验证提交Json内容时，是否传递 contentMd5
+            if (!StringUtils.hasText(contentMd5)) {
+                throw new SignCatException("签名参数不完整（json类型参数，需提交 " + SignKeyEnum.CONTENT_MD5_KEY.value + " 参数）");
+            }
+
+            // 获取json原文
+            String jsonData = ServletUtil.getBody(request);
+
+            log.info("SignCatAspect:jsonData原文 -> {}", jsonData);
+
+            String realContentMd5 = SecureUtil.md5(jsonData);
+
+            // 验证json原文MD5 和 提交的contentMd5是否一致
+            if (!realContentMd5.equals(contentMd5)) {
+
+                log.info("SignCatAspect:签名 realContentMd5 -> {}", realContentMd5);
+
+                throw new SignCatException(SignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
+            }
+
+            return realContentMd5;
+        }
+
+        return "";
     }
 
 //    /**
