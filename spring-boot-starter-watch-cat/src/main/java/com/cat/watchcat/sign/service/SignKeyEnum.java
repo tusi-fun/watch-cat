@@ -8,12 +8,12 @@ package com.cat.watchcat.sign.service;
 public enum SignKeyEnum {
     APPID_KEY("appid"),
     SECRET_KEY("secret"),
-    PATH_KEY("path"),
     CONTENT_MD5_KEY("content-md5"),
-    METHOD_KEY("method"),
     TIMESTAMP_KEY("timestamp"),
     NONCE_KEY("nonce"),
-    SIGN_KEY("sign");
+    SIGN_KEY("sign"),
+    METHOD_KEY("method"),
+    PATH_KEY("path");
 
     public String value;
 
