@@ -1,7 +1,6 @@
 package com.cat.watchcat.sign.aspect;
 
 import com.cat.watchcat.area.service.AreaResolverException;
-import com.cat.watchcat.limit.service.LimitCatException;
 import com.cat.watchcat.sign.annotation.SignCat;
 import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
 import com.cat.watchcat.sign.service.AppService;
@@ -12,7 +11,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -58,7 +56,7 @@ public class SignCatAspect {
 
         Object proceed = proceedingJoinPoint.proceed();
 
-        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
+//        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();

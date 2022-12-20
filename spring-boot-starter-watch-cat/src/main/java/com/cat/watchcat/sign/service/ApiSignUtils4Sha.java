@@ -91,7 +91,7 @@ public class ApiSignUtils4Sha {
         Assert.isTrue(SignUtils.verifyTimestamp(timestamp,signShaProperties.getTolerant()), "验证签名："+SignKeyEnum.TIMESTAMP_KEY+"不合法");
 
         // 验证签名值是否合法（在一定周期内是否已使用过）
-        Assert.isTrue(cacheService.cacheSign(sign,signShaProperties.getTolerant()),"签名验证：sign 已经使用过");
+        Assert.isTrue(cacheService.cacheSign(sign,signShaProperties.getTolerant()),"签名验证：sign 已使用过");
 
         log.info("验证签名：构建签名体");
 
