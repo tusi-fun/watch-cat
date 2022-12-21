@@ -12,7 +12,6 @@ import com.cat.watchcat.sensitive.aspect.SensitiveAspect;
 import com.cat.watchcat.sign.aspect.SignCatAspect;
 import com.cat.watchcat.sign.config.SignShaProperties;
 import com.cat.watchcat.sign.config.SignSymmetricProperties;
-import com.cat.watchcat.sign.service.ApiSignUtils4Asymmetric;
 import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
 import com.cat.watchcat.sign.service.CacheService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -124,12 +123,12 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
         return new SignCatAspect();
     }
 
-    @ConditionalOnMissingBean
-    @Bean
-    public ApiSignUtils4Asymmetric apiSignUtils4Asymmetric(){
-        return new ApiSignUtils4Asymmetric();
-    }
-
+//    @ConditionalOnMissingBean
+//    @Bean
+//    public ApiSignUtils4Asymmetric apiSignUtils4Asymmetric(){
+//        return new ApiSignUtils4Asymmetric();
+//    }
+//
     @ConditionalOnMissingBean
     @Bean
     public ApiSignUtils4Sha apiSignUtils4Sha(){

@@ -76,14 +76,16 @@ public class SignCatAspect {
 
         // 验证签名元参数是否传递
         if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
-            throw new SignCatException("签名参数不完整（appId、nonce、timestamp、sign）");
+            throw new SignCatException("必填签名参数（"+SignKeyEnum.APPID_KEY.value+"、"+SignKeyEnum.NONCE_KEY.value+"、"+SignKeyEnum.TIMESTAMP_KEY.value+"、"+SignKeyEnum.SIGN_KEY.value+"）");
         }
 
         // 附加 请求参数 到签名参数
-        Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(Collectors.toMap(
+        Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
+                Collectors.toMap(
                     item -> item.getKey(),
                     item -> item.getValue()!=null&&item.getValue().length>0?item.getValue()[0]:""
-            ));
+                )
+        );
 
         // 附加 json 请求参数
         signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,checkJson(request,proceedingJoinPoint.getArgs(),signCat.jsonTarget()));
