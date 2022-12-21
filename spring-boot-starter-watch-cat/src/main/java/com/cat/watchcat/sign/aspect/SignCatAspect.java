@@ -3,7 +3,6 @@ package com.cat.watchcat.sign.aspect;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.cat.util.JsonUtils;
-import com.cat.watchcat.area.service.AreaResolverException;
 import com.cat.watchcat.sign.annotation.SignCat;
 import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
 import com.cat.watchcat.sign.service.AppService;
@@ -94,7 +93,7 @@ public class SignCatAspect {
         try {
             appService = applicationContext.getBean(AppService.class);
         } catch (NoSuchBeanDefinitionException e) {
-            throw new AreaResolverException("未找到 "+ AppService.class.getName() +" 接口的实现类");
+            throw new SignCatException("未找到 "+ AppService.class.getName() +" 接口的实现类");
         }
 
         String appSecret = appService.getAppSecret(appId);
