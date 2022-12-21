@@ -120,11 +120,11 @@ public class SignCatAspect {
 
         log.info("SignCatAspect ->");
 
-        if(!isPassed) {
+        if(isPassed) {
+            return proceed;
+        } else {
             throw new SignCatException("签名值sign不合法");
         }
-
-        return proceed;
     }
 
     /**
