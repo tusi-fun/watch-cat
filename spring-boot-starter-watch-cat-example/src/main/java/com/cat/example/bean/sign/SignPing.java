@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author hudongshan
@@ -20,7 +19,6 @@ public class SignPing {
 	@NotBlank
 	String phone;
 
-	@NotNull
 	Integer age;
 
 	@NotBlank

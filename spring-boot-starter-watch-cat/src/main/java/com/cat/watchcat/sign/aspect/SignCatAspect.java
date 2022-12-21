@@ -2,6 +2,7 @@ package com.cat.watchcat.sign.aspect;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.extra.servlet.ServletUtil;
+import com.cat.util.JsonUtils;
 import com.cat.watchcat.area.service.AreaResolverException;
 import com.cat.watchcat.sign.annotation.SignCat;
 import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
@@ -13,6 +14,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,7 +26,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +52,9 @@ public class SignCatAspect {
 
     @Autowired
     ApiSignUtils4Sha apiSignUtils4Sha;
+
+    @Autowired
+    Validator validator;
 
     @Pointcut("@annotation(signCat)")
     public void pointCut(SignCat signCat) {}
@@ -78,7 +86,7 @@ public class SignCatAspect {
             ));
 
         // 附加 json 请求参数
-        signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,checkJson(request));
+        signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,checkJson(request,proceedingJoinPoint.getArgs(),signCat.jsonTarget()));
 
         AppService appService = null;
         try {
@@ -89,7 +97,7 @@ public class SignCatAspect {
 
         String appSecret = appService.getAppSecret(appId);
 
-        log.info("SignCatAspect:验签，appSecret -> {}",appSecret);
+        log.info("SignCatAspect:验签，appSecret={}",appSecret);
 
         // 附加 请求头元参数 到签名参数
         signDataMap.put(SignKeyEnum.APPID_KEY.value,appId);
@@ -100,7 +108,7 @@ public class SignCatAspect {
         signDataMap.put(SignKeyEnum.NONCE_KEY.value,nonce);
         signDataMap.put(SignKeyEnum.TIMESTAMP_KEY.value,timestamp);
 
-        log.info("SignCatAspect:验签，签名体 -> {}",signDataMap);
+        log.info("SignCatAspect:验签，签名体={}",signDataMap);
 
         Boolean isPassed = apiSignUtils4Sha.verify(
                 appSecret,
@@ -123,7 +131,7 @@ public class SignCatAspect {
      * @param request
      * @return
      */
-    private String checkJson(HttpServletRequest request) {
+    private String checkJson(HttpServletRequest request,Object[] args,Class jsonTarget) {
 
         MediaType mediaType = MediaType.parseMediaType(request.getContentType());
 
@@ -139,19 +147,44 @@ public class SignCatAspect {
             // 获取json原文
             String jsonData = ServletUtil.getBody(request);
 
-            log.info("SignCatAspect:jsonData原文 -> {}", jsonData);
+            log.info("SignCatAspect:验签，json原文={}", jsonData);
 
             String realContentMd5 = SecureUtil.md5(jsonData);
 
             // 验证json原文MD5 和 提交的contentMd5是否一致
             if (!realContentMd5.equals(contentMd5)) {
 
-                log.info("SignCatAspect:签名 realContentMd5 -> {}", realContentMd5);
+                log.info("SignCatAspect:验签，json原文Md5={}", realContentMd5);
 
                 throw new SignCatException(SignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
             }
 
+
+            for (int i=0;i<args.length;i++) {
+
+                Object o = args[i];
+
+                if(o != null && jsonTarget.isInstance(o)) {
+
+                    BeanUtils.copyProperties(JsonUtils.toBean(jsonData, o.getClass()),o);
+
+                    args[i] = o;
+
+                    // 验证参数
+                    Set<ConstraintViolation<Object>> constraintViolationSet = validator.validate(o);
+                    if (!constraintViolationSet.isEmpty()) {
+                        StringBuilder sb = new StringBuilder();
+                        for (ConstraintViolation violation: constraintViolationSet) {
+                            sb.append(violation.getPropertyPath().toString());
+                            sb.append(violation.getMessage());
+                        }
+                        throw new SignCatException(sb.toString());
+                    }
+                }
+            }
+
             return realContentMd5;
+
         }
 
         return "";

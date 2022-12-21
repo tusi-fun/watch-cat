@@ -28,9 +28,9 @@ public class SignCatTestController {
      * @return
      */
     @LogCat(actionGroup = "sign-cat", action = "case1", enableEvent = false)
-    @SignCat
+    @SignCat(jsonTarget = SignPing.class)
     @PostMapping("case1")
-    public ResultData signCatCase1(SignPing signPing) {
+    public ResultData signCatCase1(SignPing signPing,String a) {
         return new ResultData(200, "操作成功").data("");
     }
 
