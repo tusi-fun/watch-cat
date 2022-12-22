@@ -20,6 +20,10 @@ public class Result implements Serializable {
 
     protected static final BaseCode SUCCESS = SysDefaultEnum.SUCCESS;
 
+    /**
+     * 业务状态码（200为成功）
+     * @mock 200
+     */
     private Integer code;
 
     private String message;
