@@ -63,7 +63,6 @@ public class SignCatAspect {
 
         log.info("-> SignCatAspect");
 
-//        Object proceed = ;
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
