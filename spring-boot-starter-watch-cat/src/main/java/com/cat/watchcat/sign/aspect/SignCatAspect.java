@@ -81,7 +81,7 @@ public class SignCatAspect {
         Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
                 Collectors.toMap(
                     item -> item.getKey(),
-                    item -> item.getValue()!=null&&item.getValue().length>0?item.getValue()[0]:""
+                    item -> item.getValue()!=null && item.getValue().length>0?item.getValue()[0]:""
                 )
         );
 
@@ -134,6 +134,10 @@ public class SignCatAspect {
      * @return
      */
     private String checkJson(HttpServletRequest request,Object[] args,Class jsonTarget) {
+
+        if(!StringUtils.hasText(request.getContentType())){
+            return "";
+        }
 
         MediaType mediaType = MediaType.parseMediaType(request.getContentType());
 
