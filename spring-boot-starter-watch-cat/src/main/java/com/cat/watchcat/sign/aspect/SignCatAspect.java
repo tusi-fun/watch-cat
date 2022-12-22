@@ -63,7 +63,7 @@ public class SignCatAspect {
 
         log.info("-> SignCatAspect");
 
-        Object proceed = proceedingJoinPoint.proceed();
+//        Object proceed = ;
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
@@ -118,10 +118,12 @@ public class SignCatAspect {
                 request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
                 signDataMap);
 
+        log.info("SignCatAspect:验签，isPassed={}",isPassed);
+
         log.info("SignCatAspect ->");
 
         if(isPassed) {
-            return proceed;
+            return proceedingJoinPoint.proceed();
         } else {
             throw new SignCatException("签名值sign不合法");
         }
