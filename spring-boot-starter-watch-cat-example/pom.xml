@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <smart-doc.version>2.6.2</smart-doc.version>
+        <smart-doc.version>2.6.3</smart-doc.version>
     </properties>
 
     <dependencies>
