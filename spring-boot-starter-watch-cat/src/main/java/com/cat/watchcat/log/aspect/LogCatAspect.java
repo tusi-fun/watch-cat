@@ -47,8 +47,8 @@ import java.util.UUID;
 @Component
 public class LogCatAspect {
 
-    private NamedThreadLocal<LocalDateTime> startTimeTL = new NamedThreadLocal<>("StartTime");
-    private NamedThreadLocal<String> requestIdTL = new NamedThreadLocal<>("RequestId");
+    private final NamedThreadLocal<LocalDateTime> startTimeTL = new NamedThreadLocal<>("StartTime");
+    private final NamedThreadLocal<String> requestIdTL = new NamedThreadLocal<>("RequestId");
     private static final String logFormat =
             "\r\n----------------[ %s ]----------------" +
             "\r\n【Request URI    】:%s > %s > %s" +
