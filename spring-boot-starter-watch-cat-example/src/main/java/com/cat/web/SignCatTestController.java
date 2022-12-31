@@ -27,7 +27,7 @@ public class SignCatTestController {
      * @param signPing
      * @return
      */
-    @LogCat(actionGroup = "sign-cat", action = "case1", enableEvent = false)
+    @LogCat(actionGroup = "sign-cat", action = "case1")
     @SignCat(jsonTarget = SignPing.class,verifySign = false)
     @PostMapping("case1")
     public ResultData signCatCase1(SignPing signPing,String a) {
@@ -39,7 +39,7 @@ public class SignCatTestController {
      * @param signPing
      * @return
      */
-    @LogCat(actionGroup = "sign-cat", action = "case2", enableEvent = false)
+    @LogCat(actionGroup = "sign-cat", action = "case2")
     @SignCat(verifySign = false)
     @PostMapping("case2")
     public ResultData signCatCase2(@Valid SignPing signPing) {
