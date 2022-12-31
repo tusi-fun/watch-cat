@@ -72,9 +72,9 @@ public class SignCatAspect {
 
             // 获取请求头签名元数据（appid、nonce、timestamp、sign）
             String appId = request.getHeader(SignKeyEnum.APPID_KEY.value),
-                    nonce = request.getHeader(SignKeyEnum.NONCE_KEY.value),
-                    timestamp = request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
-                    sign = request.getHeader(SignKeyEnum.SIGN_KEY.value);
+                   nonce = request.getHeader(SignKeyEnum.NONCE_KEY.value),
+                   timestamp = request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
+                   sign = request.getHeader(SignKeyEnum.SIGN_KEY.value);
 
             // 验证签名元参数是否传递
             if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
@@ -89,9 +89,6 @@ public class SignCatAspect {
                     )
             );
 
-            // 附加 json 请求参数
-            signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,jsonContentMd5);
-
             AppService appService = null;
             try {
                 appService = applicationContext.getBean(AppService.class);
@@ -102,6 +99,9 @@ public class SignCatAspect {
             String appSecret = appService.getAppSecret(appId);
 
             log.info("SignCatAspect:验签，appSecret={}",appSecret);
+
+            // 附加 json 请求参数
+            signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,jsonContentMd5);
 
             // 附加 请求头元参数 到签名参数
             signDataMap.put(SignKeyEnum.APPID_KEY.value,appId);
@@ -114,12 +114,7 @@ public class SignCatAspect {
 
             log.info("SignCatAspect:验签，签名体={}",signDataMap);
 
-            Boolean isPassed = apiSignUtils4Sha.verify(
-                    appSecret,
-                    request.getHeader(SignKeyEnum.SIGN_KEY.value),
-                    request.getHeader(SignKeyEnum.NONCE_KEY.value),
-                    request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
-                    signDataMap);
+            Boolean isPassed = apiSignUtils4Sha.verify(appSecret, sign, nonce, timestamp, signDataMap);
 
             log.info("SignCatAspect:验签，isPassed={}",isPassed);
 
