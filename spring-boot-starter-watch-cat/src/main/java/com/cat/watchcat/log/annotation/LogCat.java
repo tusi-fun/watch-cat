@@ -1,6 +1,5 @@
 package com.cat.watchcat.log.annotation;
 
-
 import java.lang.annotation.*;
 
 /**
@@ -13,7 +12,7 @@ import java.lang.annotation.*;
 public @interface LogCat {
 
     /**
-     * 自定义参数
+     * 自定义参数（支持 SpEL）
      * @return
      */
     String bid() default "";

@@ -21,13 +21,27 @@ public class LogCatTestController {
 
     @LogCat(actionGroup = "log-cat", action = "case1", enableEvent = false)
     @PostMapping("case1")
-    public Result case1(String a) {
+    public Result case1(String a) throws InterruptedException {
+
+        Thread.sleep(3000);
+
         return Result.ok();
     }
 
     @LogCat(actionGroup = "log-cat", action = "case2", enableEvent = false)
     @PostMapping("case2")
     public Result case2(Gh gh) {
+        return Result.ok();
+    }
+
+    @LogCat(actionGroup = "log-cat", action = "case2", enableEvent = false)
+    @PostMapping("case3")
+    public Result case3(Gh gh) {
+
+        if(1==1) {
+            throw new RuntimeException("异常日志");
+        }
+
         return Result.ok();
     }
 }

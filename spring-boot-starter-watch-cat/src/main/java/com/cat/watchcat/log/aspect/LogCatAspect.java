@@ -15,6 +15,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.NamedThreadLocal;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -33,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 日志记录切面，对 Controller 层请求、响应日志输出、持久化（使用 Json 格式输出，解决在大量请求时日志输出时序混乱的问题）
@@ -44,6 +46,17 @@ import java.util.Map;
 @Aspect
 @Component
 public class LogCatAspect {
+
+    private NamedThreadLocal<LocalDateTime> startTimeTL = new NamedThreadLocal<>("StartTime");
+    private NamedThreadLocal<String> requestIdTL = new NamedThreadLocal<>("RequestId");
+    private static final String logFormat =
+            "\r\n----------------[ %s ]----------------" +
+            "\r\n【Request URI    】:%s > %s > %s" +
+            "\r\n【Request Headers】:%s" +
+            "\r\n【Request body   】:%s" +
+            "\r\n【Result         】:%s" +
+            "\r\n【Time Cost      】:%s ms" +
+            "\r\n----------------[ %s ]----------------";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -60,15 +73,20 @@ public class LogCatAspect {
     @Around("pointCut(logCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, LogCat logCat) throws Throwable {
 
-        log.info("-> LogCatAspect");
+        log.info("---------------------< LogCat doAround in  >---------------------");
 
-        LocalDateTime startTime = LocalDateTime.now();
+        startTimeTL.set(LocalDateTime.now());
+
+        requestIdTL.set(UUID.randomUUID().toString().replaceAll("-",""));
+
+        // 执行业务方法
+        Object proceed = proceedingJoinPoint.proceed();
+
+        LocalDateTime endTime = LocalDateTime.now();
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         HttpServletRequest request = attributes.getRequest();
-
-        Object proceed = proceedingJoinPoint.proceed();
 
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
@@ -76,7 +94,7 @@ public class LogCatAspect {
         if(StringUtils.hasText(logCat.bid())) {
             requestInfo.setBid(getKey(proceedingJoinPoint, logCat.bid()));
         }
-        requestInfo.setStartTime(startTime);
+        requestInfo.setStartTime(startTimeTL.get());
         requestInfo.setActionGroup(logCat.actionGroup());
         requestInfo.setAction(logCat.action());
         requestInfo.setIp(request.getRemoteAddr());
@@ -84,22 +102,15 @@ public class LogCatAspect {
         requestInfo.setHttpMethod(request.getMethod());
         requestInfo.setRequestHeaders(getRequestHeaders(request));
         requestInfo.setClassMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()));
-        requestInfo.setRequestParams(getRequestParamsByProceedingJoinPoint(proceedingJoinPoint));
+        requestInfo.setRequestParams(getRequestParamsByJoinPoint(proceedingJoinPoint));
         requestInfo.setResult(proceed);
-        requestInfo.setEndTime(LocalDateTime.now());
-        requestInfo.setTimeCost(Duration.between(startTime,requestInfo.getEndTime()).toMillis());
+        requestInfo.setEndTime(endTime);
+        requestInfo.setTimeCost(Duration.between(startTimeTL.get(),endTime).toMillis());
 
         if(logCat.print()) {
-            String reqMsg =
-                    "\r\n-----------------------" +
-                    "\r\n【Request URI    】:" + requestInfo.getIp() + " > " + requestInfo.getHttpMethod() + " " + requestInfo.getUrl() +
-                    "\r\n【Request Headers】:" + requestInfo.getRequestHeaders() +
-                    "\r\n【Request body   】:" + requestInfo.getRequestParams() +
-                    "\r\n【Result         】:" + JsonUtils.toJson(requestInfo.getResult()) +
-                    "\r\n【Time Cost      】:" + requestInfo.getTimeCost() + "ms" +
-                    "\r\n-----------------------";
-
-            log.info(reqMsg);
+            log.info(String.format(logFormat,requestIdTL.get(),
+                    requestInfo.getIp(), requestInfo.getHttpMethod(), requestInfo.getUrl(), requestInfo.getRequestHeaders(),
+                    requestInfo.getRequestParams(),JsonUtils.toJson(requestInfo.getResult()), requestInfo.getTimeCost(),requestIdTL.get()));
         }
 
         if(logCat.enableEvent()) {
@@ -107,7 +118,7 @@ public class LogCatAspect {
             applicationContext.publishEvent(new LogCatEvent(this,requestInfo));
         }
 
-        log.info("LogCatAspect ->");
+        log.info("---------------------< LogCat doAround out >---------------------");
 
         return proceed;
     }
@@ -120,6 +131,8 @@ public class LogCatAspect {
     @AfterThrowing(pointcut = "pointCut(logCat)", throwing = "e")
     public void doAfterThrow(JoinPoint joinPoint, RuntimeException e, LogCat logCat) {
 
+        LocalDateTime endTime = LocalDateTime.now();
+
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         HttpServletRequest request = attributes.getRequest();
@@ -130,7 +143,7 @@ public class LogCatAspect {
         if(StringUtils.hasText(logCat.bid())) {
             requestInfo.setBid(getKey(joinPoint, logCat.bid()));
         }
-        requestInfo.setStartTime(LocalDateTime.now());
+        requestInfo.setStartTime(startTimeTL.get());
         requestInfo.setActionGroup(logCat.actionGroup());
         requestInfo.setAction(logCat.action());
         requestInfo.setIp(request.getRemoteAddr());
@@ -140,41 +153,21 @@ public class LogCatAspect {
         requestInfo.setClassMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()));
         requestInfo.setRequestParams(getRequestParamsByJoinPoint(joinPoint));
         requestInfo.setException(e.getMessage());
-        requestInfo.setEndTime(LocalDateTime.now());
-        requestInfo.setTimeCost(Duration.between(requestInfo.getStartTime(),requestInfo.getEndTime()).toMillis());
+        requestInfo.setEndTime(endTime);
+        requestInfo.setTimeCost(Duration.between(startTimeTL.get(),endTime).toMillis());
 
         if(logCat.print()) {
-            String reqMsg =
-                    "\r\n-----------------------" +
-                    "\r\n【Request URI    】:" + requestInfo.getIp() + " > " + requestInfo.getHttpMethod() + " " + requestInfo.getUrl() +
-                    "\r\n【Request Headers】:" + requestInfo.getRequestHeaders() +
-                    "\r\n【Request body   】:" + requestInfo.getRequestParams() +
-                    "\r\n【Exception      】:" + requestInfo.getException() +
-                    "\r\n【Time Cost      】:" + requestInfo.getTimeCost() + "ms" +
-                    "\r\n-----------------------";
-
-            log.info(reqMsg);
+            log.info(String.format(logFormat,requestIdTL.get(),
+                    requestInfo.getIp(), requestInfo.getHttpMethod(), requestInfo.getUrl(), requestInfo.getRequestHeaders(),
+                    requestInfo.getRequestParams(),requestInfo.getException(), requestInfo.getTimeCost(),requestIdTL.get()));
         }
 
         if(logCat.enableEvent()) {
             // 产生记录日志事件
             applicationContext.publishEvent(new LogCatEvent(this,requestInfo));
         }
-    }
 
-    /**
-     * 获取请求参数
-     * @param proceedingJoinPoint
-     *
-     * @return
-     * */
-    private Map<String, Object> getRequestParamsByProceedingJoinPoint(ProceedingJoinPoint proceedingJoinPoint) {
-        //参数名
-        String[] paramNames = ((MethodSignature)proceedingJoinPoint.getSignature()).getParameterNames();
-        //参数值
-        Object[] paramValues = proceedingJoinPoint.getArgs();
-
-        return buildRequestParam(paramNames, paramValues);
+        log.info("---------------------< LogCat doAround out >---------------------");
     }
 
     /**
@@ -183,9 +176,9 @@ public class LogCatAspect {
      * @return
      */
     private Map<String, Object> getRequestParamsByJoinPoint(JoinPoint joinPoint) {
-        //参数名
+
         String[] paramNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();
-        //参数值
+
         Object[] paramValues = joinPoint.getArgs();
 
         return buildRequestParam(paramNames, paramValues);
