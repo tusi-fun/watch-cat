@@ -24,4 +24,5 @@ public @interface SignCat {
 	 * @return
 	 */
 	Class jsonTarget() default Object.class;
+
 }

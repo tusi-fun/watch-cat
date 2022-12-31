@@ -61,71 +61,76 @@ public class SignCatAspect {
     @Around("pointCut(signCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, SignCat signCat) throws Throwable {
 
-        log.info("-> SignCatAspect");
+        log.info("---------------------< SignCat doAround in  >---------------------");
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        // 获取请求头签名元数据（appid、nonce、timestamp、sign）
-        String appId = request.getHeader(SignKeyEnum.APPID_KEY.value),
-                nonce = request.getHeader(SignKeyEnum.NONCE_KEY.value),
-                timestamp = request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
-                sign = request.getHeader(SignKeyEnum.SIGN_KEY.value);
+        String jsonContentMd5 = checkJson(request,proceedingJoinPoint.getArgs(),signCat.jsonTarget());
 
-        // 验证签名元参数是否传递
-        if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
-            throw new SignCatException("必填签名参数（"+SignKeyEnum.APPID_KEY.value+"、"+SignKeyEnum.NONCE_KEY.value+"、"+SignKeyEnum.TIMESTAMP_KEY.value+"、"+SignKeyEnum.SIGN_KEY.value+"）");
+        if(signCat.verifySign()) {
+
+            // 获取请求头签名元数据（appid、nonce、timestamp、sign）
+            String appId = request.getHeader(SignKeyEnum.APPID_KEY.value),
+                    nonce = request.getHeader(SignKeyEnum.NONCE_KEY.value),
+                    timestamp = request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
+                    sign = request.getHeader(SignKeyEnum.SIGN_KEY.value);
+
+            // 验证签名元参数是否传递
+            if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
+                throw new SignCatException("必填签名参数（"+SignKeyEnum.APPID_KEY.value+"、"+SignKeyEnum.NONCE_KEY.value+"、"+SignKeyEnum.TIMESTAMP_KEY.value+"、"+SignKeyEnum.SIGN_KEY.value+"）");
+            }
+
+            // 附加 请求参数 到签名参数
+            Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
+                    Collectors.toMap(
+                            item -> item.getKey(),
+                            item -> item.getValue()!=null && item.getValue().length>0?item.getValue()[0]:""
+                    )
+            );
+
+            // 附加 json 请求参数
+            signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,jsonContentMd5);
+
+            AppService appService = null;
+            try {
+                appService = applicationContext.getBean(AppService.class);
+            } catch (NoSuchBeanDefinitionException e) {
+                throw new SignCatException("未找到 "+ AppService.class.getName() +" 接口的实现类");
+            }
+
+            String appSecret = appService.getAppSecret(appId);
+
+            log.info("SignCatAspect:验签，appSecret={}",appSecret);
+
+            // 附加 请求头元参数 到签名参数
+            signDataMap.put(SignKeyEnum.APPID_KEY.value,appId);
+            signDataMap.put(SignKeyEnum.METHOD_KEY.value,request.getMethod());
+            signDataMap.put(SignKeyEnum.PATH_KEY.value,request.getServletPath());
+
+            // 附加 请求头参数 到签名参数
+            signDataMap.put(SignKeyEnum.NONCE_KEY.value,nonce);
+            signDataMap.put(SignKeyEnum.TIMESTAMP_KEY.value,timestamp);
+
+            log.info("SignCatAspect:验签，签名体={}",signDataMap);
+
+            Boolean isPassed = apiSignUtils4Sha.verify(
+                    appSecret,
+                    request.getHeader(SignKeyEnum.SIGN_KEY.value),
+                    request.getHeader(SignKeyEnum.NONCE_KEY.value),
+                    request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
+                    signDataMap);
+
+            log.info("SignCatAspect:验签，isPassed={}",isPassed);
+
+            if(!isPassed) {
+                throw new SignCatException("签名值sign不合法");
+            }
         }
 
-        // 附加 请求参数 到签名参数
-        Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
-                Collectors.toMap(
-                    item -> item.getKey(),
-                    item -> item.getValue()!=null && item.getValue().length>0?item.getValue()[0]:""
-                )
-        );
+        log.info("---------------------< SignCat doAround out >---------------------");
 
-        // 附加 json 请求参数
-        signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,checkJson(request,proceedingJoinPoint.getArgs(),signCat.jsonTarget()));
-
-        AppService appService = null;
-        try {
-            appService = applicationContext.getBean(AppService.class);
-        } catch (NoSuchBeanDefinitionException e) {
-            throw new SignCatException("未找到 "+ AppService.class.getName() +" 接口的实现类");
-        }
-
-        String appSecret = appService.getAppSecret(appId);
-
-        log.info("SignCatAspect:验签，appSecret={}",appSecret);
-
-        // 附加 请求头元参数 到签名参数
-        signDataMap.put(SignKeyEnum.APPID_KEY.value,appId);
-        signDataMap.put(SignKeyEnum.METHOD_KEY.value,request.getMethod());
-        signDataMap.put(SignKeyEnum.PATH_KEY.value,request.getServletPath());
-
-        // 附加 请求头参数 到签名参数
-        signDataMap.put(SignKeyEnum.NONCE_KEY.value,nonce);
-        signDataMap.put(SignKeyEnum.TIMESTAMP_KEY.value,timestamp);
-
-        log.info("SignCatAspect:验签，签名体={}",signDataMap);
-
-        Boolean isPassed = apiSignUtils4Sha.verify(
-                appSecret,
-                request.getHeader(SignKeyEnum.SIGN_KEY.value),
-                request.getHeader(SignKeyEnum.NONCE_KEY.value),
-                request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
-                signDataMap);
-
-        log.info("SignCatAspect:验签，isPassed={}",isPassed);
-
-        log.info("SignCatAspect ->");
-
-        if(isPassed) {
-            return proceedingJoinPoint.proceed();
-        } else {
-            throw new SignCatException("签名值sign不合法");
-        }
+        return proceedingJoinPoint.proceed();
     }
 
     /**
