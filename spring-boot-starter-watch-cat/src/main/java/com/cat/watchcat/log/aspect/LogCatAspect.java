@@ -50,13 +50,13 @@ public class LogCatAspect {
     private final NamedThreadLocal<LocalDateTime> startTimeTL = new NamedThreadLocal<>("StartTime");
     private final NamedThreadLocal<String> requestIdTL = new NamedThreadLocal<>("RequestId");
     private static final String logFormat =
-            "\r\n----------------[ %s ]----------------" +
+            "\r\n---------< %s >---------" +
             "\r\n【Request URI    】:%s > %s > %s" +
             "\r\n【Request Headers】:%s" +
             "\r\n【Request body   】:%s" +
             "\r\n【Result         】:%s" +
             "\r\n【Time Cost      】:%s ms" +
-            "\r\n----------------[ %s ]----------------";
+            "\r\n---------< %s >---------";
 
     @Autowired
     private ApplicationContext applicationContext;
