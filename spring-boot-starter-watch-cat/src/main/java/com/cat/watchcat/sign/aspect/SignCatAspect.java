@@ -74,7 +74,7 @@ public class SignCatAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        String jsonContentMd5 = checkJson(request,proceedingJoinPoint.getArgs(),signCat.jsonTarget());
+        String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signCat.jsonTarget());
 
         if(signCat.verifySign()) {
 
@@ -147,7 +147,7 @@ public class SignCatAspect {
      * @param request
      * @return
      */
-    private String checkJson(HttpServletRequest request,Object[] args,Class jsonTarget) {
+    private String checkJson(HttpServletRequest request, Object[] args, Class jsonTarget) {
 
         if(!StringUtils.hasText(request.getContentType())){
             return "";
@@ -178,7 +178,6 @@ public class SignCatAspect {
 
                 throw new SignCatException(ApiSignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
             }
-
 
             for (int i=0;i<args.length;i++) {
 
