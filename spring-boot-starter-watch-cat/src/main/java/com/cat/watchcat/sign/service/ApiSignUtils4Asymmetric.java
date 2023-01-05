@@ -5,6 +5,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
+import com.cat.enumerate.ApiSignKeyEnum;
 import com.cat.util.SignUtils;
 import com.cat.watchcat.sign.config.SignSymmetricProperties;
 import com.cat.watchcat.sign.config.SymmetricSignProvider;
@@ -38,11 +39,11 @@ public class ApiSignUtils4Asymmetric {
     @Autowired
     private SignSymmetricProperties platformSymmetricProperties;
 
-    private static final String PATH_KEY = SignKeyEnum.PATH_KEY.value;
-    private static final String METHOD_KEY = SignKeyEnum.METHOD_KEY.value;
-    private static final String NONCE_KEY = SignKeyEnum.NONCE_KEY.value;
-    private static final String TIMESTAMP_KEY = SignKeyEnum.TIMESTAMP_KEY.value;
-    private static final String SIGN_KEY = SignKeyEnum.SIGN_KEY.value;
+    private static final String PATH_KEY = ApiSignKeyEnum.PATH_KEY.value;
+    private static final String METHOD_KEY = ApiSignKeyEnum.METHOD_KEY.value;
+    private static final String NONCE_KEY = ApiSignKeyEnum.NONCE_KEY.value;
+    private static final String TIMESTAMP_KEY = ApiSignKeyEnum.TIMESTAMP_KEY.value;
+    private static final String SIGN_KEY = ApiSignKeyEnum.SIGN_KEY.value;
 
     /**
      * 对请求内容签名
@@ -92,9 +93,9 @@ public class ApiSignUtils4Asymmetric {
         Assert.notNull(symmetricSignProvider,"验证签名: 签名提供者（"+pulicKeyProvider+"）不存在");
         Assert.hasLength(symmetricSignProvider.getAlgorithm(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数Algorithm未配置");
         Assert.hasLength(symmetricSignProvider.getPublicKey(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数PublicKey未配置");
-        Assert.isTrue(StringUtils.hasText(sign),"验证签名: "+SignKeyEnum.SIGN_KEY+"不合法");
-        Assert.isTrue(StringUtils.hasText(nonce),"验证签名: "+SignKeyEnum.NONCE_KEY+"不合法");
-        Assert.isTrue(SignUtils.verifyTimestamp(timestamp,symmetricSignProvider.getTolerant()), "验证签名: "+SignKeyEnum.TIMESTAMP_KEY+"不合法");
+        Assert.isTrue(StringUtils.hasText(sign),"验证签名: "+ApiSignKeyEnum.SIGN_KEY+"不合法");
+        Assert.isTrue(StringUtils.hasText(nonce),"验证签名: "+ApiSignKeyEnum.NONCE_KEY+"不合法");
+        Assert.isTrue(SignUtils.verifyTimestamp(timestamp,symmetricSignProvider.getTolerant()), "验证签名: "+ApiSignKeyEnum.TIMESTAMP_KEY+"不合法");
         // 验证签名值是否被使用过，存在则抛异常
         Assert.isTrue(cacheService.cacheSign(sign,symmetricSignProvider.getTolerant()),"验证签名: sign 已经使用过");
 

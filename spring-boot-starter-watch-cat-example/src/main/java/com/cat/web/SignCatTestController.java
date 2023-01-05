@@ -28,7 +28,7 @@ public class SignCatTestController {
      * @return
      */
     @LogCat(actionGroup = "sign-cat", action = "case1")
-    @SignCat(jsonTarget = SignPing.class,verifySign = false)
+    @SignCat(jsonTarget = SignPing.class, verifySign = true)
     @PostMapping("case1")
     public ResultData signCatCase1(SignPing signPing,String a) {
         return new ResultData(200, "操作成功").data("");
@@ -40,7 +40,7 @@ public class SignCatTestController {
      * @return
      */
     @LogCat(actionGroup = "sign-cat", action = "case2")
-    @SignCat(verifySign = false)
+    @SignCat(verifySign = true)
     @PostMapping("case2")
     public ResultData signCatCase2(@Valid SignPing signPing) {
         return new ResultData(200, "操作成功").data("");

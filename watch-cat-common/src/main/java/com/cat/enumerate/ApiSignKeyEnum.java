@@ -1,11 +1,11 @@
-package com.cat.watchcat.sign.service;
+package com.cat.enumerate;
 
 /**
  * 签名参数枚举
  * @author hudongshan
  */
 
-public enum SignKeyEnum {
+public enum ApiSignKeyEnum {
     APPID_KEY("appid"),
     SECRET_KEY("secret"),
     CONTENT_MD5_KEY("content-md5"),
@@ -17,7 +17,7 @@ public enum SignKeyEnum {
 
     public String value;
 
-    SignKeyEnum(String value){
+    ApiSignKeyEnum(String value){
         this.value = value;
     }
 

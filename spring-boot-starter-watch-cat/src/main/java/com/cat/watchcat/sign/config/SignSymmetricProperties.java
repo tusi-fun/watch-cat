@@ -10,7 +10,7 @@ import java.util.Map;
  * @author hudongshan
  */
 @Data
-@ConfigurationProperties(prefix = "sign")
+@ConfigurationProperties(prefix = "watchcat.sign")
 public class SignSymmetricProperties {
 
     private Map<String,SymmetricSignProvider> symmetric;

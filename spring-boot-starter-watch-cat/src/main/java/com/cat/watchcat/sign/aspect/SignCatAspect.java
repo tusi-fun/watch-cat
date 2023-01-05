@@ -1,13 +1,17 @@
 package com.cat.watchcat.sign.aspect;
 
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.extra.servlet.ServletUtil;
+import com.cat.enumerate.ApiSignKeyEnum;
+import com.cat.util.ApiSignUtils4Sha;
 import com.cat.util.JsonUtils;
+import com.cat.util.SignUtils;
 import com.cat.watchcat.sign.annotation.SignCat;
-import com.cat.watchcat.sign.service.ApiSignUtils4Sha;
+import com.cat.watchcat.sign.config.SignShaProperties;
 import com.cat.watchcat.sign.service.AppService;
+import com.cat.watchcat.sign.service.CacheService;
 import com.cat.watchcat.sign.service.SignCatException;
-import com.cat.watchcat.sign.service.SignKeyEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -20,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -50,10 +55,13 @@ public class SignCatAspect {
     ApplicationContext applicationContext;
 
     @Autowired
-    ApiSignUtils4Sha apiSignUtils4Sha;
+    Validator validator;
 
     @Autowired
-    Validator validator;
+    CacheService cacheService;
+
+    @Autowired
+    SignShaProperties signShaProperties;
 
     @Pointcut("@annotation(signCat)")
     public void pointCut(SignCat signCat) {}
@@ -71,14 +79,14 @@ public class SignCatAspect {
         if(signCat.verifySign()) {
 
             // 获取请求头签名元数据（appid、nonce、timestamp、sign）
-            String appId = request.getHeader(SignKeyEnum.APPID_KEY.value),
-                   nonce = request.getHeader(SignKeyEnum.NONCE_KEY.value),
-                   timestamp = request.getHeader(SignKeyEnum.TIMESTAMP_KEY.value),
-                   sign = request.getHeader(SignKeyEnum.SIGN_KEY.value);
+            String appId = request.getHeader(ApiSignKeyEnum.APPID_KEY.value),
+                   nonce = request.getHeader(ApiSignKeyEnum.NONCE_KEY.value),
+                   timestamp = request.getHeader(ApiSignKeyEnum.TIMESTAMP_KEY.value),
+                   sign = request.getHeader(ApiSignKeyEnum.SIGN_KEY.value);
 
             // 验证签名元参数是否传递
             if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
-                throw new SignCatException("必填签名参数（"+SignKeyEnum.APPID_KEY.value+"、"+SignKeyEnum.NONCE_KEY.value+"、"+SignKeyEnum.TIMESTAMP_KEY.value+"、"+SignKeyEnum.SIGN_KEY.value+"）");
+                throw new SignCatException("必填签名参数（"+ApiSignKeyEnum.APPID_KEY.value+"、"+ApiSignKeyEnum.NONCE_KEY.value+"、"+ApiSignKeyEnum.TIMESTAMP_KEY.value+"、"+ApiSignKeyEnum.SIGN_KEY.value+"）");
             }
 
             // 附加 请求参数 到签名参数
@@ -101,20 +109,26 @@ public class SignCatAspect {
             log.info("SignCatAspect:验签，appSecret={}",appSecret);
 
             // 附加 json 请求参数
-            signDataMap.put(SignKeyEnum.CONTENT_MD5_KEY.value,jsonContentMd5);
+            signDataMap.put(ApiSignKeyEnum.CONTENT_MD5_KEY.value,jsonContentMd5);
 
             // 附加 请求头元参数 到签名参数
-            signDataMap.put(SignKeyEnum.APPID_KEY.value,appId);
-            signDataMap.put(SignKeyEnum.METHOD_KEY.value,request.getMethod());
-            signDataMap.put(SignKeyEnum.PATH_KEY.value,request.getServletPath());
+            signDataMap.put(ApiSignKeyEnum.APPID_KEY.value,appId);
+            signDataMap.put(ApiSignKeyEnum.METHOD_KEY.value,request.getMethod());
+            signDataMap.put(ApiSignKeyEnum.PATH_KEY.value,request.getServletPath());
 
             // 附加 请求头参数 到签名参数
-            signDataMap.put(SignKeyEnum.NONCE_KEY.value,nonce);
-            signDataMap.put(SignKeyEnum.TIMESTAMP_KEY.value,timestamp);
+            signDataMap.put(ApiSignKeyEnum.NONCE_KEY.value,nonce);
+            signDataMap.put(ApiSignKeyEnum.TIMESTAMP_KEY.value,timestamp);
 
             log.info("SignCatAspect:验签，签名体={}",signDataMap);
 
-            Boolean isPassed = apiSignUtils4Sha.verify(appSecret, sign, nonce, timestamp, signDataMap);
+            // 验证时间戳是否合法（在宽容时间内）
+            Assert.isTrue(SignUtils.verifyTimestamp(timestamp,signShaProperties.getTolerant()), "验证签名："+ApiSignKeyEnum.TIMESTAMP_KEY+"不合法");
+
+            // 验证签名值是否合法（在一定周期内是否已使用过）
+            Assert.isTrue(cacheService.cacheSign(sign,signShaProperties.getTolerant()),"签名验证：sign 已使用过");
+
+            Boolean isPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256 , sign, nonce, timestamp, signDataMap);
 
             log.info("SignCatAspect:验签，isPassed={}",isPassed);
 
@@ -143,17 +157,17 @@ public class SignCatAspect {
 
         if(mediaType.includes(MediaType.APPLICATION_JSON)) {
 
-            String contentMd5 = request.getHeader(SignKeyEnum.CONTENT_MD5_KEY.value);
+            String contentMd5 = request.getHeader(ApiSignKeyEnum.CONTENT_MD5_KEY.value);
 
             // 验证提交Json内容时，是否传递 contentMd5
             if (!StringUtils.hasText(contentMd5)) {
-                throw new SignCatException("签名参数不完整（json类型参数，需提交 " + SignKeyEnum.CONTENT_MD5_KEY.value + " 参数）");
+                throw new SignCatException("签名参数不完整（json类型参数，需提交 " + ApiSignKeyEnum.CONTENT_MD5_KEY.value + " 参数）");
             }
 
             // 获取json原文
             String jsonData = ServletUtil.getBody(request);
 
-            log.info("SignCatAspect:验签，json原文={}", jsonData);
+            log.info("SignCatAspect:验签，json原文:\n{}", jsonData);
 
             String realContentMd5 = SecureUtil.md5(jsonData);
 
@@ -162,7 +176,7 @@ public class SignCatAspect {
 
                 log.info("SignCatAspect:验签，json原文Md5={}", realContentMd5);
 
-                throw new SignCatException(SignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
+                throw new SignCatException(ApiSignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
             }
 
 
