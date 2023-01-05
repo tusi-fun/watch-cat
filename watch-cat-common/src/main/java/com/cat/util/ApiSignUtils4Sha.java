@@ -52,7 +52,7 @@ public class ApiSignUtils4Sha {
         signResult.put(NONCE_KEY, RandomUtil.randomString(16));
 
         // 构建签名体
-        Map<String,String> signBody = requestParams!=null?Maps.newHashMap(requestParams):Maps.newHashMap();
+        Map<String,String> signBody = requestParams!=null ? Maps.newHashMap(requestParams) : Maps.newHashMap();
         signBody.putAll(signResult);
         signBody.put(METHOD_KEY, method);
         signBody.put(PATH_KEY, path);
