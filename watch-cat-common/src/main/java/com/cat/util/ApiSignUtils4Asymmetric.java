@@ -1,21 +1,15 @@
-package com.cat.watchcat.sign.service;
+package com.cat.util;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import com.cat.enumerate.ApiSignKeyEnum;
-import com.cat.util.SignUtils;
-import com.cat.watchcat.sign.config.SignSymmetricProperties;
-import com.cat.watchcat.sign.config.SymmetricSignProvider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,14 +24,7 @@ import java.util.Map;
  * @version 20200803
  */
 @Slf4j
-@Component
 public class ApiSignUtils4Asymmetric {
-
-    @Autowired
-    private CacheService cacheService;
-
-    @Autowired
-    private SignSymmetricProperties platformSymmetricProperties;
 
     private static final String PATH_KEY = ApiSignKeyEnum.PATH_KEY.value;
     private static final String METHOD_KEY = ApiSignKeyEnum.METHOD_KEY.value;
@@ -52,7 +39,9 @@ public class ApiSignUtils4Asymmetric {
      * @param path
      * @return
      */
-    public Map<String, String> sign(String pulicKeyProvider,
+    public Map<String, String> sign(String publicKey,
+                                    String privateKey,
+                                    SignAlgorithm signAlgorithm,
                                     String method,
                                     String path,
                                     Map<String, String> requestParams) {
@@ -69,7 +58,7 @@ public class ApiSignUtils4Asymmetric {
         signBody.putAll(signResult);
         signBody.put(METHOD_KEY,method);
         signBody.put(PATH_KEY,path);
-        signResult.put(SIGN_KEY, genSign(pulicKeyProvider,signBody));
+        signResult.put(SIGN_KEY, genSign(publicKey,privateKey,signAlgorithm,signBody));
 
         return signResult;
     }
@@ -79,7 +68,8 @@ public class ApiSignUtils4Asymmetric {
      * @param requestParams 请求参数
      * @return
      */
-    public Boolean verify(String pulicKeyProvider,
+    public Boolean verify(String publicKey,
+                          SignAlgorithm signAlgorithm,
                           String sign,
                           String nonce,
                           String timestamp,
@@ -88,16 +78,17 @@ public class ApiSignUtils4Asymmetric {
         log.info("验证签名: sign = " + sign + ", nonce = " + nonce + ", timestamp = " + timestamp + ", requestParams = " + requestParams);
 
         // 验证公钥提供者
-        SymmetricSignProvider symmetricSignProvider = platformSymmetricProperties.getSymmetric().get(pulicKeyProvider);
+//        SymmetricSignProvider symmetricSignProvider = platformSymmetricProperties.getSymmetric().get(pulicKeyProvider);
 
-        Assert.notNull(symmetricSignProvider,"验证签名: 签名提供者（"+pulicKeyProvider+"）不存在");
-        Assert.hasLength(symmetricSignProvider.getAlgorithm(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数Algorithm未配置");
-        Assert.hasLength(symmetricSignProvider.getPublicKey(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数PublicKey未配置");
+//        Assert.notNull(symmetricSignProvider,"验证签名: 签名提供者（"+pulicKeyProvider+"）不存在");
+//        Assert.hasLength(symmetricSignProvider.getAlgorithm(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数Algorithm未配置");
+//        Assert.hasLength(symmetricSignProvider.getPublicKey(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数PublicKey未配置");
         Assert.isTrue(StringUtils.hasText(sign),"验证签名: "+ApiSignKeyEnum.SIGN_KEY+"不合法");
         Assert.isTrue(StringUtils.hasText(nonce),"验证签名: "+ApiSignKeyEnum.NONCE_KEY+"不合法");
-        Assert.isTrue(SignUtils.verifyTimestamp(timestamp,symmetricSignProvider.getTolerant()), "验证签名: "+ApiSignKeyEnum.TIMESTAMP_KEY+"不合法");
-        // 验证签名值是否被使用过，存在则抛异常
-        Assert.isTrue(cacheService.cacheSign(sign,symmetricSignProvider.getTolerant()),"验证签名: sign 已经使用过");
+
+//        Assert.isTrue(SignUtils.verifyTimestamp(timestamp,symmetricSignProvider.getTolerant()), "验证签名: "+ApiSignKeyEnum.TIMESTAMP_KEY+"不合法");
+//        // 验证签名值是否被使用过，存在则抛异常
+//        Assert.isTrue(cacheService.cacheSign(sign,symmetricSignProvider.getTolerant()),"验证签名: sign 已经使用过");
 
         Map<String, String> signBody = Maps.newHashMap(requestParams);
         signBody.put(NONCE_KEY,nonce);
@@ -106,19 +97,18 @@ public class ApiSignUtils4Asymmetric {
         // 构建签名体
         String signStr = buildSignBody(signBody);
 
-        SignAlgorithm signAlgorithm = null;
+//        SignAlgorithm signAlgorithm = null;
+//
+//        try {
+//
+//            signAlgorithm = SignAlgorithm.valueOf(symmetricSignProvider.getAlgorithm());
+//
+//        } catch (IllegalArgumentException e) {
+//            log.error("验证签名: 签名算法无效 = {}",symmetricSignProvider.getAlgorithm());
+//        }
+//        Assert.notNull(signAlgorithm,"验证签名: 签名算法无效");
 
-        try {
-
-            signAlgorithm = SignAlgorithm.valueOf(symmetricSignProvider.getAlgorithm());
-
-        } catch (IllegalArgumentException e) {
-            log.error("验证签名: 签名算法无效 = {}",symmetricSignProvider.getAlgorithm());
-        }
-
-        Assert.notNull(signAlgorithm,"验证签名: 签名算法无效");
-
-        Sign rsaSign = SecureUtil.sign(signAlgorithm,null, symmetricSignProvider.getPublicKey());
+        Sign rsaSign = SecureUtil.sign(signAlgorithm,null,publicKey);
 
         try {
 
@@ -137,34 +127,34 @@ public class ApiSignUtils4Asymmetric {
      * 生成 Sign 值 (排序、去空值、计算签名)
      * @param signBody （包含业务参数、nonce、timestamp、accept、content-type）
      */
-    private String genSign(String pulicKeyProvider, Map<String,String> signBody) {
+    private String genSign(String publicKey,String privateKey,SignAlgorithm signAlgorithm,Map<String,String> signBody) {
 
         log.info("计算签名: signBody = " + signBody);
 
         String signStr = buildSignBody(signBody);
 
         // 生成 Sign 值
-        SymmetricSignProvider symmetricSignProvider = platformSymmetricProperties.getSymmetric().get(pulicKeyProvider);
+//        SymmetricSignProvider symmetricSignProvider = platformSymmetricProperties.getSymmetric().get(pulicKeyProvider);
 
-        Assert.notNull(symmetricSignProvider,"计算签名: 签名提供者（"+pulicKeyProvider+"）不存在");
-        Assert.hasLength(symmetricSignProvider.getAlgorithm(),"计算签名: 签名提供者（"+pulicKeyProvider+"）参数Algorithm未配置");
-        Assert.hasLength(symmetricSignProvider.getPublicKey(),"计算签名: 签名提供者（"+pulicKeyProvider+"）参数PublicKey未配置");
-        Assert.hasLength(symmetricSignProvider.getPrivateKey(),"计算签名: 签名提供者（"+pulicKeyProvider+"）参数PrivateKey未配置");
+//        Assert.notNull(symmetricSignProvider,"计算签名: 签名提供者（"+pulicKeyProvider+"）不存在");
+//        Assert.hasLength(symmetricSignProvider.getAlgorithm(),"计算签名: 签名提供者（"+pulicKeyProvider+"）参数Algorithm未配置");
+//        Assert.hasLength(symmetricSignProvider.getPublicKey(),"计算签名: 签名提供者（"+pulicKeyProvider+"）参数PublicKey未配置");
+//        Assert.hasLength(symmetricSignProvider.getPrivateKey(),"计算签名: 签名提供者（"+pulicKeyProvider+"）参数PrivateKey未配置");
 
-        SignAlgorithm signAlgorithm = null;
+//        SignAlgorithm signAlgorithm = null;
+//
+//        try {
+//
+//            signAlgorithm = SignAlgorithm.valueOf(symmetricSignProvider.getAlgorithm());
+//
+//        } catch (IllegalArgumentException e) {
+//
+//            log.error("计算签名：签名算法无效 = {}",symmetricSignProvider.getAlgorithm());
+//        }
+//
+//        Assert.notNull(signAlgorithm,"计算签名: 签名算法无效");
 
-        try {
-
-            signAlgorithm = SignAlgorithm.valueOf(symmetricSignProvider.getAlgorithm());
-
-        } catch (IllegalArgumentException e) {
-
-            log.error("计算签名：签名算法无效 = {}",symmetricSignProvider.getAlgorithm());
-        }
-
-        Assert.notNull(signAlgorithm,"计算签名: 签名算法无效");
-
-        Sign sign = SecureUtil.sign(signAlgorithm, symmetricSignProvider.getPrivateKey(), symmetricSignProvider.getPublicKey());
+        Sign sign = SecureUtil.sign(signAlgorithm, privateKey, publicKey);
 
         return HexUtil.encodeHexStr(sign.sign(signStr.getBytes()));
     }
