@@ -74,7 +74,11 @@ public class SignCatAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signCat.jsonTarget());
+        if(!StringUtils.hasText(request.getContentType())){
+            throw new SignCatException("ContentType 不合法");
+        }
+
+        MediaType mediaType = MediaType.parseMediaType(request.getContentType());
 
         if(signCat.verifySign()) {
 
@@ -108,8 +112,11 @@ public class SignCatAspect {
 
             log.info("SignCatAspect:验签，appSecret={}",appSecret);
 
-            // 附加 json 请求参数
-            signDataMap.put(ApiSignKeyEnum.CONTENT_MD5_KEY.value,jsonContentMd5);
+            // json 方式提交，附加 json 请求参数
+            if(mediaType.includes(MediaType.APPLICATION_JSON)) {
+                String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signCat.jsonTarget());
+                signDataMap.put(ApiSignKeyEnum.CONTENT_MD5_KEY.value, jsonContentMd5);
+            }
 
             // 附加 请求头元参数 到签名参数
             signDataMap.put(ApiSignKeyEnum.APPID_KEY.value,appId);
@@ -149,64 +156,53 @@ public class SignCatAspect {
      */
     private String checkJson(HttpServletRequest request, Object[] args, Class jsonTarget) {
 
-        if(!StringUtils.hasText(request.getContentType())){
-            return "";
+        String contentMd5 = request.getHeader(ApiSignKeyEnum.CONTENT_MD5_KEY.value);
+
+        // 验证提交Json内容时，是否传递 contentMd5
+        if (!StringUtils.hasText(contentMd5)) {
+            throw new SignCatException("签名参数不完整（json类型参数，需提交 " + ApiSignKeyEnum.CONTENT_MD5_KEY.value + " 参数）");
         }
 
-        MediaType mediaType = MediaType.parseMediaType(request.getContentType());
+        // 获取json原文
+        String jsonData = ServletUtil.getBody(request);
 
-        if(mediaType.includes(MediaType.APPLICATION_JSON)) {
+        log.info("SignCatAspect:验签，json原文:\n{}", jsonData);
 
-            String contentMd5 = request.getHeader(ApiSignKeyEnum.CONTENT_MD5_KEY.value);
+        String realContentMd5 = SecureUtil.md5(jsonData);
 
-            // 验证提交Json内容时，是否传递 contentMd5
-            if (!StringUtils.hasText(contentMd5)) {
-                throw new SignCatException("签名参数不完整（json类型参数，需提交 " + ApiSignKeyEnum.CONTENT_MD5_KEY.value + " 参数）");
-            }
+        // 验证json原文MD5 和 提交的contentMd5是否一致
+        if (!realContentMd5.equals(contentMd5)) {
 
-            // 获取json原文
-            String jsonData = ServletUtil.getBody(request);
+            log.info("SignCatAspect:验签，json原文Md5={}", realContentMd5);
 
-            log.info("SignCatAspect:验签，json原文:\n{}", jsonData);
+            throw new SignCatException(ApiSignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
+        }
 
-            String realContentMd5 = SecureUtil.md5(jsonData);
+        for (int i=0;i<args.length;i++) {
 
-            // 验证json原文MD5 和 提交的contentMd5是否一致
-            if (!realContentMd5.equals(contentMd5)) {
+            Object o = args[i];
 
-                log.info("SignCatAspect:验签，json原文Md5={}", realContentMd5);
+            if(o != null && jsonTarget.isInstance(o)) {
 
-                throw new SignCatException(ApiSignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
-            }
+                BeanUtils.copyProperties(JsonUtils.toBean(jsonData, o.getClass()),o);
 
-            for (int i=0;i<args.length;i++) {
+                args[i] = o;
 
-                Object o = args[i];
-
-                if(o != null && jsonTarget.isInstance(o)) {
-
-                    BeanUtils.copyProperties(JsonUtils.toBean(jsonData, o.getClass()),o);
-
-                    args[i] = o;
-
-                    // 验证参数
-                    Set<ConstraintViolation<Object>> constraintViolationSet = validator.validate(o);
-                    if (!constraintViolationSet.isEmpty()) {
-                        StringBuilder sb = new StringBuilder();
-                        for (ConstraintViolation violation: constraintViolationSet) {
-                            sb.append(violation.getPropertyPath().toString());
-                            sb.append(violation.getMessage());
-                        }
-                        throw new SignCatException(sb.toString());
+                // 验证参数
+                Set<ConstraintViolation<Object>> constraintViolationSet = validator.validate(o);
+                if (!constraintViolationSet.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (ConstraintViolation violation: constraintViolationSet) {
+                        sb.append(violation.getPropertyPath().toString());
+                        sb.append(violation.getMessage());
                     }
+                    throw new SignCatException(sb.toString());
                 }
             }
-
-            return realContentMd5;
-
         }
 
-        return "";
+        return realContentMd5;
+
     }
 
 //    /**

@@ -131,9 +131,9 @@ public class ApiSignUtils4Sha {
         StringBuilder sb = new StringBuilder();
 
         for (String key : keyList) {
-            Object valueObj = signBody.get(key);
-            if(valueObj!=null) {
-                sb.append(key).append(valueObj);
+            String value = String.valueOf(signBody.get(key));
+            if(StringUtils.hasText(value)) {
+                sb.append(key).append(value);
             }
         }
 
