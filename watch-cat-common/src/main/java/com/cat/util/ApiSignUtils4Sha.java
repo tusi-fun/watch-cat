@@ -43,7 +43,7 @@ public class ApiSignUtils4Sha {
                                     HmacAlgorithm algorithm,
                                     String method,
                                     String path,
-                                    Map<String, String> requestParams) {
+                                    Map<String, Object> requestParams) {
 
         log.info("计算签名：appid = " + appid + ", secret = " + secret + ", method = " + method + ", path = " + path + ", requestParams = " + requestParams);
 
@@ -51,7 +51,7 @@ public class ApiSignUtils4Sha {
         String nonce = RandomUtil.randomString(16);
 
         // 构建签名体
-        Map<String,String> signBody = requestParams!=null ? Maps.newHashMap(requestParams) : Maps.newHashMap();
+        Map<String,Object> signBody = requestParams!=null ? Maps.newHashMap(requestParams) : Maps.newHashMap();
         signBody.put(APPID_KEY, appid);
         signBody.put(METHOD_KEY, method);
         signBody.put(PATH_KEY, path);
@@ -78,7 +78,7 @@ public class ApiSignUtils4Sha {
 	 * @param timestamp unix 时间戳
 	 * @return
      */
-    public static boolean verify(String secret, HmacAlgorithm algorithm, Map<String, String> params, String sign, String nonce, String timestamp) {
+    public static boolean verify(String secret, HmacAlgorithm algorithm, Map<String, Object> params, String sign, String nonce, String timestamp) {
 
         log.info("验证签名：secret=" + secret + ",algorithm=" + algorithm + ",params=" + params + ",sign=" + sign + ",nonce=" + nonce + ",timestamp=" + timestamp);
 
@@ -87,7 +87,7 @@ public class ApiSignUtils4Sha {
 
         log.info("验证签名：构建签名体");
 
-        Map<String, String> signBody = Maps.newHashMap(params);
+        Map<String, Object> signBody = Maps.newHashMap(params);
         signBody.put(NONCE_KEY,nonce);
         signBody.put(TIMESTAMP_KEY,timestamp);
 
@@ -105,7 +105,7 @@ public class ApiSignUtils4Sha {
      * @param secret
      * @param signBody （包含业务参数、nonce、timestamp、accept、content-type）
      */
-    private static String genSign(String secret, HmacAlgorithm algorithm, Map<String,String> signBody) {
+    private static String genSign(String secret, HmacAlgorithm algorithm, Map<String,Object> signBody) {
 
         log.info("计算签名：secret="+secret+",algorithm="+algorithm+",signBody="+signBody);
 
@@ -116,7 +116,7 @@ public class ApiSignUtils4Sha {
         return mac.digestHex(buildSignBody(signBody));
     }
 
-    private static String buildSignBody(Map<String,String> signBody) {
+    private static String buildSignBody(Map<String,Object> signBody) {
 
         // 移除签名体中已有的 sign 参数（如果存在）
         signBody.remove(SIGN_KEY);
@@ -131,9 +131,9 @@ public class ApiSignUtils4Sha {
         StringBuilder sb = new StringBuilder();
 
         for (String key : keyList) {
-            String value = signBody.get(key);
-            if(StringUtils.hasText(value)) {
-                sb.append(key).append(value);
+            Object valueObj = signBody.get(key);
+            if(valueObj!=null) {
+                sb.append(key).append(valueObj);
             }
         }
 
