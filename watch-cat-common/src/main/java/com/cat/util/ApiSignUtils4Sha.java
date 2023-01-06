@@ -131,7 +131,10 @@ public class ApiSignUtils4Sha {
         StringBuilder sb = new StringBuilder();
 
         for (String key : keyList) {
-            String value = String.valueOf(signBody.get(key));
+            // 这种写法值为null的时候，value = "null"，不符合要求
+            // String value = String.valueOf(signBody.get(key));
+
+            String value = String.valueOf(signBody.get(key)!=null?signBody.get(key):"");
             if(StringUtils.hasText(value)) {
                 sb.append(key).append(value);
             }

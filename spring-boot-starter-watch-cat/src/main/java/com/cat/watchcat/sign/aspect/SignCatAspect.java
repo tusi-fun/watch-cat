@@ -75,7 +75,7 @@ public class SignCatAspect {
         HttpServletRequest request = attributes.getRequest();
 
         if(!StringUtils.hasText(request.getContentType())){
-            throw new SignCatException("ContentType 不合法");
+            throw new SignCatException("请求 ContentType 必传");
         }
 
         MediaType mediaType = MediaType.parseMediaType(request.getContentType());
@@ -100,6 +100,8 @@ public class SignCatAspect {
                             item -> item.getValue()!=null && item.getValue().length>0?item.getValue()[0]:""
                     )
             );
+
+            log.info("SignCatAspect:验签，请求参数={}",signDataMap);
 
             AppService appService = null;
             try {
