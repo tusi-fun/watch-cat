@@ -6,6 +6,7 @@ import com.cat.watchcat.log.annotation.LogCat;
 import com.cat.watchcat.sign.annotation.SignCat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,18 @@ public class SignCatTestController {
     @SignCat
     @PostMapping("case2")
     public ResultData signCatCase2(@Valid SignPing signPing) {
+        return new ResultData(200, "操作成功").data("");
+    }
+
+    /**
+     * 表单提交
+     * @param signPing
+     * @return
+     */
+    @LogCat(actionGroup = "sign-cat", action = "case2")
+    @SignCat
+    @GetMapping("case3")
+    public ResultData signCatCase3(@Valid SignPing signPing) {
         return new ResultData(200, "操作成功").data("");
     }
 }

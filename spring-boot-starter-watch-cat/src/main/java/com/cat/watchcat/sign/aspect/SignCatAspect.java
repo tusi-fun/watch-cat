@@ -94,7 +94,7 @@ public class SignCatAspect {
             }
 
             // 附加 请求参数 到签名参数
-            Map<String, Object> signDataMap = request.getParameterMap().entrySet().stream().collect(
+            Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
                     Collectors.toMap(
                             item -> item.getKey(),
                             item -> item.getValue()!=null && item.getValue().length>0?item.getValue()[0]:""
