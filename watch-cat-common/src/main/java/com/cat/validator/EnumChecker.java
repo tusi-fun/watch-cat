@@ -15,7 +15,7 @@ import static java.lang.annotation.ElementType.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(EnumChecker.List.class)
 @Documented
-@Constraint(validatedBy = {EnumCheckerValidatorForInteger.class, EnumCheckerValidatorForString.class})
+@Constraint(validatedBy = {EnumCheckerValidatorForInteger.class,EnumCheckerValidatorForLong.class, EnumCheckerValidatorForString.class})
 public @interface EnumChecker {
 
     /**
