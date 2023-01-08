@@ -76,7 +76,7 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean
     @Bean
-    public LimitCatsAspect limitCatsAspect(){
+    public LimitCatsAspect limitCatsAspect() {
         return new LimitCatsAspect();
     }
 
