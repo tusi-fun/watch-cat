@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 public @interface LimitCatRule {
 
     /**
-     * 时间间隔（秒）
+     * 周期（秒）
      * @return
      */
     long interval();

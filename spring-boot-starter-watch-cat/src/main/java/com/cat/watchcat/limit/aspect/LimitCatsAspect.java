@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 日志记录切面，对 Controller 层请求、响应日志输出、持久化（使用 Json 格式输出，解决在大量请求时日志输出时序混乱的问题）
+ * 业务频率控制记录切面
  * @author hudongshan
  * @version 20210608
  */
