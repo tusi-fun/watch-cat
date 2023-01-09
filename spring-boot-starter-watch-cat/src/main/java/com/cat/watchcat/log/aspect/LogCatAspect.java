@@ -50,13 +50,13 @@ public class LogCatAspect {
     private final NamedThreadLocal<LocalDateTime> startTimeTL = new NamedThreadLocal<>("StartTime");
     private final NamedThreadLocal<String> requestIdTL = new NamedThreadLocal<>("RequestId");
     private static final String logFormat =
-            "\r\n---------< %s >---------" +
+            "\r\n---------<%s>---------" +
             "\r\n【Request URI    】:%s > %s > %s" +
             "\r\n【Request Headers】:%s" +
             "\r\n【Request body   】:%s" +
             "\r\n【Result         】:%s" +
             "\r\n【Time Cost      】:%s ms" +
-            "\r\n---------< %s >---------";
+            "\r\n---------<%s>---------";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -73,7 +73,7 @@ public class LogCatAspect {
     @Around("pointCut(logCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, LogCat logCat) throws Throwable {
 
-        log.info("---------[ LogCat doAround in  ]---------");
+        log.info("---------[LogCat doAround in ]---------");
 
         startTimeTL.set(LocalDateTime.now());
 
@@ -84,7 +84,7 @@ public class LogCatAspect {
 
         buildLog(proceedingJoinPoint, logCat, proceed);
 
-        log.info("---------[ LogCat doAround out ]---------");
+        log.info("---------[LogCat doAround out]---------");
 
         return proceed;
     }
@@ -99,7 +99,7 @@ public class LogCatAspect {
 
         buildLog(joinPoint,logCat,e);
 
-        log.info("---------[ LogCat doAround out ]---------");
+        log.info("---------[LogCat doAround out]---------");
     }
 
     /**
