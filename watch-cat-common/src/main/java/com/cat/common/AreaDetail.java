@@ -37,8 +37,11 @@ public class AreaDetail implements Serializable {
     private String community;
 
     public String getAddress() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(province).append(city).append(district);
+
+        StringBuilder sb = new StringBuilder()
+                .append(province)
+                .append(city)
+                .append(district);
 
         if(StringUtils.hasText(community)) {
             sb.append(community);
@@ -47,8 +50,14 @@ public class AreaDetail implements Serializable {
     }
 
     public String getAreaNames() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(province).append("|").append(city).append("|").append(district);
+
+        StringBuilder sb = new StringBuilder()
+                .append(province)
+                .append("|")
+                .append(city)
+                .append("|")
+                .append(district);
+
         if(StringUtils.hasText(community)) {
             sb.append("|").append(community);
         }
