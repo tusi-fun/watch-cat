@@ -82,41 +82,7 @@ public class LogCatAspect {
         // 执行业务方法
         Object proceed = proceedingJoinPoint.proceed();
 
-        LocalDateTime endTime = LocalDateTime.now();
-
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-        HttpServletRequest request = attributes.getRequest();
-
-        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-
-        RequestInfo requestInfo = new RequestInfo();
-        if(StringUtils.hasText(logCat.bid())) {
-            requestInfo.setBid(getKey(proceedingJoinPoint, logCat.bid()));
-        }
-        requestInfo.setStartTime(startTimeTL.get());
-        requestInfo.setActionGroup(logCat.actionGroup());
-        requestInfo.setAction(logCat.action());
-        requestInfo.setIp(request.getRemoteAddr());
-        requestInfo.setUrl(request.getRequestURL().toString());
-        requestInfo.setHttpMethod(request.getMethod());
-        requestInfo.setRequestHeaders(getRequestHeaders(request));
-        requestInfo.setClassMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()));
-        requestInfo.setRequestParams(getRequestParamsByJoinPoint(proceedingJoinPoint));
-        requestInfo.setResult(proceed);
-        requestInfo.setEndTime(endTime);
-        requestInfo.setTimeCost(Duration.between(startTimeTL.get(),endTime).toMillis());
-
-        if(logCat.print()) {
-            log.info(String.format(logFormat,requestIdTL.get(),
-                    requestInfo.getIp(), requestInfo.getHttpMethod(), requestInfo.getUrl(), requestInfo.getRequestHeaders(),
-                    requestInfo.getRequestParams(),JsonUtils.toJson(requestInfo.getResult()), requestInfo.getTimeCost(),requestIdTL.get()));
-        }
-
-        if(logCat.enableEvent()) {
-            // 产生记录日志事件
-            applicationContext.publishEvent(new LogCatEvent(this,requestInfo));
-        }
+        buildLog(proceedingJoinPoint, logCat, proceed);
 
         log.info("---------------------< LogCat doAround out >---------------------");
 
@@ -129,7 +95,31 @@ public class LogCatAspect {
      * @param e
      */
     @AfterThrowing(pointcut = "pointCut(logCat)", throwing = "e")
-    public void doAfterThrow(JoinPoint joinPoint, RuntimeException e, LogCat logCat) {
+    public void doAfterThrow(JoinPoint joinPoint, LogCat logCat, RuntimeException e) {
+
+        buildLog(joinPoint,logCat,e);
+
+        log.info("---------------------< LogCat doAround out >---------------------");
+    }
+
+    /**
+     * 构建日志(正常)
+     */
+    private void buildLog(JoinPoint joinPoint, LogCat logCat, Object proceed) {
+        buildLog(joinPoint, logCat, false, proceed);
+    }
+
+    /**
+     * 构建日志(异常)
+     */
+    private void buildLog(JoinPoint joinPoint, LogCat logCat, RuntimeException e) {
+        buildLog(joinPoint, logCat, true, e.getMessage());
+    }
+
+    /**
+     * 构建日志
+     */
+    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data) {
 
         LocalDateTime endTime = LocalDateTime.now();
 
@@ -151,23 +141,27 @@ public class LogCatAspect {
         requestInfo.setHttpMethod(request.getMethod());
         requestInfo.setRequestHeaders(getRequestHeaders(request));
         requestInfo.setClassMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()));
-        requestInfo.setRequestParams(getRequestParamsByJoinPoint(joinPoint));
-        requestInfo.setException(e.getMessage());
+        requestInfo.setRequestParams(getRequestParams(joinPoint));
+
+        if(isError) {
+            requestInfo.setException(String.valueOf(data));
+        } else {
+            requestInfo.setResult(data);
+        }
+
         requestInfo.setEndTime(endTime);
         requestInfo.setTimeCost(Duration.between(startTimeTL.get(),endTime).toMillis());
 
         if(logCat.print()) {
             log.info(String.format(logFormat,requestIdTL.get(),
                     requestInfo.getIp(), requestInfo.getHttpMethod(), requestInfo.getUrl(), requestInfo.getRequestHeaders(),
-                    requestInfo.getRequestParams(),requestInfo.getException(), requestInfo.getTimeCost(),requestIdTL.get()));
+                    requestInfo.getRequestParams(),isError?requestInfo.getException():JsonUtils.toJson(requestInfo.getResult()), requestInfo.getTimeCost(),requestIdTL.get()));
         }
 
         if(logCat.enableEvent()) {
             // 产生记录日志事件
             applicationContext.publishEvent(new LogCatEvent(this,requestInfo));
         }
-
-        log.info("---------------------< LogCat doAround out >---------------------");
     }
 
     /**
@@ -175,7 +169,7 @@ public class LogCatAspect {
      * @param joinPoint
      * @return
      */
-    private Map<String, Object> getRequestParamsByJoinPoint(JoinPoint joinPoint) {
+    private Map<String, Object> getRequestParams(JoinPoint joinPoint) {
 
         String[] paramNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();
 
@@ -185,7 +179,7 @@ public class LogCatAspect {
     }
 
     /**
-     * 获取请求头
+     * 获取请求头参数
      * @param request
      * @return
      */
