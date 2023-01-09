@@ -1,6 +1,10 @@
 package com.cat.watchcat;
 
-import com.cat.watchcat.converter.*;
+import com.cat.watchcat.converter.String2LocalDateConverter;
+import com.cat.watchcat.converter.String2LocalDateTimeConverter;
+import com.cat.watchcat.converter.String2LocalTimeConverter;
+import com.cat.watchcat.converter.StringTrimConverter;
+import com.cat.watchcat.converter.area.AreaDetailConverter;
 import com.cat.watchcat.limit.aspect.LimitCatsAspect;
 import com.cat.watchcat.limit.config.LimitCatProperties;
 import com.cat.watchcat.limit.service.LimitCatService;

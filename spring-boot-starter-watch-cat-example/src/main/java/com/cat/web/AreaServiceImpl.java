@@ -1,6 +1,6 @@
 package com.cat.web;
 
-import com.cat.watchcat.area.service.AreaService;
+import com.cat.watchcat.converter.area.service.AreaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

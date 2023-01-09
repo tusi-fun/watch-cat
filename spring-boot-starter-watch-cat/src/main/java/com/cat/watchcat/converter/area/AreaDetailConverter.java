@@ -1,8 +1,8 @@
-package com.cat.watchcat.converter;
+package com.cat.watchcat.converter.area;
 
 import com.cat.common.AreaDetail;
-import com.cat.watchcat.area.service.AreaResolverException;
-import com.cat.watchcat.area.service.AreaService;
+import com.cat.watchcat.converter.area.service.AreaResolverException;
+import com.cat.watchcat.converter.area.service.AreaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
