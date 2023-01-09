@@ -244,7 +244,7 @@ public class LogCatAspect {
         ExpressionParser parser = new SpelExpressionParser();
 
         // SPEL上下文 使用 StandardEvaluationContext 有注入的隐患， SimpleEvaluationContext 比较安全
-//        SimpleEvaluationContext context = new SimpleEvaluationContext.Builder().build();
+        // SimpleEvaluationContext context = new SimpleEvaluationContext.Builder().build();
         EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
 
         // 把方法参数放入SPEL上下文中
