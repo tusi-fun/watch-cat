@@ -14,9 +14,7 @@ public class PhoneCheckerValidatorForString implements ConstraintValidator<Phone
     private static final Pattern LOCAL_PART_PATTERN = Pattern.compile("^1\\d{10}$");
 
     @Override
-    public void initialize(PhoneChecker parameters) {
-
-    }
+    public void initialize(PhoneChecker parameters) {}
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -26,6 +24,5 @@ public class PhoneCheckerValidatorForString implements ConstraintValidator<Phone
         }
 
         return LOCAL_PART_PATTERN.matcher(value).matches();
-
     }
 }

@@ -36,6 +36,5 @@ public class EnumCheckerValidatorForInteger implements ConstraintValidator<EnumC
         } else {
             return fieldValues.contains(value);
         }
-
     }
 }

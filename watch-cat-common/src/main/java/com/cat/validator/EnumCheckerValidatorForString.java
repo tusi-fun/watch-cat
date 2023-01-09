@@ -28,6 +28,5 @@ public class EnumCheckerValidatorForString implements ConstraintValidator<EnumCh
         }
 
         return EnumUtil.contains(enumClass, value);
-
     }
 }

@@ -36,6 +36,5 @@ public class EnumCheckerValidatorForLong implements ConstraintValidator<EnumChec
         } else {
             return fieldValues.contains(value.intValue());
         }
-
     }
 }
