@@ -232,8 +232,8 @@ public class LogCatAspect {
     private String getKey(JoinPoint joinPoint, String key) {
 
         // 获取方法签名(通过此签名获取目标方法信息)
-        MethodSignature ms = (MethodSignature)joinPoint.getSignature();
-        Method method = ms.getMethod();
+        MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+        Method method = methodSignature.getMethod();
         Object[] args = joinPoint.getArgs();
 
         // 获取被拦截方法参数名列表(使用Spring支持类库)
