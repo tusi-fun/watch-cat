@@ -69,7 +69,7 @@ public class SignCatAspect {
     @Around("pointCut(signCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, SignCat signCat) throws Throwable {
 
-        log.info("---------------------< SignCat doAround in  >---------------------");
+        log.info("---------[ SignCat doAround in  ]---------");
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
@@ -146,7 +146,7 @@ public class SignCatAspect {
             }
         }
 
-        log.info("---------------------< SignCat doAround out >---------------------");
+        log.info("---------[ SignCat doAround out ]---------");
 
         return proceedingJoinPoint.proceed();
     }

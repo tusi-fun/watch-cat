@@ -73,7 +73,7 @@ public class LogCatAspect {
     @Around("pointCut(logCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, LogCat logCat) throws Throwable {
 
-        log.info("---------------------< LogCat doAround in  >---------------------");
+        log.info("---------[ LogCat doAround in  ]---------");
 
         startTimeTL.set(LocalDateTime.now());
 
@@ -84,7 +84,7 @@ public class LogCatAspect {
 
         buildLog(proceedingJoinPoint, logCat, proceed);
 
-        log.info("---------------------< LogCat doAround out >---------------------");
+        log.info("---------[ LogCat doAround out ]---------");
 
         return proceed;
     }
@@ -99,7 +99,7 @@ public class LogCatAspect {
 
         buildLog(joinPoint,logCat,e);
 
-        log.info("---------------------< LogCat doAround out >---------------------");
+        log.info("---------[ LogCat doAround out ]---------");
     }
 
     /**
