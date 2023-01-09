@@ -30,13 +30,18 @@ public class LogCatTestController {
 
     @LogCat(actionGroup = "log-cat", action = "case2", enableEvent = false)
     @PostMapping("case2")
-    public Result case2(Gh gh) {
+    public Result case2(Gh gh) throws InterruptedException {
+
+        Thread.sleep(1000);
+
         return Result.ok();
     }
 
     @LogCat(actionGroup = "log-cat", action = "case2", enableEvent = false)
     @PostMapping("case3")
-    public Result case3(Gh gh) {
+    public Result case3(Gh gh) throws InterruptedException {
+
+        Thread.sleep(1000);
 
         if(1==1) {
             throw new RuntimeException("异常日志");

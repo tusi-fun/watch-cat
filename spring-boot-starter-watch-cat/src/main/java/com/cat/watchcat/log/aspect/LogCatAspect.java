@@ -129,33 +129,27 @@ public class LogCatAspect {
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
-        RequestInfo requestInfo = new RequestInfo();
-        if(StringUtils.hasText(logCat.bid())) {
-            requestInfo.setBid(getKey(joinPoint, logCat.bid()));
-        }
-        requestInfo.setStartTime(startTimeTL.get());
-        requestInfo.setActionGroup(logCat.actionGroup());
-        requestInfo.setAction(logCat.action());
-        requestInfo.setIp(request.getRemoteAddr());
-        requestInfo.setUrl(request.getRequestURL().toString());
-        requestInfo.setHttpMethod(request.getMethod());
-        requestInfo.setRequestHeaders(getRequestHeaders(request));
-        requestInfo.setClassMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()));
-        requestInfo.setRequestParams(getRequestParams(joinPoint));
-
-        if(isError) {
-            requestInfo.setException(String.valueOf(data));
-        } else {
-            requestInfo.setResult(data);
-        }
-
-        requestInfo.setEndTime(endTime);
-        requestInfo.setTimeCost(Duration.between(startTimeTL.get(),endTime).toMillis());
+        RequestInfo requestInfo = RequestInfo.builder()
+                .startTime(startTimeTL.get())
+                .bid(StringUtils.hasText(logCat.bid())?getKey(joinPoint, logCat.bid()):null)
+                .actionGroup(logCat.actionGroup())
+                .action(logCat.action())
+                .ip(request.getRemoteAddr())
+                .url(request.getRequestURL().toString())
+                .httpMethod(request.getMethod())
+                .requestHeaders(getRequestHeaders(request))
+                .requestParams(getRequestParams(joinPoint))
+                .classMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()))
+                .exception(isError?String.valueOf(data):null)
+                .result(isError?null:data)
+                .endTime(endTime)
+                .timeCost(Duration.between(startTimeTL.get(),endTime).toMillis())
+                .build();
 
         if(logCat.print()) {
             log.info(String.format(logFormat,requestIdTL.get(),
                     requestInfo.getIp(), requestInfo.getHttpMethod(), requestInfo.getUrl(), requestInfo.getRequestHeaders(),
-                    requestInfo.getRequestParams(),isError?requestInfo.getException():JsonUtils.toJson(requestInfo.getResult()), requestInfo.getTimeCost(),requestIdTL.get()));
+                    requestInfo.getRequestParams(), isError?requestInfo.getException():JsonUtils.toJson(requestInfo.getResult()), requestInfo.getTimeCost(),requestIdTL.get()));
         }
 
         if(logCat.enableEvent()) {

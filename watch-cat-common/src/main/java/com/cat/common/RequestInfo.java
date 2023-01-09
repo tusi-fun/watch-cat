@@ -2,6 +2,7 @@ package com.cat.common;
 
 import com.cat.util.StringUtils;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author hudongshan
  */
 @Data
+@SuperBuilder
 public class RequestInfo implements Serializable {
 
     private static final long serialVersionUID = -5874472232861587583L;
