@@ -126,18 +126,6 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
         return new SignCatAspect();
     }
 
-//    @ConditionalOnMissingBean
-//    @Bean
-//    public ApiSignUtils4Asymmetric apiSignUtils4Asymmetric(){
-//        return new ApiSignUtils4Asymmetric();
-//    }
-//
-//    @ConditionalOnMissingBean
-//    @Bean
-//    public ApiSignUtils4Sha apiSignUtils4Sha(){
-//        return new ApiSignUtils4Sha();
-//    }
-
     @ConditionalOnMissingBean
     @Bean
     public CacheService cacheService(RedisTemplate wcRedisTemplate){
