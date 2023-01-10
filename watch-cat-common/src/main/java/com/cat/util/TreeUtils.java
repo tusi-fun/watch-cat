@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * 数组转树形工具类（20220506，经测试，性能比自己封装的好）
+ * 集合转树形工具类（20220506，经测试，性能比自己封装的好）
  *
  * @author hudongshan
  */
@@ -34,7 +34,7 @@ public class TreeUtils<T> {
 	}
 
 	/**
-	 * 数组转树形
+	 * 集合转树形
 	 * 不指定父节点，则会按照当前集合查询，查询到当前集合没有找到父节点的则为父节点
 	 * */
 	public List<T> tree(List<T> sourceList){
@@ -52,10 +52,10 @@ public class TreeUtils<T> {
 	}
 
 	/**
-	 * 数组转树形
+	 * 集合转树形
 	 * 指定父节点，只查询指定父节点下的数据节点
 	 * */
-	public List<T> tree(List<T> sourceList,Object pid){
+	public List<T> tree(List<T> sourceList, Object pid){
 		List<T> treeList = new ArrayList<>();
 		Map<Object, T> codeMap = sourceList.stream().collect(Collectors.toMap(t->code.apply(t), t -> t));
 		sourceList.stream().forEach(t -> {
