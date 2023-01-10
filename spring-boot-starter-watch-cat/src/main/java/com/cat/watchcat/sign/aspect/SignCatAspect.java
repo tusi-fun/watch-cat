@@ -74,7 +74,7 @@ public class SignCatAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        if(!StringUtils.hasText(request.getContentType())){
+        if(!StringUtils.hasText(request.getContentType())) {
             throw new SignCatException("请求 ContentType 必传");
         }
 
