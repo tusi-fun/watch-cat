@@ -137,11 +137,11 @@ public class SignCatAspect {
             // 验证签名值是否合法（在一定周期内是否已使用过）
             Assert.isTrue(cacheService.cacheSign(sign,signShaProperties.getTolerant()),"签名验证：sign 已使用过");
 
-            Boolean isPassed = ApiSignUtils4Sha.verify(appSecret,HmacAlgorithm.HmacSHA256,signDataMap,sign,nonce,timestamp);
+            Boolean itsPassed = ApiSignUtils4Sha.verify(appSecret,HmacAlgorithm.HmacSHA256,signDataMap,sign,nonce,timestamp);
 
-            log.info("SignCatAspect:验签，isPassed={}",isPassed);
+            log.info("SignCatAspect:验签，itsPassed={}",itsPassed);
 
-            if(!isPassed) {
+            if(!itsPassed) {
                 throw new SignCatException("签名值sign不合法");
             }
         }
