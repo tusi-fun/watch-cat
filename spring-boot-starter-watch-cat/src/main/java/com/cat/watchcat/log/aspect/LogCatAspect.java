@@ -29,8 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,8 +45,9 @@ import java.util.UUID;
 @Component
 public class LogCatAspect {
 
-    private final NamedThreadLocal<LocalDateTime> startTimeTL = new NamedThreadLocal<>("StartTime");
+    private final NamedThreadLocal<Long> startTimeTL = new NamedThreadLocal<>("StartTime");
     private final NamedThreadLocal<String> requestIdTL = new NamedThreadLocal<>("RequestId");
+
     private static final String logFormat =
             "\r\n---------<%s>---------" +
             "\r\n【Request URI    】:%s > %s > %s" +
@@ -75,7 +74,8 @@ public class LogCatAspect {
 
         log.info("---------[LogCat doAround in ]---------");
 
-        startTimeTL.set(LocalDateTime.now());
+        // 20230309 System.currentTimeMillis() 方法的性能比 LocalDateTime.now() 方法要快大约 50 倍。但需要注意的是，这个结果并不是绝对的，具体的性能差距会因环境和实现而异
+        startTimeTL.set(System.currentTimeMillis());
 
         requestIdTL.set(UUID.randomUUID().toString().replaceAll("-",""));
 
@@ -121,7 +121,7 @@ public class LogCatAspect {
      */
     private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data) {
 
-        LocalDateTime endTime = LocalDateTime.now();
+        Long endTime = System.currentTimeMillis();
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
@@ -143,7 +143,7 @@ public class LogCatAspect {
                 .exception(isError?String.valueOf(data):null)
                 .result(isError?null:data)
                 .endTime(endTime)
-                .timeCost(Duration.between(startTimeTL.get(),endTime).toMillis())
+                .timeCost(endTime-startTimeTL.get())
                 .build();
 
         if(logCat.print()) {
@@ -165,11 +165,25 @@ public class LogCatAspect {
      */
     private Map<String, Object> getRequestParams(JoinPoint joinPoint) {
 
-        String[] paramNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();
+        String[] parameterNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();
 
-        Object[] paramValues = joinPoint.getArgs();
+        Object[] args = joinPoint.getArgs();
 
-        return buildRequestParam(paramNames, paramValues);
+        Map<String, Object> requestParams = new HashMap<>();
+
+        for (int i = 0; i < args.length; i++) {
+
+            Object arg = args[i];
+
+            if(arg instanceof MultipartFile) {
+                MultipartFile file = (MultipartFile)arg;
+                requestParams.put(parameterNames[i],String.format("%s(%d bytes)",file.getOriginalFilename(),file.getSize()));
+            } else {
+                requestParams.put(parameterNames[i],arg);
+            }
+        }
+        return requestParams;
+
     }
 
     /**
@@ -199,23 +213,23 @@ public class LogCatAspect {
         return requestHeadersParams;
     }
 
-    private Map<String, Object> buildRequestParam(String[] paramNames, Object[] paramValues) {
-
-        Map<String, Object> requestParams = new HashMap<>();
-
-        for (int i = 0; i < paramNames.length; i++) {
-
-            Object value = paramValues[i];
-
-            //如果是文件对象，获取文件名
-            if (value instanceof MultipartFile) {
-                MultipartFile file = (MultipartFile) value;
-                value = file.getOriginalFilename();
-            }
-            requestParams.put(paramNames[i], value);
-        }
-        return requestParams;
-    }
+//    private Map<String, Object> buildRequestParam(String[] paramNames, Object[] paramValues) {
+//
+//        Map<String, Object> requestParams = new HashMap<>();
+//
+//        for (int i = 0; i < paramNames.length; i++) {
+//
+//            Object value = paramValues[i];
+//
+//            //如果是文件对象，获取文件名
+//            if (value instanceof MultipartFile) {
+//                MultipartFile file = (MultipartFile) value;
+//                value = file.getOriginalFilename();
+//            }
+//            requestParams.put(paramNames[i], value);
+//        }
+//        return requestParams;
+//    }
 
     /**
      * 获取 bid 的值

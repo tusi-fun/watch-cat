@@ -30,8 +30,8 @@ public class RequestInfo implements Serializable {
     private String action;
     private Object result;
     private String exception;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Long startTime;
+    private Long endTime;
 
     public Boolean itsOk() {
         return StringUtils.hasText(exception);
