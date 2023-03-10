@@ -41,4 +41,10 @@ public @interface LogCat {
      */
     boolean print() default true;
 
+    /**
+     * 是否启用打印原始请求
+     * @return
+     */
+    boolean printOrig() default true;
+
 }

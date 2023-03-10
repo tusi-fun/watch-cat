@@ -15,7 +15,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.core.NamedThreadLocal;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -29,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 日志记录切面，对 Controller 层请求、响应日志输出、持久化（使用 Json 格式输出，解决在大量请求时日志输出时序混乱的问题）
@@ -45,17 +41,18 @@ import java.util.UUID;
 @Component
 public class LogCatAspect {
 
-    private final NamedThreadLocal<Long> startTimeTL = new NamedThreadLocal<>("StartTime");
-    private final NamedThreadLocal<String> requestIdTL = new NamedThreadLocal<>("RequestId");
+    private final ThreadLocal<Long> startTime = new ThreadLocal<>();
+    private final ThreadLocal<String> requestId = new ThreadLocal<>();
 
+    private static final String originReqFormat = "\r\n[ReqOrigParams] %s";
     private static final String logFormat =
-            "\r\n---------<%s>---------" +
-            "\r\n【Request URI    】:%s > %s > %s" +
-            "\r\n【Request Headers】:%s" +
-            "\r\n【Request body   】:%s" +
-            "\r\n【Result         】:%s" +
-            "\r\n【Time Cost      】:%s ms" +
-            "\r\n---------<%s>---------";
+            "\r\n-----<%s>-----" +
+            "\r\n[ReqInfo      ] %s > [%s]%s" +
+            "\r\n[ReqHeaders   ] %s" + "%s" +
+            "\r\n[ReqParams    ] %s" +
+            "\r\n[Resp         ] %s" +
+            "\r\n[Take time    ] %sms（Start:%s ~ End:%s）" +
+            "\r\n-----<%s>-----";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -72,21 +69,21 @@ public class LogCatAspect {
     @Around("pointCut(logCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, LogCat logCat) throws Throwable {
 
-        log.info("---------[LogCat doAround in ]---------");
+        log.info("---------[LogCat in ]---------");
 
         // 20230309 System.currentTimeMillis() 方法的性能比 LocalDateTime.now() 方法要快大约 50 倍。但需要注意的是，这个结果并不是绝对的，具体的性能差距会因环境和实现而异
-        startTimeTL.set(System.currentTimeMillis());
+        startTime.set(System.currentTimeMillis());
 
-        requestIdTL.set(UUID.randomUUID().toString().replaceAll("-",""));
+        requestId.set(UUID.randomUUID().toString().replaceAll("-",""));
 
         // 执行业务方法
-        Object proceed = proceedingJoinPoint.proceed();
+        Object retult = proceedingJoinPoint.proceed();
 
-        buildLog(proceedingJoinPoint, logCat, proceed);
+        buildLog(proceedingJoinPoint, logCat,false, retult);
 
-        log.info("---------[LogCat doAround out]---------");
+        log.info("---------[LogCat out]---------");
 
-        return proceed;
+        return retult;
     }
 
     /**
@@ -95,31 +92,17 @@ public class LogCatAspect {
      * @param e
      */
     @AfterThrowing(pointcut = "pointCut(logCat)", throwing = "e")
-    public void doAfterThrow(JoinPoint joinPoint, LogCat logCat, RuntimeException e) {
+    public void doAfterThrow(JoinPoint joinPoint, LogCat logCat, RuntimeException e){
 
-        buildLog(joinPoint,logCat,e);
+        buildLog(joinPoint, logCat,true, e);
 
-        log.info("---------[LogCat doAround out]---------");
-    }
-
-    /**
-     * 构建日志(正常)
-     */
-    private void buildLog(JoinPoint joinPoint, LogCat logCat, Object proceed) {
-        buildLog(joinPoint, logCat, false, proceed);
-    }
-
-    /**
-     * 构建日志(异常)
-     */
-    private void buildLog(JoinPoint joinPoint, LogCat logCat, RuntimeException e) {
-        buildLog(joinPoint, logCat, true, e.getMessage());
+        log.info("---------[LogCat out]---------");
     }
 
     /**
      * 构建日志
      */
-    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data) {
+    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data){
 
         Long endTime = System.currentTimeMillis();
 
@@ -130,7 +113,7 @@ public class LogCatAspect {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
         RequestInfo requestInfo = RequestInfo.builder()
-                .startTime(startTimeTL.get())
+                .startTime(startTime.get())
                 .bid(StringUtils.hasText(logCat.bid())?getKey(joinPoint, logCat.bid()):null)
                 .actionGroup(logCat.actionGroup())
                 .action(logCat.action())
@@ -138,18 +121,26 @@ public class LogCatAspect {
                 .url(request.getRequestURL().toString())
                 .httpMethod(request.getMethod())
                 .requestHeaders(getRequestHeaders(request))
-                .requestParams(getRequestParams(joinPoint))
+                .requestParams(getParameters(joinPoint))
                 .classMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()))
                 .exception(isError?String.valueOf(data):null)
                 .result(isError?null:data)
                 .endTime(endTime)
-                .timeCost(endTime-startTimeTL.get())
+                .timeCost(endTime-startTime.get())
                 .build();
 
         if(logCat.print()) {
-            log.info(String.format(logFormat,requestIdTL.get(),
-                    requestInfo.getIp(), requestInfo.getHttpMethod(), requestInfo.getUrl(), requestInfo.getRequestHeaders(),
-                    requestInfo.getRequestParams(), isError?requestInfo.getException():JsonUtils.toJson(requestInfo.getResult()), requestInfo.getTimeCost(),requestIdTL.get()));
+            log.info(String.format(logFormat,
+                    requestId.get(),
+                    requestInfo.getIp(),
+                    requestInfo.getHttpMethod(),
+                    requestInfo.getUrl(),
+                    requestInfo.getRequestHeaders(),
+                    logCat.printOrig()? String.format(originReqFormat,getParameters(request)):"",
+                    requestInfo.getRequestParams(),
+                    isError?requestInfo.getException():JsonUtils.toJson(requestInfo.getResult()),
+                    requestInfo.getTimeCost(),requestInfo.getStartTime(),requestInfo.getEndTime(),
+                    requestId.get()));
         }
 
         if(logCat.enableEvent()) {
@@ -159,11 +150,34 @@ public class LogCatAspect {
     }
 
     /**
-     * 获取请求参数
+     * 获取请求参数（获取所有参数）
+     * @return
+     */
+    private Map<String, Object> getParameters(HttpServletRequest request) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        Enumeration<String> paramNames = request.getParameterNames();
+
+        while (paramNames.hasMoreElements()) {
+            String paramName = paramNames.nextElement();
+            String[] paramValues = request.getParameterValues(paramName);
+            if (paramValues.length == 1) {
+                params.put(paramName, paramValues[0]);
+            } else {
+                params.put(paramName, Arrays.asList(paramValues));
+            }
+        }
+
+        return params;
+    }
+
+    /**
+     * 获取请求参数（只能获取到方法中定义到参数）
      * @param joinPoint
      * @return
      */
-    private Map<String, Object> getRequestParams(JoinPoint joinPoint) {
+    private Map<String, Object> getParameters(JoinPoint joinPoint) {
 
         String[] parameterNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();
 
@@ -213,23 +227,9 @@ public class LogCatAspect {
         return requestHeadersParams;
     }
 
-//    private Map<String, Object> buildRequestParam(String[] paramNames, Object[] paramValues) {
-//
-//        Map<String, Object> requestParams = new HashMap<>();
-//
-//        for (int i = 0; i < paramNames.length; i++) {
-//
-//            Object value = paramValues[i];
-//
-//            //如果是文件对象，获取文件名
-//            if (value instanceof MultipartFile) {
-//                MultipartFile file = (MultipartFile) value;
-//                value = file.getOriginalFilename();
-//            }
-//            requestParams.put(paramNames[i], value);
-//        }
-//        return requestParams;
-//    }
+    public static boolean isArrayOrCollection(Object obj) {
+        return (obj != null && (obj.getClass().isArray()));
+    }
 
     /**
      * 获取 bid 的值
