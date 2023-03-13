@@ -248,7 +248,7 @@ public class LogCatAspect {
         ExpressionParser parser = new SpelExpressionParser();
 
         // SPEL上下文 使用 StandardEvaluationContext 有注入的隐患， SimpleEvaluationContext 比较安全
-        // SimpleEvaluationContext context = new SimpleEvaluationContext.Builder().build();
+        // 使用安全的上下文：SPEL提供了两种上下文对象，即StandardEvaluationContext和SimpleEvaluationContext。其中，StandardEvaluationContext是支持注入的，而SimpleEvaluationContext则是不支持注入的。因此，在使用SPEL时应该使用SimpleEvaluationContext对象，以避免注入攻击
         EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
 
         // 把方法参数放入SPEL上下文中
