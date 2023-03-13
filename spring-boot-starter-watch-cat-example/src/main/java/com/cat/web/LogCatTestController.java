@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 日志工具测试
@@ -22,20 +23,24 @@ public class LogCatTestController {
 
     @LogCat(actionGroup = "log-cat", action = "case1", enableEvent = false)
     @PostMapping("case1")
-    public Result case1(String[] a) throws InterruptedException {
-
+    public Result form(String[] a, String b, Integer c) {
         return Result.ok();
     }
 
-    @LogCat(actionGroup = "log-cat", action = "case2", enableEvent = false)
+    @LogCat(actionGroup = "log-cat", action = "case1", enableEvent = false)
     @PostMapping("case2")
-    public Result case2(Gh gh) throws InterruptedException {
+    public Result update(String[] a, String b, Integer c, MultipartFile d,MultipartFile[] e) {
+        return Result.ok();
+    }
 
+    @LogCat(actionGroup = "log-cat", action = "case4", enableEvent = false)
+    @PostMapping("case3")
+    public Result json(@RequestBody Gh gh) {
         return Result.ok();
     }
 
     @LogCat(actionGroup = "log-cat", action = "case2", enableEvent = false)
-    @PostMapping("case3")
+    @PostMapping("case4")
     public Result case3(Gh gh) throws InterruptedException {
 
         Thread.sleep(1000);
@@ -47,10 +52,4 @@ public class LogCatTestController {
         return Result.ok();
     }
 
-    @LogCat(actionGroup = "log-cat", action = "case4", enableEvent = false)
-    @PostMapping("case4")
-    public Result case4(@RequestBody Gh gh) {
-
-        return Result.ok();
-    }
 }

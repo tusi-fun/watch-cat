@@ -27,6 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -92,7 +93,7 @@ public class LogCatAspect {
      * @param e
      */
     @AfterThrowing(pointcut = "pointCut(logCat)", throwing = "e")
-    public void doAfterThrow(JoinPoint joinPoint, LogCat logCat, RuntimeException e){
+    public void doAfterThrow(JoinPoint joinPoint, LogCat logCat, RuntimeException e) throws IOException {
 
         buildLog(joinPoint, logCat,true, e);
 
@@ -102,7 +103,7 @@ public class LogCatAspect {
     /**
      * 构建日志
      */
-    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data){
+    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data) throws IOException {
 
         Long endTime = System.currentTimeMillis();
 
@@ -197,7 +198,6 @@ public class LogCatAspect {
             }
         }
         return requestParams;
-
     }
 
     /**
@@ -225,10 +225,6 @@ public class LogCatAspect {
             requestHeadersParams.put(name,sb.toString());
         }
         return requestHeadersParams;
-    }
-
-    public static boolean isArrayOrCollection(Object obj) {
-        return (obj != null && (obj.getClass().isArray()));
     }
 
     /**

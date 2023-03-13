@@ -1,26 +1,55 @@
 # watch-cat（看家猫）
-* 封装-请求中 字符串格式的时间戳 转对应格式（LocalDateTime 、Localdate、LocalTime）
-* ------------------------------
-* @LogCat：api 请求和响应日志打印、持久化
-* @LimitCat：api 流控
-* @SecretCat：api 请求参数解密 和 响应加密
-* @SensitiveCat：响应中的敏感参数脱敏
-* ------------------------------
-* AreaDetailConverter：将请求中的地区（省市县区）code，解析为地区对象
-* StringTrimConverter：对请求中的String参数前后去空格
+* @LogCat：接口请求和响应日志打印、持久化
+* @LimitCat：接口流控
+* @SecretCat：接口请求参数解密 和 响应加密
+* @SensitiveCat：接口响应中的敏感参数脱敏
+* 包含 AreaDetailConverter：将请求中的地区（省市县区）code，解析为地区对象，便于后端使用
+* 包含 StringTrimConverter：对请求中String类型参数前后去空格
+* 包含 String2LocalTimeConverter、String2LocalDateTimeConverter、String2LocalDateConverter：对请求中String类型参数自动转LocalTime、LocalDateTime、LocalDate
 
+## 食用姿势
 ### 引入依赖
 ```xml
 <dependency>
     <groupId>com.cat</groupId>
     <artifactId>spring-boot-starter-watch-cat</artifactId>
-    <version>1.0.8</version>
+    <version>1.1.4</version>
 </dependency>
 ```
+### @LogCat（LocCat 使用 AOP 方式获取请求和响应参数，参数验证异常、参数类型转换异常等无法获取日志）
 
-### @LimitCat 使用说明
+* @LogCat 参数说明
+  - bid 自定义参数（支持 SpEL）
+  - actionGroup 操作分组
+  - action 操作
+  - enableEvent 是否启用事件通知（默认 true），持久化日志时需要启用
+  - print 是否打印日志（默认 true）
+  - printOrig 是否在日志中打印原始请求（默认 true）
+
+
+* 在代码中使用
+```java
+// 持久化 + 打印到控制台
+@LogCat
+
+// 持久化 + 不打印到控制台
+@LogCat(print = false)
+
+// 不持久化
+@LogCat(enableEvent = false) 
+
+// 对日志分组（后台管理推荐设置）
+@LogCat(actionGroup = "订单管理功能组", action = "删除订单")
+```
+
+### @LimitCat
 #### 方式一：配置文件指定规则
-* 规则配置
+* @LimitCat 注解配置说明
+  - scene 和配置文件中的场景一一对应
+  - key 流控依据参数 uid、token、phone 等，支持 Spel 表达式
+  - triggerFor 触发流控计数的异常数组（必须是 RuntimeException 的子类）
+  - triggerForCode 触发流控计数的异常 Code 数组（与 triggerFor 同时使用）
+  - rules 流控规则配置（代码方式使用）
 
 规则：watchcat.limit.scenes.场景（String）.频率（Duration）=次数（Long）
 ```properties
@@ -59,22 +88,3 @@ watchcat.limit.scenes.smsWrong.5m=3
 )
 ```
 
-* @LimitCat 注解说明
-  - scene 和配置文件中的场景一一对应
-  - key 流控依据参数 uid、token、phone 等，支持 Spel 表达式
-  - triggerFor 触发流控计数的异常数组（必须是 RuntimeException 的子类）
-  - triggerForCode 触发流控计数的异常 Code 数组（与 triggerFor 同时使用）
-  - rules 流控规则配置（代码方式使用）
-
-### @LogCat 使用说明（参数验证异常、参数类型转换异常等无法获取日志，因为 LocCat 使用 AOP 方式获取请求和响应参数）
-
-* 在代码中使用
-```java
-@LogCat(actionGroup = "订单管理功能组", action = "删除订单")
-
-@LogCat(actionGroup = "订单管理功能组", action = "删除订单", enableEvent = false)
-```
-* @LogCat 参数说明
-  - actionGroup 操作分组
-  - action 操作
-  - enableEvent 是否启用日志事件通知（默认启用，便于持久化日志）
