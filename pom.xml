@@ -28,7 +28,6 @@
         <revision>1.1.4</revision>
         <hutool.version>5.8.11</hutool.version>
         <guava.version>31.1-jre</guava.version>
-        <commons-io.version>2.11.0</commons-io.version>
     </properties>
 
     <dependencyManagement>
@@ -56,12 +55,6 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-extra</artifactId>
                 <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
             </dependency>
 
             <dependency>
