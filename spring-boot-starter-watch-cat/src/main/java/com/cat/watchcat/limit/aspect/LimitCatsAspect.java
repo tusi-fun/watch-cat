@@ -212,27 +212,26 @@ public class LimitCatsAspect {
      * @param key
      * @return
      */
-    private String getKey(JoinPoint joinPoint,String scene,String key) {
+    private String getKey(JoinPoint joinPoint, String scene, String key) {
 
         // TODO key 默认为客户端 ip + userAgent 是否合理？
         // TODO 对于周期内频率限制的场景，考虑使用 redis 临牌桶？是否合理？
 
         // 获取方法签名(通过此签名获取目标方法信息)
-        MethodSignature ms = (MethodSignature)joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+        Object[] args = joinPoint.getArgs();
 
         // 获取被拦截方法参数名列表(使用Spring支持类库)
         LocalVariableTableParameterNameDiscoverer localVariableTable = new LocalVariableTableParameterNameDiscoverer();
-        String[] paraNameArr = localVariableTable.getParameterNames(ms.getMethod());
+        String[] paraNameArr = localVariableTable.getParameterNames(methodSignature.getMethod());
 
         // 使用SPEL进行key的解析
         ExpressionParser parser = new SpelExpressionParser();
 
         // SPEL上下文 使用 StandardEvaluationContext 有注入的隐患， SimpleEvaluationContext 比较安全
-//        SimpleEvaluationContext context = new SimpleEvaluationContext.Builder().build();
         EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
 
         //把方法参数放入SPEL上下文中
-        Object[] args = joinPoint.getArgs();
         for(int i=0; i<paraNameArr.length; i++) {
             context.setVariable(paraNameArr[i], args[i]);
         }
