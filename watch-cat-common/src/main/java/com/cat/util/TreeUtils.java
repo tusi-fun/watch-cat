@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * 集合转树形工具类（20220506，经测试，性能比自己封装的好）
+ * 集合转树形工具类（20220506，性能比自己封装的好）
  *
  * @author hudongshan
  */
@@ -37,13 +37,13 @@ public class TreeUtils<T> {
 	 * 集合转树形
 	 * 不指定父节点，则会按照当前集合查询，查询到当前集合没有找到父节点的则为父节点
 	 * */
-	public List<T> tree(List<T> sourceList){
+	public List<T> tree(List<T> sourceList) {
 		List<T> treeList = new ArrayList<>();
 		Map<Object, T> codeMap = sourceList.stream().collect(Collectors.toMap(t->code.apply(t), t -> t));
 		sourceList.stream().forEach(t -> {
 			if(!codeMap.containsKey(parent.apply(t))){
 				treeList.add(t);
-			}else{
+			} else {
 				T parentT = codeMap.get(parent.apply(t));
 				children.apply(parentT).add(t);
 			}
@@ -61,7 +61,7 @@ public class TreeUtils<T> {
 		sourceList.stream().forEach(t -> {
 			if(Objects.equals(pid,parent.apply(t))){
 				treeList.add(t);
-			}else{
+			} else {
 				T parentT = codeMap.get(parent.apply(t));
 				if(Objects.nonNull(parentT)){
 					children.apply(parentT).add(t);
@@ -72,7 +72,7 @@ public class TreeUtils<T> {
 	}
 //
 //	@Data
-//	static class Menu{
+//	static class Menu {
 //		private Long id;
 //		private Long pid;
 //		private String name;
