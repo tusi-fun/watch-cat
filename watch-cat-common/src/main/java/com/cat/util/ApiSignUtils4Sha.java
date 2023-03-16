@@ -5,13 +5,9 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import com.cat.enumerate.ApiSignKeyEnum;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 签名工具（适用于散列算法）
@@ -51,7 +47,7 @@ public class ApiSignUtils4Sha {
         String nonce = RandomUtil.randomString(16);
 
         // 构建签名体
-        Map<String,String> signBody = requestParams!=null ? Maps.newHashMap(requestParams) : Maps.newHashMap();
+        Map<String,String> signBody = requestParams!=null ? new HashMap(requestParams) : new HashMap();
         signBody.put(APPID_KEY, appid);
         signBody.put(METHOD_KEY, method);
         signBody.put(PATH_KEY, path);
@@ -59,7 +55,7 @@ public class ApiSignUtils4Sha {
         signBody.put(NONCE_KEY, nonce);
 
         // 构建签名返回
-        Map<String,String> signResult = Maps.newHashMap();
+        Map<String,String> signResult = new HashMap();
         signResult.put(APPID_KEY, appid);
         signResult.put(TIMESTAMP_KEY, timestamp);
         signResult.put(NONCE_KEY, nonce);
@@ -87,7 +83,7 @@ public class ApiSignUtils4Sha {
 
         log.info("验证签名：构建签名体");
 
-        Map<String, String> signBody = Maps.newHashMap(params);
+        Map<String, String> signBody = new HashMap(params);
         signBody.put(NONCE_KEY,nonce);
         signBody.put(TIMESTAMP_KEY,timestamp);
 
@@ -122,7 +118,7 @@ public class ApiSignUtils4Sha {
         signBody.remove(SIGN_KEY);
 
         // 获取 signBody 中的 key 集合
-        List<String> keyList = Lists.newArrayList(signBody.keySet());
+        List<String> keyList = new ArrayList(signBody.keySet());
 
         // 排序
         Collections.sort(keyList);

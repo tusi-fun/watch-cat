@@ -7,13 +7,9 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import com.cat.enumerate.ApiSignKeyEnum;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 签名工具（适用于非对称算法rsa、sm2等）
@@ -49,12 +45,12 @@ public class ApiSignUtils4Asymmetric {
         log.info("计算签名: method = " + method + ", path = " + path + ", requestParams = " + requestParams);
 
         // 请求签名后的返回内容
-        Map<String,String> signResult = Maps.newHashMap();
+        Map<String,String> signResult = new HashMap();
         signResult.put(TIMESTAMP_KEY, String.valueOf(System.currentTimeMillis()/1000L));
         signResult.put(NONCE_KEY, RandomUtil.randomString(16));
 
         // 构建签名体
-        Map<String,String> signBody = requestParams!=null?Maps.newHashMap(requestParams):Maps.newHashMap();
+        Map<String,String> signBody = requestParams!=null?new HashMap(requestParams):new HashMap();
         signBody.putAll(signResult);
         signBody.put(METHOD_KEY,method);
         signBody.put(PATH_KEY,path);
@@ -90,7 +86,7 @@ public class ApiSignUtils4Asymmetric {
 //        // 验证签名值是否被使用过，存在则抛异常
 //        Assert.isTrue(cacheService.cacheSign(sign,symmetricSignProvider.getTolerant()),"验证签名: sign 已经使用过");
 
-        Map<String, String> signBody = Maps.newHashMap(requestParams);
+        Map<String, String> signBody = new HashMap(requestParams);
         signBody.put(NONCE_KEY,nonce);
         signBody.put(TIMESTAMP_KEY,timestamp);
 
@@ -165,7 +161,7 @@ public class ApiSignUtils4Asymmetric {
         signBody.remove(SIGN_KEY);
 
         // 获取 signBody 中的 key 集合
-        List<String> keyList = Lists.newArrayList(signBody.keySet());
+        List<String> keyList = new ArrayList(signBody.keySet());
 
         // 排序
         Collections.sort(keyList);
