@@ -25,6 +25,13 @@
     <module>spring-boot-starter-watch-cat-example</module>
     <module>watch-cat-common</module>
   </modules>
+  <distributionManagement>
+    <repository>
+      <id>maven-releases</id>
+      <name>corp nexus-releases</name>
+      <url>http://wukong.tusi.fun:12881/repository/maven-releases/</url>
+    </repository>
+  </distributionManagement>
   <properties>
     <hutool.version>5.8.15</hutool.version>
     <revision>1.1.5-sb2</revision>

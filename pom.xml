@@ -61,6 +61,15 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- 公司内部研发依赖分发的位置（私有仓库） -->
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <name>corp nexus-releases</name>
+            <url>http://wukong.tusi.fun:12881/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
 
