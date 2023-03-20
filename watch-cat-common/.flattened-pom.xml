@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.cat</groupId>
     <artifactId>watch-cat</artifactId>
-    <version>1.1.5</version>
+    <version>1.1.5-sb2</version>
   </parent>
   <groupId>com.cat</groupId>
   <artifactId>watch-cat-common</artifactId>
-  <version>1.1.5</version>
+  <version>1.1.5-sb2</version>
   <name>watch-cat-common</name>
   <description>watch-cat-common</description>
   <licenses>
@@ -46,10 +46,6 @@
     <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-crypto</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
     </dependency>
   </dependencies>
 </project>
