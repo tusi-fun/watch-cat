@@ -7,7 +7,13 @@ package com.cat.util;
  */
 public class SignUtils {
 
-    public static boolean verifyTimestamp(String timestamp,Long tolerant) {
+    /**
+     * 验证时间戳是否在容差范围内
+     * @param timestamp unix 时间戳
+     * @param tolerant 秒
+     * @return
+     */
+    public static boolean verifyTimestamp(String timestamp, Long tolerant) {
 
         if(!StringUtils.hasText(timestamp)) {
             return false;

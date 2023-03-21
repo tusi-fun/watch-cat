@@ -127,10 +127,9 @@ public class ApiSignUtils4Sha {
         StringBuilder sb = new StringBuilder();
 
         for (String key : keyList) {
-            // 这种写法值为null的时候，value = "null"，不符合要求
-            // String value = String.valueOf(signBody.get(key));
+
             String value = signBody.get(key);
-//            String value = String.valueOf(signBody.get(key)!=null?signBody.get(key):"");
+
             if(StringUtils.hasText(value)) {
                 sb.append(key).append(value);
             }
@@ -139,7 +138,6 @@ public class ApiSignUtils4Sha {
         log.info("构建签名体：签名原文 = {}",sb);
 
         return sb.toString();
-
     }
 
 }
