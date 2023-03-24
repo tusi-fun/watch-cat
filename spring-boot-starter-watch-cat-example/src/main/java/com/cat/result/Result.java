@@ -2,8 +2,10 @@ package com.cat.result;
 
 import com.cat.exception.BaseCode;
 import com.cat.exception.SysDefaultEnum;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -13,9 +15,8 @@ import java.io.Serializable;
  * @author hudongshan
  * @version 20181107
  */
-@Getter
-@Setter
-public class Result implements Serializable {
+@Data
+public class Result<T> implements Serializable {
 
     private static final long serialVersionUID = 498230420181686615L;
 
@@ -29,6 +30,8 @@ public class Result implements Serializable {
 
     private String message;
 
+    private T data;
+
     public Result() {
         this(SUCCESS.code(), SUCCESS.desc());
     }
@@ -41,7 +44,10 @@ public class Result implements Serializable {
         this.code = code;
         this.message = message;
     }
-
+    public Result data(T data) {
+        this.setData(data);
+        return this;
+    }
     public static Result ok() {
         return new Result();
     }

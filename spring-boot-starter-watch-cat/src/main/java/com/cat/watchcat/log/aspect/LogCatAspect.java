@@ -1,7 +1,6 @@
 package com.cat.watchcat.log.aspect;
 
 import com.cat.common.RequestInfo;
-import com.cat.util.JsonUtils;
 import com.cat.watchcat.log.annotation.LogCat;
 import com.cat.watchcat.log.event.LogCatEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -138,7 +137,7 @@ public class LogCatAspect {
                     requestInfo.getRequestHeaders(),
                     logCat.printOrig()? String.format(originReqFormat,getParameters(request)):"",
                     requestInfo.getRequestParams(),
-                    isError?requestInfo.getException():JsonUtils.toJson(requestInfo.getResult()),
+                    isError?requestInfo.getException():requestInfo.getResult(),
                     requestInfo.getTimeCost(),requestInfo.getStartTime(),requestInfo.getEndTime(),
                     requestId.get()));
         }

@@ -1,7 +1,7 @@
 package com.cat.web;
 
 import com.cat.bean.User;
-import com.cat.result.ResultData;
+import com.cat.result.Result;
 import com.cat.watchcat.log.annotation.LogCat;
 import com.cat.watchcat.sensitive.annotation.SensitiveCat;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class TestController {
     @LogCat(actionGroup = "example", action = "sensitiveCatExample", enableEvent = false)
     @PostMapping("sensitiveCatExample")
     @SensitiveCat
-    public ResultData sensitiveCatExample() {
+    public Result sensitiveCatExample() {
 
         User user1 = new User();
         user1.setIdCard("51138119910256117X");
@@ -51,7 +51,7 @@ public class TestController {
         userMap.put("user1",user1);
         userMap.put("user2",user2);
 
-        return new ResultData(200, "操作成功").data(userMap);
+        return Result.ok().data(userMap);
     }
 
 //

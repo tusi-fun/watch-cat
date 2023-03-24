@@ -1,7 +1,7 @@
 package com.cat.web;
 
 import com.cat.ping.ResultPing;
-import com.cat.result.ResultData;
+import com.cat.result.Result;
 import com.cat.watchcat.log.annotation.LogCat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -22,11 +22,11 @@ public class ResultTestController {
 
     @LogCat(actionGroup = "result", action = "case1", enableEvent = false)
     @PostMapping("result/{a}")
-    public ResultData<ResultPing> strToLocalDate(@PathVariable String a) {
+    public Result<ResultPing> strToLocalDate(@PathVariable String a) {
 
         log.info("a={}",a);
 
-        return ResultData.ok().data(ResultPing.builder()
+        return Result.ok().data(ResultPing.builder()
                 .name("zhangsan")
                 .phone("15188888888")
                 .build());
