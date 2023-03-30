@@ -3,9 +3,6 @@ package com.cat.result;
 import com.cat.exception.BaseCode;
 import com.cat.exception.SysDefaultEnum;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 import java.io.Serializable;
 
