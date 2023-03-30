@@ -5,13 +5,11 @@
   <parent>
     <groupId>com.cat</groupId>
     <artifactId>watch-cat</artifactId>
-    <version>1.1.6-sb2</version>
+    <version>1.1.8-sb2</version>
   </parent>
   <groupId>com.cat</groupId>
   <artifactId>watch-cat-common</artifactId>
-  <version>1.1.6-sb2</version>
-  <name>watch-cat-common</name>
-  <description>watch-cat-common</description>
+  <version>1.1.8-sb2</version>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
