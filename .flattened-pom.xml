@@ -33,9 +33,9 @@
     </repository>
   </distributionManagement>
   <properties>
-    <java.version>1.8</java.version>
     <hutool.version>5.8.15</hutool.version>
     <revision>1.2.0-sb2</revision>
+    <java.version>1.8</java.version>
   </properties>
   <dependencyManagement>
     <dependencies>
