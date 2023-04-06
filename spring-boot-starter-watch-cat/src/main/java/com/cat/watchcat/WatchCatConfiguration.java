@@ -1,9 +1,5 @@
 package com.cat.watchcat;
 
-import com.cat.watchcat.converter.String2LocalDateConverter;
-import com.cat.watchcat.converter.String2LocalDateTimeConverter;
-import com.cat.watchcat.converter.String2LocalTimeConverter;
-import com.cat.watchcat.converter.StringTrimConverter;
 import com.cat.watchcat.converter.area.AreaDetailConverter;
 import com.cat.watchcat.limit.aspect.LimitCatsAspect;
 import com.cat.watchcat.limit.config.LimitCatProperties;
@@ -32,8 +28,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * watch-cat 配置
@@ -46,7 +40,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableConfigurationProperties({LimitCatProperties.class, SecretCatProperties.class, SignShaProperties.class, SignSymmetricProperties.class})
-public class WatchCatConfiguration implements WebMvcConfigurer {
+public class WatchCatConfiguration{
 
     /**
      * WatchCat RedisTemplate 配置
@@ -132,16 +126,16 @@ public class WatchCatConfiguration implements WebMvcConfigurer {
         return new CacheService(wcRedisTemplate);
     }
 
-    /**
-     * 注册自定义 convert
-     * @param registry
-     */
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(areaDetailConverter());
-        registry.addConverter(new StringTrimConverter());
-        registry.addConverter(new String2LocalDateConverter());
-        registry.addConverter(new String2LocalDateTimeConverter());
-        registry.addConverter(new String2LocalTimeConverter());
-    }
+//    /**
+//     * 注册自定义 convert
+//     * @param registry
+//     */
+//    @Override
+//    public void addFormatters(FormatterRegistry registry) {
+//        registry.addConverter(areaDetailConverter());
+//        registry.addConverter(new StringTrimConverter());
+//        registry.addConverter(new String2LocalDateConverter());
+//        registry.addConverter(new String2LocalDateTimeConverter());
+//        registry.addConverter(new String2LocalTimeConverter());
+//    }
 }
