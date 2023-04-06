@@ -4,6 +4,7 @@ import com.cat.watchcat.converter.area.service.AreaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,9 +24,13 @@ public class AreaServiceImpl implements AreaService {
 	@Override
 	public Map<String, String> parseAreaCodes(String[] areaCodes) {
 
-		log.info("-----parseAreaCodes");
+		Map<String, String> areas = new HashMap<>();
+		areas.put("340000","四川省");
+		areas.put("340800","成都市");
+		areas.put("340803","锦江区");
+		areas.put("340803401","xxx街道");
 
-		return null;
+		return areas;
 	}
 
 }
