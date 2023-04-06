@@ -152,6 +152,7 @@ public class LimitCatService {
 
         Long currentValue = wcRedisTemplate.opsForValue().increment(frequencyKey);
 
+        // 初次计数，设置 key 有效期
         if(currentValue==1) {
             wcRedisTemplate.expire(frequencyKey,duration);
         }

@@ -43,14 +43,14 @@ public class LogCatAspect {
     private final ThreadLocal<Long> startTime = new ThreadLocal<>();
     private final ThreadLocal<String> requestId = new ThreadLocal<>();
 
-    private static final String originReqFormat = "\r\n[ReqOrigParams] %s";
+    private static final String originReqFormat = "\r\n[Req OrigParams] %s";
     private static final String logFormat =
             "\r\n-----<%s>-----" +
-            "\r\n[ReqInfo      ] %s > [%s]%s" +
-            "\r\n[ReqHeaders   ] %s" + "%s" +
-            "\r\n[ReqParams    ] %s" +
-            "\r\n[Resp         ] %s" +
-            "\r\n[Take time    ] %sms（Start:%s ~ End:%s）" +
+            "\r\n[Req Info      ] %s > %s > %s" +
+            "\r\n[Req Headers   ] %s" + "%s" +
+            "\r\n[Req Params    ] %s" +
+            "\r\n[Resp          ] %s" +
+            "\r\n[Time Cost     ] %sms（Start:%s ~ End:%s）" +
             "\r\n-----<%s>-----";
 
     @Autowired
@@ -172,7 +172,7 @@ public class LogCatAspect {
     }
 
     /**
-     * 获取请求参数（只能获取到方法中定义到参数）
+     * 获取请求参数（只能获取到方法定义的参数）
      * @param joinPoint
      * @return
      */
