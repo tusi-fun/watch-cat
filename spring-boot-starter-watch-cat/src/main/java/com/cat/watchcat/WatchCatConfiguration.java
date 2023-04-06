@@ -126,16 +126,4 @@ public class WatchCatConfiguration{
         return new CacheService(wcRedisTemplate);
     }
 
-//    /**
-//     * 注册自定义 convert
-//     * @param registry
-//     */
-//    @Override
-//    public void addFormatters(FormatterRegistry registry) {
-//        registry.addConverter(areaDetailConverter());
-//        registry.addConverter(new StringTrimConverter());
-//        registry.addConverter(new String2LocalDateConverter());
-//        registry.addConverter(new String2LocalDateTimeConverter());
-//        registry.addConverter(new String2LocalTimeConverter());
-//    }
 }
