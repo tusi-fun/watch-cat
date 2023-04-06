@@ -5,13 +5,8 @@ import com.cat.watchcat.limit.annotation.LimitCat;
 import com.cat.watchcat.limit.annotation.LimitCatRule;
 import com.cat.watchcat.limit.config.LimitCatProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.util.StringUtils;
-
-import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -29,24 +24,24 @@ public class LimitCatService {
 
     public static final String FREQUENCY_KEY = "watch-cat:limit:%s:%s:%s";
 
-    DefaultRedisScript<Long> limitUpdateScript;
-    DefaultRedisScript<Long> limitGetScript;
+//    DefaultRedisScript<Long> limitUpdateScript;
+//    DefaultRedisScript<Long> limitGetScript;
 
     public LimitCatService(RedisTemplate wcRedisTemplate, LimitCatProperties limitCatProperties) {
         this.wcRedisTemplate = wcRedisTemplate;
         this.limitCatProperties = limitCatProperties;
     }
 
-    @PostConstruct
-    public void initLuaScript() {
-        limitUpdateScript = new DefaultRedisScript<>();
-        limitUpdateScript.setResultType(Long.class);
-        limitUpdateScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit_update.lua")));
-
-        limitGetScript = new DefaultRedisScript<>();
-        limitGetScript.setResultType(Long.class);
-        limitGetScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit_get.lua")));
-    }
+//    @PostConstruct
+//    public void initLuaScript() {
+//        limitUpdateScript = new DefaultRedisScript<>();
+//        limitUpdateScript.setResultType(Long.class);
+//        limitUpdateScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit_update.lua")));
+//
+//        limitGetScript = new DefaultRedisScript<>();
+//        limitGetScript.setResultType(Long.class);
+//        limitGetScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit_get.lua")));
+//    }
 
     /**
      * 业务执行前验证
