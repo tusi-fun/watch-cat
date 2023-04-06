@@ -31,7 +31,7 @@ public class AreaDetailConverter implements Converter<String, AreaDetail> {
         log.info("AreaDetailConverter -> {}",areaCodeStr);
 
         if(!StringUtils.hasText(areaCodeStr)) {
-            log.error("参数 areaCodes 不能为空");
+            log.error("地区代码为空，不执行解析");
             return null;
         }
 
@@ -39,7 +39,7 @@ public class AreaDetailConverter implements Converter<String, AreaDetail> {
 
         // 地区codes只能为3级（省、市、县） 或 4级（省、市、县、社区）
         if(!(areaCodes.length == 3 || areaCodes.length == 4)) {
-            log.error("参数 areaCodes = {} 解析失败",areaCodeStr);
+            log.error("地区代码 {} 解析失败",areaCodeStr);
             return null;
         }
 
@@ -58,7 +58,7 @@ public class AreaDetailConverter implements Converter<String, AreaDetail> {
         log.info("areas = {}", areas);
 
         if(areas==null || areas.size()==0) {
-            log.error("参数 areaCodes = {} 查询失败",areaCodeStr);
+            log.error("地区代码 {} 查询失败",areaCodeStr);
             return null;
         }
 
