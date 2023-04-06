@@ -43,7 +43,7 @@ public class AreaDetailConverter implements Converter<String, AreaDetail> {
             return null;
         }
 
-        AreaService areaService = null;
+        AreaService areaService;
 
         try {
 
