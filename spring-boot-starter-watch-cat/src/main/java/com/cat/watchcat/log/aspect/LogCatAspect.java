@@ -149,7 +149,7 @@ public class LogCatAspect {
     }
 
     /**
-     * 获取请求参数（获取所有参数）
+     * 获取请求原始参数（获取所有参数）
      * @return
      */
     private Map<String, Object> getParameters(HttpServletRequest request) {
