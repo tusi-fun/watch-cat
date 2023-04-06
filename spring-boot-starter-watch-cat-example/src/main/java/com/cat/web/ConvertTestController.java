@@ -53,7 +53,7 @@ public class ConvertTestController {
     @PostMapping("strToAreaDetail")
     public String strToAreaDateil(@RequestParam(name="areaCodes",required = false) AreaDetail areaDetail) {
 
-        log.info("a={}",areaDetail);
+        log.info("areaDetail={}",areaDetail);
 
         return "ok";
     }
