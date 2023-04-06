@@ -150,7 +150,7 @@ public class LimitCatService {
 
         String frequencyKey = String.format(FREQUENCY_KEY,scene,SecureUtil.md5(key),duration.toString());
 
-        Long currentValue = wcRedisTemplate.opsForValue().increment(frequencyKey);
+        Long currentValue = wcRedisTemplate.opsForValue().increment(frequencyKey,1);
 
         // 初次计数，设置 key 有效期
         if(currentValue==1) {
