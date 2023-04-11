@@ -83,6 +83,8 @@ public class LimitCatsAspect {
      */
     private void check(JoinPoint joinPoint) {
 
+        log.info("LimitCatsAspect:check");
+
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
         Method method = methodSignature.getMethod();
@@ -125,6 +127,8 @@ public class LimitCatsAspect {
      */
     private void update(JoinPoint joinPoint, RuntimeException e) {
 
+        log.info("LimitCatsAspect:update e = {}",e);
+
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
         Method method = methodSignature.getMethod();
@@ -151,7 +155,9 @@ public class LimitCatsAspect {
             // 1、e!=null && instanceofOneof(item,e)      > 异常，且异常类型满足触发条件
             // 2、e==null && item.triggerFor().length==0  > 正常，且未设置 triggerFor
             if((e!=null && instanceofOneof(item,e)) || (e==null && item.triggerFor().length==0)) {
+
                 log.info("limitCat:update -> {}",item.scene());
+
                 String scene = StringUtils.hasText(item.scene())?item.scene():joinPoint.getSignature().getName();
                 String key = getKey(joinPoint,scene,item.key());
                 limitCatService.updateFrequency(scene,key,item.rules());
