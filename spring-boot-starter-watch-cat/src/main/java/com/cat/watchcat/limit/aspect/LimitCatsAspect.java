@@ -25,7 +25,9 @@ import org.springframework.util.StringUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 业务频率控制记录切面
@@ -172,14 +174,18 @@ public class LimitCatsAspect {
             return false;
         }
 
-        List<String> codes = Arrays.asList(limitCat.triggerForCode());
-
-        // 获取异常的属性值
-        Method method = ReflectionUtils.findMethod(e.getClass(),limitCat.triggerForCodeField());
+        Set<String> codes = new HashSet<>(Arrays.asList(limitCat.triggerForCode()));
 
         Object codeObj = null;
-        if(method != null) {
-            codeObj = ReflectionUtils.invokeMethod(method, e);
+
+        if(!codes.isEmpty()) {
+
+            // 获取异常的属性值
+            Method method = ReflectionUtils.findMethod(e.getClass(), "get"+StringUtils.capitalize(limitCat.triggerForCodeField()));
+
+            if(method != null) {
+                codeObj = ReflectionUtils.invokeMethod(method, e);
+            }
         }
 
         for (Class<? extends RuntimeException> eClass : triggerFor) {
@@ -191,11 +197,7 @@ public class LimitCatsAspect {
 
                     return true;
 
-                } else {
-
-                    if(codeObj==null) {
-                        return false;
-                    }
+                } else if(codeObj!=null) {
 
                     if(codes.contains(String.valueOf(codeObj))) {
                         return true;

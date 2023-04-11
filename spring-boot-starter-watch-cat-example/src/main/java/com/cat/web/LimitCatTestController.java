@@ -60,7 +60,7 @@ public class LimitCatTestController {
      * @return
      */
     @LogCat(actionGroup = "limit-cat", action = "case3", enableEvent = false)
-    @LimitCat(scene ="case3", key = "#a", triggerFor = {LimitCatCase3Exception.class},triggerForCode = {"2000"})
+    @LimitCat(scene ="case3", key = "#a", triggerFor = {LimitCatCase3Exception.class}, triggerForCode = {"2000"})
     @PostMapping("case3")
     public Result case3(Integer a) {
 
@@ -81,7 +81,7 @@ public class LimitCatTestController {
      * @return
      */
     @LogCat(actionGroup = "limit-cat", action = "case4", enableEvent = false)
-    @LimitCat(scene ="case4", key = "#a", triggerFor = {LimitCatCase4Exception.class},triggerForCode = {"2000"}, triggerForCodeField = "getStatus")
+    @LimitCat(scene ="case4", key = "#a", triggerFor = {LimitCatCase4Exception.class}, triggerForCode = {"2000"}, triggerForCodeField = "status")
     @PostMapping("case4")
     public Result case4(Integer a) {
 
