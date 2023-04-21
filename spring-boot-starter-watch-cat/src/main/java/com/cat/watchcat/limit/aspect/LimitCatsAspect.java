@@ -105,15 +105,15 @@ public class LimitCatsAspect {
             };
         }
 
-        Arrays.stream(limitCats.value()).forEach(item -> {
+        Arrays.stream(limitCats.value()).forEach(limitCat -> {
 
-            log.info("limitCat:check -> {}",item.scene());
+            log.info("limitCat:check -> {}",limitCat.scene());
 
-            String scene = StringUtils.hasText(item.scene())?item.scene():methodSignature.getName();
-            String key = getKey(joinPoint,scene,item.key());
+            String scene = StringUtils.hasText(limitCat.scene())?limitCat.scene():methodSignature.getName();
+            String key = getKey(joinPoint, scene, limitCat.key());
 
             // 调用频率验证
-            limitCatService.checkFrequency(scene,key,item);
+            limitCatService.checkFrequency(scene, key, limitCat);
 
         });
 
@@ -149,17 +149,17 @@ public class LimitCatsAspect {
             };
         }
 
-        Arrays.stream(limitCats.value()).forEach(item -> {
+        Arrays.stream(limitCats.value()).forEach(limitCat -> {
             // 根据异常类型来判断是否触发计数
             // 1、e!=null && instanceofOneof(item,e)      > 异常，且异常类型满足触发条件
             // 2、e==null && item.triggerFor().length==0  > 正常，且未设置 triggerFor
-            if((e!=null && instanceofOneof(item,e)) || (e==null && item.triggerFor().length==0)) {
+            if((e!=null && instanceofOneof(limitCat,e)) || (e==null && limitCat.triggerFor().length==0)) {
 
-                log.info("limitCat:update -> {}",item.scene());
+                log.info("limitCat:update -> {}",limitCat.scene());
 
-                String scene = StringUtils.hasText(item.scene())?item.scene():joinPoint.getSignature().getName();
-                String key = getKey(joinPoint,scene,item.key());
-                limitCatService.updateFrequency(scene,key,item.rules());
+                String scene = StringUtils.hasText(limitCat.scene())?limitCat.scene():joinPoint.getSignature().getName();
+                String key = getKey(joinPoint,scene,limitCat.key());
+                limitCatService.updateFrequency(scene,key,limitCat.rules());
             }
         });
 

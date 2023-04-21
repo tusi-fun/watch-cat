@@ -123,9 +123,9 @@ public class LimitCatService {
      * @param duration
      * @param frequency
      */
-    private void checkCache(String scene,String key,Duration duration,Long frequency,String msg) {
+    private void checkCache(String scene, String key, Duration duration, Long frequency, String msg) {
 
-        String frequencyKey = String.format(FREQUENCY_KEY,scene,SecureUtil.md5(key),duration.toString());
+        String frequencyKey = String.format(FREQUENCY_KEY, scene, SecureUtil.md5(key), duration.toString());
 
         Object object = wcRedisTemplate.opsForValue().get(frequencyKey);
 
@@ -142,7 +142,7 @@ public class LimitCatService {
      * @param key
      * @param duration
      */
-    private void updateCache(String scene,String key,Duration duration) {
+    private void updateCache(String scene, String key, Duration duration) {
 
         String frequencyKey = String.format(FREQUENCY_KEY,scene,SecureUtil.md5(key),duration.toString());
 
