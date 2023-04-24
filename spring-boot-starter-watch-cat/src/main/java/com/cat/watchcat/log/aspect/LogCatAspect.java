@@ -68,7 +68,7 @@ public class LogCatAspect {
     @Around("pointCut(logCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, LogCat logCat) throws Throwable {
 
-        log.info("<LogCat in>");
+        log.info("<LogCat doAround in>");
 
         // 20230309 System.currentTimeMillis() 方法的性能比 LocalDateTime.now() 方法要快大约 50 倍。但需要注意的是，这个结果并不是绝对的，具体的性能差距会因环境和实现而异
         startTime.set(System.currentTimeMillis());

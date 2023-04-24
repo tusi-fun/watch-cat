@@ -12,7 +12,7 @@ import com.cat.watchcat.sensitive.aspect.SensitiveAspect;
 import com.cat.watchcat.sign.aspect.SignCatAspect;
 import com.cat.watchcat.sign.config.SignShaProperties;
 import com.cat.watchcat.sign.config.SignSymmetricProperties;
-import com.cat.watchcat.sign.service.CacheService;
+import com.cat.watchcat.sign.service.SignCommonService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -122,8 +122,8 @@ public class WatchCatConfiguration{
 
     @ConditionalOnMissingBean
     @Bean
-    public CacheService cacheService(RedisTemplate wcRedisTemplate){
-        return new CacheService(wcRedisTemplate);
+    public SignCommonService cacheService(RedisTemplate wcRedisTemplate){
+        return new SignCommonService(wcRedisTemplate);
     }
 
 }

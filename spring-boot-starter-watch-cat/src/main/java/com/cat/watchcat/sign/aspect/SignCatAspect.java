@@ -3,15 +3,13 @@ package com.cat.watchcat.sign.aspect;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.extra.servlet.ServletUtil;
-import com.cat.enumerate.ApiSignKeyEnum;
-import com.cat.util.ApiSignUtils4Sha;
 import com.cat.util.JsonUtils;
-import com.cat.util.SignUtils;
 import com.cat.watchcat.sign.annotation.SignCat;
 import com.cat.watchcat.sign.config.SignShaProperties;
 import com.cat.watchcat.sign.service.AppService;
-import com.cat.watchcat.sign.service.CacheService;
 import com.cat.watchcat.sign.service.SignCatException;
+import com.cat.watchcat.sign.service.SignCommonService;
+import com.cat.watchcat.sign.util.ApiSignUtils4Sha;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -22,9 +20,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -40,7 +38,7 @@ import java.util.stream.Collectors;
  * 请求验签、响应加签控制切面
  *
  * @author hudongshan
- * @version 20200227
+ * @version 20230424
  *
  * 参考：https://blog.csdn.net/qq_15076569/article/details/100923074
  *
@@ -58,7 +56,7 @@ public class SignCatAspect {
     Validator validator;
 
     @Autowired
-    CacheService cacheService;
+    SignCommonService signCommonService;
 
     @Autowired
     SignShaProperties signShaProperties;
@@ -69,31 +67,49 @@ public class SignCatAspect {
     @Around("pointCut(signCat)")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint, SignCat signCat) throws Throwable {
 
-        log.info("---------[SignCat doAround in ]---------");
+        log.info("<SignCat doAround in>");
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
         if(!StringUtils.hasText(request.getContentType())) {
-            throw new SignCatException("请求 ContentType 必传");
+            throw new SignCatException("ContentType 不能为空");
         }
 
-        MediaType mediaType = MediaType.parseMediaType(request.getContentType());
+        MediaType mediaType;
 
-        if(signCat.verifySign()) {
+        try {
+            mediaType = MediaType.parseMediaType(request.getContentType());
+        } catch (InvalidMediaTypeException e){
+            throw new SignCatException("ContentType = "+request.getContentType()+"，解析失败");
+        }
 
-            // 获取请求头签名元数据（appid、nonce、timestamp、sign）
-            String appId = request.getHeader(ApiSignKeyEnum.APPID_KEY.value),
-                   nonce = request.getHeader(ApiSignKeyEnum.NONCE_KEY.value),
-                   timestamp = request.getHeader(ApiSignKeyEnum.TIMESTAMP_KEY.value),
-                   sign = request.getHeader(ApiSignKeyEnum.SIGN_KEY.value);
+        if(signCat.checkSign()) {
 
-            // 验证签名元参数是否传递
+            // 获取签名元参数（appid、nonce、timestamp、sign）
+            String appId = request.getHeader(ApiSignUtils4Sha.APPID_KEY),
+                   nonce = request.getHeader(ApiSignUtils4Sha.NONCE_KEY),
+                   timestamp = request.getHeader(ApiSignUtils4Sha.TIMESTAMP_KEY),
+                   sign = request.getHeader(ApiSignUtils4Sha.SIGN_KEY),
+                   method = request.getMethod(),
+                   path = request.getServletPath();
+
+            // 验证 appId、nonce、timestamp、sign 是否传递
             if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
-                throw new SignCatException("必填签名参数（"+ApiSignKeyEnum.APPID_KEY.value+"、"+ApiSignKeyEnum.NONCE_KEY.value+"、"+ApiSignKeyEnum.TIMESTAMP_KEY.value+"、"+ApiSignKeyEnum.SIGN_KEY.value+"）");
+                throw new SignCatException("签名参数（"+ApiSignUtils4Sha.APPID_KEY+"、"+ApiSignUtils4Sha.NONCE_KEY+"、"+ApiSignUtils4Sha.TIMESTAMP_KEY+"、"+ApiSignUtils4Sha.SIGN_KEY+"）不能为空");
             }
 
-            // 附加 请求参数 到签名参数
+            // 验证 timestamp 是否在宽容时间内
+            if(!signCommonService.checkTimestampTolerant(timestamp, signShaProperties.getTolerant())) {
+                throw new SignCatException(ApiSignUtils4Sha.TIMESTAMP_KEY + "验证失败");
+            }
+
+            // 验证 sign 在一定周期内是否被使用过
+            if(!signCommonService.checkSign(sign, signShaProperties.getTolerant())) {
+                throw new SignCatException(ApiSignUtils4Sha.SIGN_KEY + " 已使用");
+            }
+
+            // 获取业务参数
             Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
                     Collectors.toMap(
                             item -> item.getKey(),
@@ -101,54 +117,41 @@ public class SignCatAspect {
                     )
             );
 
-            log.info("SignCatAspect:验签，请求参数={}",signDataMap);
+            signDataMap.put(ApiSignUtils4Sha.APPID_KEY, appId);
+            signDataMap.put(ApiSignUtils4Sha.METHOD_KEY, method);
+            signDataMap.put(ApiSignUtils4Sha.PATH_KEY, path);
+            signDataMap.put(ApiSignUtils4Sha.NONCE_KEY, nonce);
+            signDataMap.put(ApiSignUtils4Sha.TIMESTAMP_KEY, timestamp);
+
+            // application/json 方式，获取 jsonContentMd5
+            if(mediaType.includes(MediaType.APPLICATION_JSON)) {
+                String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signCat.jsonTarget());
+                signDataMap.put(ApiSignUtils4Sha.CONTENT_MD5_KEY, jsonContentMd5);
+            }
+
+            log.info("SignCatAspect:验签，签名参数={}",signDataMap);
 
             AppService appService = null;
             try {
                 appService = applicationContext.getBean(AppService.class);
             } catch (NoSuchBeanDefinitionException e) {
-                throw new SignCatException("未找到 "+ AppService.class.getName() +" 接口的实现类");
+                throw new SignCatException("未提供 "+ AppService.class.getName() +" 接口实现类");
             }
 
             String appSecret = appService.getAppSecret(appId);
 
-            log.info("SignCatAspect:验签，appSecret={}",appSecret);
-
-            Assert.isTrue(StringUtils.hasText(appSecret),"签名验证：appSecret 为空");
-
-            // json 方式提交，附加 json 请求参数
-            if(mediaType.includes(MediaType.APPLICATION_JSON)) {
-                String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signCat.jsonTarget());
-                signDataMap.put(ApiSignKeyEnum.CONTENT_MD5_KEY.value, jsonContentMd5);
+            if(!StringUtils.hasText(appSecret)) {
+                throw new SignCatException(ApiSignUtils4Sha.SECRET_KEY+"获取失败");
             }
 
-            // 附加 请求头元参数 到签名参数
-            signDataMap.put(ApiSignKeyEnum.APPID_KEY.value,appId);
-            signDataMap.put(ApiSignKeyEnum.METHOD_KEY.value,request.getMethod());
-            signDataMap.put(ApiSignKeyEnum.PATH_KEY.value,request.getServletPath());
+            Boolean isPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256, signDataMap, sign, nonce, timestamp);
 
-            // 附加 请求头参数 到签名参数
-            signDataMap.put(ApiSignKeyEnum.NONCE_KEY.value,nonce);
-            signDataMap.put(ApiSignKeyEnum.TIMESTAMP_KEY.value,timestamp);
-
-            log.info("SignCatAspect:验签，签名体={}",signDataMap);
-
-            // 验证时间戳是否合法（在宽容时间内）
-            Assert.isTrue(SignUtils.verifyTimestamp(timestamp,signShaProperties.getTolerant()), "验证签名："+ApiSignKeyEnum.TIMESTAMP_KEY+"不合法");
-
-            // 验证签名值是否合法（在一定周期内是否已使用过）
-            Assert.isTrue(cacheService.cacheSign(sign,signShaProperties.getTolerant()),"签名验证：sign 已使用过");
-
-            Boolean itsPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256, signDataMap, sign, nonce, timestamp);
-
-            log.info("SignCatAspect:验签，itsPassed={}",itsPassed);
-
-            if(!itsPassed) {
-                throw new SignCatException("签名值sign不合法");
+            if(!isPassed) {
+                throw new SignCatException(ApiSignUtils4Sha.SIGN_KEY + " 验证失败");
             }
         }
 
-        log.info("---------[SignCat doAround out]---------");
+        log.info("<SignCat doAround out>");
 
         return proceedingJoinPoint.proceed();
     }
@@ -160,11 +163,11 @@ public class SignCatAspect {
      */
     private String checkJson(HttpServletRequest request, Object[] args, Class jsonTarget) {
 
-        String contentMd5 = request.getHeader(ApiSignKeyEnum.CONTENT_MD5_KEY.value);
+        String contentMd5 = request.getHeader(ApiSignUtils4Sha.CONTENT_MD5_KEY);
 
         // 验证提交Json内容时，是否传递 contentMd5
         if (!StringUtils.hasText(contentMd5)) {
-            throw new SignCatException("签名参数不完整（json类型参数，需提交 " + ApiSignKeyEnum.CONTENT_MD5_KEY.value + " 参数）");
+            throw new SignCatException("签名参数不完整（json类型参数，需提交 " + ApiSignUtils4Sha.CONTENT_MD5_KEY + " 参数）");
         }
 
         // 获取json原文
@@ -179,7 +182,7 @@ public class SignCatAspect {
 
             log.info("SignCatAspect:验签，json原文Md5={}", realContentMd5);
 
-            throw new SignCatException(ApiSignKeyEnum.CONTENT_MD5_KEY.value + "和提交内容的md5值不一致");
+            throw new SignCatException(ApiSignUtils4Sha.CONTENT_MD5_KEY + "和提交内容的md5值不一致");
         }
 
         for (int i=0;i<args.length;i++) {

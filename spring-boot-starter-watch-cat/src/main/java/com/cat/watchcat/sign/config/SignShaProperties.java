@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 /**
  * 接口签名验证参数配置（适用于散列算法）
  * @author hudongshan
@@ -19,8 +21,8 @@ public class SignShaProperties {
     private String algorithm;
 
     /**
-     * 前后宽容时间(s)
+     * 前后宽容时间
      */
-    private Long tolerant = 0L;
+    private Duration tolerant;
 
 }

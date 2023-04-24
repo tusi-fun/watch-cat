@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.cat</groupId>
   <artifactId>watch-cat</artifactId>
-  <version>1.2.3-sb2</version>
+  <version>1.2.4-sb2</version>
   <packaging>pom</packaging>
   <name>watch-cat</name>
   <description>watch-cat</description>
@@ -22,7 +22,6 @@
   </licenses>
   <modules>
     <module>spring-boot-starter-watch-cat</module>
-    <module>spring-boot-starter-watch-cat-example</module>
     <module>watch-cat-common</module>
   </modules>
   <distributionManagement>
@@ -33,8 +32,8 @@
     </repository>
   </distributionManagement>
   <properties>
-    <hutool.version>5.8.15</hutool.version>
-    <revision>1.2.3-sb2</revision>
+    <hutool.version>5.8.18</hutool.version>
+    <revision>1.2.4-sb2</revision>
     <java.version>1.8</java.version>
   </properties>
   <dependencyManagement>
@@ -42,12 +41,12 @@
       <dependency>
         <groupId>com.cat</groupId>
         <artifactId>spring-boot-starter-watch-cat</artifactId>
-        <version>1.2.3-sb2</version>
+        <version>1.2.4-sb2</version>
       </dependency>
       <dependency>
         <groupId>com.cat</groupId>
         <artifactId>watch-cat-common</artifactId>
-        <version>1.2.3-sb2</version>
+        <version>1.2.4-sb2</version>
       </dependency>
       <dependency>
         <groupId>cn.hutool</groupId>

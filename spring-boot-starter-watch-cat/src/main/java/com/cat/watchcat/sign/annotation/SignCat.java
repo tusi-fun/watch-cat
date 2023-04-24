@@ -16,7 +16,7 @@ public @interface SignCat {
 	 * 是否启用签名验证
 	 * @return
 	 */
-	boolean verifySign() default true;
+	boolean checkSign() default true;
 
 	/**
 	 * json 请求接收对象

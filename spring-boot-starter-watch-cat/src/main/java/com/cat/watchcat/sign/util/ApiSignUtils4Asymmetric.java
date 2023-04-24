@@ -1,4 +1,4 @@
-package com.cat.util;
+package com.cat.watchcat.sign.util;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.HexUtil;
@@ -6,7 +6,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
-import com.cat.enumerate.ApiSignKeyEnum;
+import com.cat.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -22,11 +22,13 @@ import java.util.*;
 @Slf4j
 public class ApiSignUtils4Asymmetric {
 
-    private static final String PATH_KEY = ApiSignKeyEnum.PATH_KEY.value;
-    private static final String METHOD_KEY = ApiSignKeyEnum.METHOD_KEY.value;
-    private static final String NONCE_KEY = ApiSignKeyEnum.NONCE_KEY.value;
-    private static final String TIMESTAMP_KEY = ApiSignKeyEnum.TIMESTAMP_KEY.value;
-    private static final String SIGN_KEY = ApiSignKeyEnum.SIGN_KEY.value;
+    public static final String
+            PATH_KEY = "path",
+            CONTENT_MD5_KEY = "content-md5",
+            METHOD_KEY = "method",
+            TIMESTAMP_KEY = "timestamp",
+            NONCE_KEY = "nonce",
+            SIGN_KEY = "sign";
 
     /**
      * 对请求内容签名
@@ -79,8 +81,8 @@ public class ApiSignUtils4Asymmetric {
 //        Assert.notNull(symmetricSignProvider,"验证签名: 签名提供者（"+pulicKeyProvider+"）不存在");
 //        Assert.hasLength(symmetricSignProvider.getAlgorithm(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数Algorithm未配置");
 //        Assert.hasLength(symmetricSignProvider.getPublicKey(),"验证签名: 签名提供者（"+pulicKeyProvider+"）参数PublicKey未配置");
-        Assert.isTrue(StringUtils.hasText(sign),"验证签名: "+ApiSignKeyEnum.SIGN_KEY+"不合法");
-        Assert.isTrue(StringUtils.hasText(nonce),"验证签名: "+ApiSignKeyEnum.NONCE_KEY+"不合法");
+        Assert.isTrue(StringUtils.hasText(sign),"验证签名: "+SIGN_KEY+"不合法");
+        Assert.isTrue(StringUtils.hasText(nonce),"验证签名: "+NONCE_KEY+"不合法");
 
 //        Assert.isTrue(SignUtils.verifyTimestamp(timestamp,symmetricSignProvider.getTolerant()), "验证签名: "+ApiSignKeyEnum.TIMESTAMP_KEY+"不合法");
 //        // 验证签名值是否被使用过，存在则抛异常
