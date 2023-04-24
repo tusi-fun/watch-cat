@@ -15,4 +15,27 @@ public class SignSymmetricProperties {
 
     private Map<String,SymmetricSignProvider> symmetric;
 
+    @Data
+    public static class SymmetricSignProvider {
+        /**
+         * 签名算法
+         */
+        private String algorithm;
+
+        /**
+         * 前后宽容时间(s)
+         */
+        private Long tolerant;
+
+        /**
+         * 公钥
+         */
+        private String publicKey;
+
+        /**
+         * 私钥
+         */
+        private String privateKey;
+    }
+
 }

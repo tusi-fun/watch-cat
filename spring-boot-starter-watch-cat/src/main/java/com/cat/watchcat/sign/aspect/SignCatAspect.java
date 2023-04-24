@@ -114,6 +114,8 @@ public class SignCatAspect {
 
             log.info("SignCatAspect:验签，appSecret={}",appSecret);
 
+            Assert.isTrue(StringUtils.hasText(appSecret),"签名验证：appSecret 为空");
+
             // json 方式提交，附加 json 请求参数
             if(mediaType.includes(MediaType.APPLICATION_JSON)) {
                 String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signCat.jsonTarget());
@@ -137,7 +139,7 @@ public class SignCatAspect {
             // 验证签名值是否合法（在一定周期内是否已使用过）
             Assert.isTrue(cacheService.cacheSign(sign,signShaProperties.getTolerant()),"签名验证：sign 已使用过");
 
-            Boolean itsPassed = ApiSignUtils4Sha.verify(appSecret,HmacAlgorithm.HmacSHA256,signDataMap,sign,nonce,timestamp);
+            Boolean itsPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256, signDataMap, sign, nonce, timestamp);
 
             log.info("SignCatAspect:验签，itsPassed={}",itsPassed);
 

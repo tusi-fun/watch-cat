@@ -18,7 +18,6 @@ import java.util.*;
 public class ApiSignUtils4Sha {
 
     private static final String APPID_KEY = ApiSignKeyEnum.APPID_KEY.value;
-
     private static final String PATH_KEY = ApiSignKeyEnum.PATH_KEY.value;
     private static final String METHOD_KEY = ApiSignKeyEnum.METHOD_KEY.value;
     private static final String NONCE_KEY = ApiSignKeyEnum.NONCE_KEY.value;
@@ -107,7 +106,7 @@ public class ApiSignUtils4Sha {
 
         Assert.notNull(algorithm,"计算签名：未找到签名算法为"+algorithm+"的配置");
 
-        HMac mac = new HMac(algorithm,secret.getBytes());
+        HMac mac = new HMac(algorithm, secret.getBytes());
 
         return mac.digestHex(buildSignBody(signBody));
     }
