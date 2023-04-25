@@ -101,7 +101,7 @@ public class SignCatAspect {
 
             // 验证 timestamp 是否在宽容时间内
             if(!signCommonService.checkTimestampTolerant(timestamp, signShaProperties.getTolerant())) {
-                throw new SignCatException(ApiSignUtils4Sha.TIMESTAMP_KEY + "验证失败");
+                throw new SignCatException(ApiSignUtils4Sha.TIMESTAMP_KEY + " 验证失败");
             }
 
             // 验证 sign 在一定周期内是否被使用过
@@ -141,7 +141,7 @@ public class SignCatAspect {
             String appSecret = appService.getAppSecret(appId);
 
             if(!StringUtils.hasText(appSecret)) {
-                throw new SignCatException(ApiSignUtils4Sha.SECRET_KEY+"获取失败");
+                throw new SignCatException(ApiSignUtils4Sha.SECRET_KEY+" 获取失败");
             }
 
             Boolean isPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256, signDataMap, sign, nonce, timestamp);
@@ -182,7 +182,7 @@ public class SignCatAspect {
 
             log.info("SignCatAspect:验签，json原文Md5={}", realContentMd5);
 
-            throw new SignCatException(ApiSignUtils4Sha.CONTENT_MD5_KEY + "和提交内容的md5值不一致");
+            throw new SignCatException(ApiSignUtils4Sha.CONTENT_MD5_KEY + " 和提交内容的md5值不一致");
         }
 
         for (int i=0;i<args.length;i++) {
