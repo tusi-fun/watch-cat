@@ -1,6 +1,7 @@
 package com.cat.watchcat.sensitive.config;
 
 import com.cat.watchcat.sensitive.aspect.SensitiveAspect;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 public class SensitiveCatConfiguration {
 
     @ConditionalOnWebApplication
+    @ConditionalOnProperty(prefix = "watchcat.sensitive", name = "enabled", havingValue = "true")
     @Bean
     public SensitiveAspect sensitiveAspect(){
         return new SensitiveAspect();

@@ -2,6 +2,7 @@ package com.cat.watchcat.secret.config;
 
 import com.cat.watchcat.secret.aspect.SecretCatAspect;
 import com.cat.watchcat.secret.service.DataEncryptService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,12 +25,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class SecretCatConfiguration {
 
     @ConditionalOnWebApplication
+    @ConditionalOnProperty(prefix = "watchcat.secret", name = "enabled", havingValue = "true")
     @Bean
     public SecretCatAspect secretCatAspect(){
         return new SecretCatAspect();
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "watchcat.secret", name = "enabled", havingValue = "true")
     public DataEncryptService dataEncryptService(RedisTemplate wcRedisTemplate, SecretCatProperties secretCatProperties) {
         return new DataEncryptService(wcRedisTemplate, secretCatProperties);
     }

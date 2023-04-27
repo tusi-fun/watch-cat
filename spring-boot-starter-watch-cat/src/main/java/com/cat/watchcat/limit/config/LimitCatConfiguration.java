@@ -3,6 +3,7 @@ package com.cat.watchcat.limit.config;
 import com.cat.watchcat.limit.aspect.LimitCatsAspect;
 import com.cat.watchcat.limit.service.LimitCatService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,11 +26,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class LimitCatConfiguration {
 
     @Bean
+    @ConditionalOnProperty(prefix = "watchcat.limit", name = "enabled", havingValue = "true")
     public LimitCatsAspect limitCatsAspect() {
         return new LimitCatsAspect();
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "watchcat.limit", name = "enabled", havingValue = "true")
     public LimitCatService limitCatService(RedisTemplate wcRedisTemplate, LimitCatProperties limitCatProperties){
         return new LimitCatService(wcRedisTemplate, limitCatProperties);
     }

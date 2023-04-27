@@ -2,6 +2,7 @@ package com.cat.watchcat.sign.config;
 
 import com.cat.watchcat.sign.aspect.SignCatAspect;
 import com.cat.watchcat.sign.service.SignCommonService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,12 +26,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class SignCatConfiguration {
 
     @ConditionalOnWebApplication
+    @ConditionalOnProperty(prefix = "watchcat.sign", name = "enabled", havingValue = "true")
     @Bean
     public SignCatAspect signCatAspect() {
         return new SignCatAspect();
     }
 
     @ConditionalOnWebApplication
+    @ConditionalOnProperty(prefix = "watchcat.sign", name = "enabled", havingValue = "true")
     @Bean
     public SignCommonService cacheService(RedisTemplate wcRedisTemplate) {
         return new SignCommonService(wcRedisTemplate);
