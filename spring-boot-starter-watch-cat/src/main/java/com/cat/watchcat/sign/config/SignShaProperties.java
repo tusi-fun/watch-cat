@@ -2,7 +2,6 @@ package com.cat.watchcat.sign.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
@@ -11,9 +10,10 @@ import java.time.Duration;
  * @author hudongshan
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "watchcat.sign.sha")
 public class SignShaProperties {
+
+    private boolean enabled = false;
 
     /**
      * 签名算法

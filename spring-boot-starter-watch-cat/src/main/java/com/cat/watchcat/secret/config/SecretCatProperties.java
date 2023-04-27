@@ -12,6 +12,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "watchcat.secret")
 public class SecretCatProperties {
 
+    private boolean enabled = false;
+
     private String privateKey;
     private String publicKey;
 

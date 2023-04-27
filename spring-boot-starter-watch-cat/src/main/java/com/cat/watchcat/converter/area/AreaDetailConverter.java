@@ -8,7 +8,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -19,7 +18,6 @@ import java.util.Map;
  * @version 20211211
  */
 @Slf4j
-@Component
 public class AreaDetailConverter implements Converter<String, AreaDetail> {
 
     @Autowired

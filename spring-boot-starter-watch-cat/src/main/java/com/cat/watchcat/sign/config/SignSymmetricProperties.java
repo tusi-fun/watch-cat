@@ -13,6 +13,8 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "watchcat.sign")
 public class SignSymmetricProperties {
 
+    private boolean enabled = false;
+
     private Map<String,SymmetricSignProvider> symmetric;
 
     @Data

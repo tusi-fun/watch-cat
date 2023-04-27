@@ -1,3 +1,8 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.cat.watchcat.WatchCatConfiguration,\
+  com.cat.watchcat.log.config.LogCatConfiguration,\
+  com.cat.watchcat.limit.config.LimitCatConfiguration,\
+  com.cat.watchcat.secret.config.SecretCatConfiguration,\
+  com.cat.watchcat.sensitive.config.SensitiveCatConfiguration,\
+  com.cat.watchcat.sign.config.SignCatConfiguration,\
   com.cat.watchcat.converter.LocalDateTimeSerializerConfig

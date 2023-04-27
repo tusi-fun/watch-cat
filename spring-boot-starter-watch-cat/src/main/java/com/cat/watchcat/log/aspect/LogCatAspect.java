@@ -12,7 +12,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
@@ -20,14 +19,12 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.SimpleEvaluationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -38,8 +35,6 @@ import java.util.*;
 @Slf4j
 @Order(-100)
 @Aspect
-//@ConditionalOnProperty(prefix = "watchcat.log", name = "enabled", havingValue = "true")
-//@Component
 public class LogCatAspect {
 
     private final ThreadLocal<Long> startTime = new ThreadLocal<>();
@@ -93,7 +88,7 @@ public class LogCatAspect {
      * @param e
      */
     @AfterThrowing(pointcut = "pointCut(logCat)", throwing = "e")
-    public void doAfterThrow(JoinPoint joinPoint, LogCat logCat, RuntimeException e) throws IOException {
+    public void doAfterThrow(JoinPoint joinPoint, LogCat logCat, RuntimeException e) {
 
         buildLog(joinPoint, logCat,true, e);
 
@@ -103,7 +98,7 @@ public class LogCatAspect {
     /**
      * 构建日志
      */
-    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data) throws IOException {
+    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data) {
 
         Long endTime = System.currentTimeMillis();
 

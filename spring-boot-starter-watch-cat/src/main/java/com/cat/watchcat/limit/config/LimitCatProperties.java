@@ -15,6 +15,8 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "watchcat.limit")
 public class LimitCatProperties {
 
+    private boolean enabled = false;
+
     private Map<String,Map<Duration,Long>> scenes;
 
 }
