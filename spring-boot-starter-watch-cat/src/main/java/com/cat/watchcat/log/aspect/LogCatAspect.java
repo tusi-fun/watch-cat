@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
@@ -37,7 +38,8 @@ import java.util.*;
 @Slf4j
 @Order(-100)
 @Aspect
-@Component
+//@ConditionalOnProperty(prefix = "watchcat.log", name = "enabled", havingValue = "true")
+//@Component
 public class LogCatAspect {
 
     private final ThreadLocal<Long> startTime = new ThreadLocal<>();

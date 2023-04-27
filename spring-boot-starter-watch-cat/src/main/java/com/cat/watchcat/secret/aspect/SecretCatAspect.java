@@ -43,7 +43,7 @@ import java.util.Set;
 @Slf4j
 @Aspect
 @Order(-98)
-@Component
+//@Component
 public class SecretCatAspect {
 
     @Autowired

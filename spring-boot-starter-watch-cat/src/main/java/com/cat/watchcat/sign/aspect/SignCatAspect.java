@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Order(-100)
-@Component
+//@Component
 public class SignCatAspect {
 
     @Autowired
@@ -80,7 +80,7 @@ public class SignCatAspect {
 
         try {
             mediaType = MediaType.parseMediaType(request.getContentType());
-        } catch (InvalidMediaTypeException e){
+        } catch (InvalidMediaTypeException e) {
             throw new SignCatException("ContentType = "+request.getContentType()+"，解析失败");
         }
 

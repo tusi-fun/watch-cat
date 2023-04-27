@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
  */
 @Slf4j
 @Aspect
-@Component
+//@Component
 public class SensitiveAspect {
 
     @Pointcut("@annotation(sensitiveCat)")

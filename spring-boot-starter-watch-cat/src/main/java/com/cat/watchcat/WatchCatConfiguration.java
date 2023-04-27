@@ -5,6 +5,7 @@ import com.cat.watchcat.limit.aspect.LimitCatsAspect;
 import com.cat.watchcat.limit.config.LimitCatProperties;
 import com.cat.watchcat.limit.service.LimitCatService;
 import com.cat.watchcat.log.aspect.LogCatAspect;
+import com.cat.watchcat.log.config.LogCatProperties;
 import com.cat.watchcat.secret.aspect.SecretCatAspect;
 import com.cat.watchcat.secret.config.SecretCatProperties;
 import com.cat.watchcat.secret.service.DataEncryptService;
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * 它会保证你的bean只有一个，即你的实例只有一个，当你注册多个相同的bean时，会出现异常
  */
 @Configuration
-@EnableConfigurationProperties({LimitCatProperties.class, SecretCatProperties.class, SignShaProperties.class, SignSymmetricProperties.class})
+@EnableConfigurationProperties({LogCatProperties.class ,LimitCatProperties.class, SecretCatProperties.class, SignShaProperties.class, SignSymmetricProperties.class})
 public class WatchCatConfiguration{
 
     /**
@@ -72,57 +73,54 @@ public class WatchCatConfiguration{
         return wcRedisTemplate;
     }
 
-    @ConditionalOnMissingBean
     @Bean
     public LimitCatsAspect limitCatsAspect() {
         return new LimitCatsAspect();
     }
 
-    @ConditionalOnMissingBean
     @Bean
-    public LimitCatService limitCatService(RedisTemplate wcRedisTemplate,LimitCatProperties limitCatProperties){
+    public LimitCatService limitCatService(RedisTemplate wcRedisTemplate, LimitCatProperties limitCatProperties){
         return new LimitCatService(wcRedisTemplate, limitCatProperties);
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnWebApplication
     @Bean
     public LogCatAspect logCatAspect(){
         return new LogCatAspect();
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnWebApplication
     @Bean
     public SensitiveAspect sensitiveAspect(){
         return new SensitiveAspect();
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnWebApplication
     @Bean
     public SecretCatAspect secretCatAspect(){
         return new SecretCatAspect();
     }
 
-    @ConditionalOnMissingBean
     @Bean
-    public DataEncryptService dataEncryptService(RedisTemplate wcRedisTemplate,SecretCatProperties secretCatProperties){
-        return new DataEncryptService(wcRedisTemplate,secretCatProperties);
+    public DataEncryptService dataEncryptService(RedisTemplate wcRedisTemplate, SecretCatProperties secretCatProperties){
+        return new DataEncryptService(wcRedisTemplate, secretCatProperties);
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnWebApplication
     @Bean
     public AreaDetailConverter areaDetailConverter(){
         return new AreaDetailConverter();
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnWebApplication
     @Bean
     public SignCatAspect signCatAspect(){
         return new SignCatAspect();
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnWebApplication
     @Bean
-    public SignCommonService cacheService(RedisTemplate wcRedisTemplate){
+    public SignCommonService cacheService(RedisTemplate wcRedisTemplate) {
         return new SignCommonService(wcRedisTemplate);
     }
 
