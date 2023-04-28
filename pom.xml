@@ -20,6 +20,7 @@
     <modules>
         <module>spring-boot-starter-watch-cat</module>
         <module>watch-cat-common</module>
+        <module>watch-cat-spring-boot-starter</module>
     </modules>
 
     <properties>
