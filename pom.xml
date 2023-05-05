@@ -25,7 +25,7 @@
     <properties>
         <java.version>1.8</java.version>
         <hutool.version>5.8.18</hutool.version>
-        <watch-cat-starter.version>1.0.0-sb2</watch-cat-starter.version>
+        <watch-cat-starter.version>1.0.1-sb2</watch-cat-starter.version>
         <watch-cat-common.version>1.0.0-sb2</watch-cat-common.version>
     </properties>
 

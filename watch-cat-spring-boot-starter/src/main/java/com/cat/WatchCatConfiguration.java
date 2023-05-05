@@ -1,5 +1,9 @@
 package com.cat;
 
+import com.cat.converter.String2LocalDateConverter;
+import com.cat.converter.String2LocalDateTimeConverter;
+import com.cat.converter.String2LocalTimeConverter;
+import com.cat.converter.StringTrimConverter;
 import com.cat.converter.area.AreaDetailConverter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -30,7 +34,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 //        SignShaProperties.class,
 //        SignSymmetricProperties.class
 //})
-public class WatchCatConfiguration {
+public class WatchCatConfiguration{
 
     /**
      * WatchCat RedisTemplate 配置
@@ -62,10 +66,54 @@ public class WatchCatConfiguration {
         return wcRedisTemplate;
     }
 
+    /**
+     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * @return
+     */
     @ConditionalOnWebApplication
     @Bean
     public AreaDetailConverter areaDetailConverter(){
         return new AreaDetailConverter();
+    }
+
+    /**
+     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * @return
+     */
+    @ConditionalOnWebApplication
+    @Bean
+    public StringTrimConverter stringTrimConverter(){
+        return new StringTrimConverter();
+    }
+
+    /**
+     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * @return
+     */
+    @ConditionalOnWebApplication
+    @Bean
+    public String2LocalDateConverter string2LocalDateConverter(){
+        return new String2LocalDateConverter();
+    }
+
+    /**
+     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * @return
+     */
+    @ConditionalOnWebApplication
+    @Bean
+    public String2LocalDateTimeConverter string2LocalDateTimeConverter(){
+        return new String2LocalDateTimeConverter();
+    }
+
+    /**
+     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * @return
+     */
+    @ConditionalOnWebApplication
+    @Bean
+    public String2LocalTimeConverter string2LocalTimeConverter(){
+        return new String2LocalTimeConverter();
     }
 
 }

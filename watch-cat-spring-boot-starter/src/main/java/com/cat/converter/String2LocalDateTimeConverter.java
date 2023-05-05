@@ -2,7 +2,6 @@ package com.cat.converter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
@@ -15,7 +14,6 @@ import java.time.ZoneOffset;
  * @version 20211211
  */
 @Slf4j
-@Component
 public class String2LocalDateTimeConverter implements Converter<String, LocalDateTime> {
 
     @Override
