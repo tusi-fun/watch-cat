@@ -2,7 +2,7 @@ package com.cat.log.aspect;
 
 import com.cat.common.RequestInfo;
 import com.cat.log.annotation.LogCat;
-import com.cat.log.event.LogCatEvent;
+import com.cat.log.event.LogCatService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
@@ -67,7 +68,7 @@ public class LogCatAspect {
 
         log.info("<LogCat doAround in>");
 
-        // 20230309 System.currentTimeMillis() 方法的性能比 LocalDateTime.now() 方法要快大约 50 倍。但需要注意的是，这个结果并不是绝对的，具体的性能差距会因环境和实现而异
+        // 20230309 System.currentTimeMillis() 方法的性能比 LocalDateTime.now() 方法要快大约 50 倍。但这个结果并不是绝对的，具体的性能差距会因环境和实现而异
         startTime.set(System.currentTimeMillis());
 
         requestId.set(UUID.randomUUID().toString().replaceAll("-",""));
@@ -139,9 +140,21 @@ public class LogCatAspect {
                     requestId.get()));
         }
 
-        if(logCat.enableEvent()) {
-            // 产生记录日志事件
-            applicationContext.publishEvent(new LogCatEvent(this,requestInfo));
+        if(logCat.callback()) {
+
+            LogCatService logCatService;
+
+            try {
+
+                logCatService = applicationContext.getBean(LogCatService.class);
+                logCatService.callback(requestInfo);
+
+            } catch (NoSuchBeanDefinitionException e) {
+                log.error("未找到 {} 接口的实现类", LogCatService.class.getName());
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+
         }
     }
 
@@ -245,7 +258,7 @@ public class LogCatAspect {
         EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
 
         // 把方法参数放入SPEL上下文中
-        for(int i=0;i<paraNameArr.length;i++) {
+        for(int i=0; i<paraNameArr.length; i++) {
             context.setVariable(paraNameArr[i], args[i]);
         }
 

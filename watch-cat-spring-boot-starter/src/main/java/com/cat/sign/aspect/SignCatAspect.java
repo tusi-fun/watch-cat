@@ -4,7 +4,7 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.cat.sign.annotation.SignCat;
-import com.cat.sign.config.SignShaProperties;
+import com.cat.sign.config.SignProperties;
 import com.cat.sign.service.AppService;
 import com.cat.sign.service.SignCatException;
 import com.cat.sign.service.SignCommonService;
@@ -58,7 +58,7 @@ public class SignCatAspect {
     SignCommonService signCommonService;
 
     @Autowired
-    SignShaProperties signShaProperties;
+    SignProperties signProperties;
 
     @Pointcut("@annotation(signCat)")
     public void pointCut(SignCat signCat) {}
@@ -99,12 +99,12 @@ public class SignCatAspect {
             }
 
             // 验证 timestamp 是否在宽容时间内
-            if(!signCommonService.checkTimestampTolerant(timestamp, signShaProperties.getTolerant())) {
+            if(!signCommonService.checkTimestampTolerant(timestamp, signProperties.getSha().getTolerant())) {
                 throw new SignCatException(ApiSignUtils4Sha.TIMESTAMP_KEY + " 验证失败");
             }
 
             // 验证 sign 在一定周期内是否被使用过
-            if(!signCommonService.checkSign(sign, signShaProperties.getTolerant())) {
+            if(!signCommonService.checkSign(sign, signProperties.getSha().getTolerant())) {
                 throw new SignCatException(ApiSignUtils4Sha.SIGN_KEY + " 已使用");
             }
 

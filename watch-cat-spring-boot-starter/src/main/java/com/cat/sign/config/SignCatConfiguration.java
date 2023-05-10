@@ -20,8 +20,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration
 @EnableConfigurationProperties({
-        SignShaProperties.class,
-        SignSymmetricProperties.class
+        SignProperties.class
 })
 public class SignCatConfiguration {
 

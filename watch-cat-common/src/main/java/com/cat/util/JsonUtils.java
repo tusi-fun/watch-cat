@@ -103,7 +103,7 @@ public class JsonUtils {
      * @param obj
      * @return
      */
-    public static String toJsonPretty(Object obj) {
+    public static String toPrettyJson(Object obj) {
         if (obj == null) {
             return null;
         } else {

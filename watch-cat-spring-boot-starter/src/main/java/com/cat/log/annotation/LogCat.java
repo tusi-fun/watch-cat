@@ -30,10 +30,10 @@ public @interface LogCat {
     String action() default "default";
 
     /**
-     * 是否启用日志事件通知（用于持久化日志等）
+     * 是否启用日志通知（用于持久化日志等）
      * @return
      */
-    boolean enableEvent() default true;
+    boolean callback() default false;
 
     /**
      * 是否启用日志打印

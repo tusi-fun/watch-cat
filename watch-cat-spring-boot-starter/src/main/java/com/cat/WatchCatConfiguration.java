@@ -30,10 +30,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * 它会保证你的bean只有一个，即你的实例只有一个，当你注册多个相同的bean时，会出现异常
  */
 @Configuration
-//@EnableConfigurationProperties({
-//        SignShaProperties.class,
-//        SignSymmetricProperties.class
-//})
 public class WatchCatConfiguration{
 
     /**
@@ -67,7 +63,7 @@ public class WatchCatConfiguration{
     }
 
     /**
-     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * Tips：使用 @Component 方式注册，可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
      * @return
      */
     @ConditionalOnWebApplication
@@ -77,7 +73,7 @@ public class WatchCatConfiguration{
     }
 
     /**
-     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * Tips：使用 @Component 方式注册，可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
      * @return
      */
     @ConditionalOnWebApplication
@@ -87,7 +83,7 @@ public class WatchCatConfiguration{
     }
 
     /**
-     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * Tips：使用 @Component 方式注册，可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
      * @return
      */
     @ConditionalOnWebApplication
@@ -97,7 +93,7 @@ public class WatchCatConfiguration{
     }
 
     /**
-     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * Tips：使用 @Component 方式注册，可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
      * @return
      */
     @ConditionalOnWebApplication
@@ -107,7 +103,7 @@ public class WatchCatConfiguration{
     }
 
     /**
-     * Tips：使用 @Bean 方式注册，@Component 可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
+     * Tips：使用 @Component 方式注册，可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
      * @return
      */
     @ConditionalOnWebApplication
