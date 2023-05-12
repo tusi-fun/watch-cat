@@ -18,9 +18,6 @@ public class String2LocalTimeConverter implements Converter<String, LocalTime>{
 
     @Override
     public LocalTime convert(String timestampStr) {
-
-        log.info("String2LocalTimeConverter->{}",timestampStr);
-
         // 秒级时间戳 转 LocalTime
         return StringUtils.hasText(timestampStr)?Instant.ofEpochSecond(Long.parseLong(timestampStr)).atZone(ZoneOffset.of("+8")).toLocalTime():null;
 

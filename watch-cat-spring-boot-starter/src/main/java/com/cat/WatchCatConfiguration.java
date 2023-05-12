@@ -30,7 +30,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * 它会保证你的bean只有一个，即你的实例只有一个，当你注册多个相同的bean时，会出现异常
  */
 @Configuration
-public class WatchCatConfiguration{
+public class WatchCatConfiguration {
 
     /**
      * WatchCat RedisTemplate 配置
