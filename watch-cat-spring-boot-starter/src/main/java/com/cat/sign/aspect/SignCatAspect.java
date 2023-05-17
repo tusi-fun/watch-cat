@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Order(-100)
-//@Component
 public class SignCatAspect {
 
     @Autowired
