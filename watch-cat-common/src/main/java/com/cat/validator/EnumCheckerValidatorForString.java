@@ -1,6 +1,7 @@
 package com.cat.validator;
 
 import cn.hutool.core.util.EnumUtil;
+import com.cat.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -22,7 +23,7 @@ public class EnumCheckerValidatorForString implements ConstraintValidator<EnumCh
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
 
-        if(value==null) {
+        if(!StringUtils.hasText(value)) {
 
             return true;
         }
