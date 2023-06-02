@@ -17,19 +17,26 @@
     </parent>
 
     <modules>
+        <module>log-cat-spring-boot-starter</module>
         <module>watch-cat-common</module>
         <module>watch-cat-spring-boot-starter</module>
+        <module>watch-cat-vaildator</module>
     </modules>
 
     <properties>
         <java.version>1.8</java.version>
-        <hutool.version>5.8.18</hutool.version>
-        <watch-cat-starter.version>1.0.1-sb2</watch-cat-starter.version>
-        <watch-cat-common.version>1.0.1-sb2</watch-cat-common.version>
+        <hutool.version>5.8.19</hutool.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+                <scope>provided</scope>
+            </dependency>
 
             <dependency>
                 <groupId>cn.hutool</groupId>
