@@ -54,6 +54,11 @@ public class LimitCatConfiguration {
         return new LimitCatService(wcRedisTemplate, limitCatProperties);
     }
 
+    /**
+     * @ConditionalOnMissingBean 和 @ConditionalOnProperty 同时使用，为 AND 关系
+     * @param factory
+     * @return
+     */
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "watchcat.limit", name = "enabled", havingValue = "true")
