@@ -17,6 +17,7 @@
     </parent>
 
     <modules>
+        <module>limit-cat-spring-boot-starter</module>
         <module>log-cat-spring-boot-starter</module>
         <module>watch-cat-common</module>
         <module>watch-cat-spring-boot-starter</module>
