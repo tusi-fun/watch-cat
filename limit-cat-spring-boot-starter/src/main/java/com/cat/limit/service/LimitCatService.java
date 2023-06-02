@@ -1,11 +1,11 @@
 package com.cat.limit.service;
 
-import cn.hutool.crypto.SecureUtil;
 import com.cat.limit.annotation.LimitCat;
 import com.cat.limit.annotation.LimitCatRule;
 import com.cat.limit.config.LimitCatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
@@ -125,7 +125,9 @@ public class LimitCatService {
      */
     private void checkCache(String scene, String key, Duration duration, Long frequency, String msg) {
 
-        String frequencyKey = String.format(FREQUENCY_KEY, scene, SecureUtil.md5(key), duration.toString());
+        ;
+
+        String frequencyKey = String.format(FREQUENCY_KEY, scene, DigestUtils.md5DigestAsHex(key.getBytes()), duration.toString());
 
         Object object = wcRedisTemplate.opsForValue().get(frequencyKey);
 
@@ -144,7 +146,7 @@ public class LimitCatService {
      */
     private void updateCache(String scene, String key, Duration duration) {
 
-        String frequencyKey = String.format(FREQUENCY_KEY,scene,SecureUtil.md5(key),duration.toString());
+        String frequencyKey = String.format(FREQUENCY_KEY,scene, DigestUtils.md5DigestAsHex(key.getBytes()),duration.toString());
 
         Long currentValue = wcRedisTemplate.opsForValue().increment(frequencyKey,1);
 
