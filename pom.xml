@@ -19,8 +19,11 @@
     <modules>
         <module>limit-cat-spring-boot-starter</module>
         <module>log-cat-spring-boot-starter</module>
-        <module>watch-cat-common</module>
-        <module>watch-cat-spring-boot-starter</module>
+        <module>secret-cat-spring-boot-starter</module>
+        <module>sensitive-cat-spring-boot-starter</module>
+        <module>signature-cat-spring-boot-starter</module>
+        <module>watch-cat-converter</module>
+        <module>watch-cat-utils</module>
         <module>watch-cat-vaildator</module>
     </modules>
 

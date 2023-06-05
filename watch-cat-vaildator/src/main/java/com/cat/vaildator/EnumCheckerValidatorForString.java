@@ -1,6 +1,6 @@
 package com.cat.vaildator;
 
-import cn.hutool.core.util.EnumUtil;
+import com.cat.tool.EnumUtils;
 import com.cat.tool.StringUtils;
 
 import javax.validation.ConstraintValidator;
@@ -24,10 +24,9 @@ public class EnumCheckerValidatorForString implements ConstraintValidator<EnumCh
     public boolean isValid(String value, ConstraintValidatorContext context) {
 
         if(!StringUtils.hasText(value)) {
-
             return true;
         }
 
-        return EnumUtil.contains(enumClass, value);
+        return EnumUtils.anyMatch(enumClass, value);
     }
 }

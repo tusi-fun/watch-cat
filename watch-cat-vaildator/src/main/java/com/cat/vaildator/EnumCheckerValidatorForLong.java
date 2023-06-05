@@ -1,11 +1,10 @@
 package com.cat.vaildator;
 
-import cn.hutool.core.util.EnumUtil;
+import com.cat.tool.EnumUtils;
 import com.cat.tool.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.List;
 
 /**
  * 自定义参数校验器（验证业务状态、取值范围等）
@@ -29,13 +28,8 @@ public class EnumCheckerValidatorForLong implements ConstraintValidator<EnumChec
         if(value==null || !StringUtils.hasText(enumField)) {
             return true;
         }
-        List<Object> fieldValues = EnumUtil.getFieldValues((Class<? extends Enum<?>>) enumClass,enumField);
 
-        if(fieldValues==null || fieldValues.size()==0) {
-            return false;
-        } else {
-            return fieldValues.contains(value.intValue());
-        }
+        return EnumUtils.isValidEnumValue(enumClass, enumField, value);
     }
 
 }

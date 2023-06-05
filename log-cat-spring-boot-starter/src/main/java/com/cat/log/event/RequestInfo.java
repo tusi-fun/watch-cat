@@ -1,6 +1,6 @@
 package com.cat.log.event;
 
-import com.cat.util.StringUtils;
+import com.cat.utils.StringUtils;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 

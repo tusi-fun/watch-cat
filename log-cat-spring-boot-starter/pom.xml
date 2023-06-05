@@ -41,7 +41,7 @@
 
         <dependency>
             <groupId>com.cat</groupId>
-            <artifactId>watch-cat-common</artifactId>
+            <artifactId>watch-cat-utils</artifactId>
             <version>1.0.0-sb2</version>
         </dependency>
 

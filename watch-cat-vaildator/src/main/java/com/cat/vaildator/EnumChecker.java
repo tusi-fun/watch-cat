@@ -20,11 +20,14 @@ public @interface EnumChecker {
 
     /**
      * 使用示例：
+     *
+     * 1、判断枚举字段值是否包含
      * @NotNull
      * @EnumChecker(enumClass = GenderEnum.class, enumField = "code")
      * Integer gender;
-
-     * @NotNull
+     *
+     * 2、判断枚举名是否包含
+     * @NotBlank
      * @EnumChecker(enumClass = GenderEnum.class)
      * String genderEnum;
      */
