@@ -28,13 +28,13 @@ public class DomainCheckerValidator implements ConstraintValidator<DomainChecker
         return LOCAL_PART_PATTERN.matcher(value).matches();
     }
 
-    public static void main(String[] args) {
-        System.out.println(LOCAL_PART_PATTERN.matcher("www").matches());
-        System.out.println(LOCAL_PART_PATTERN.matcher("http://www").matches());
-        System.out.println(LOCAL_PART_PATTERN.matcher("http://www.baidu.com").matches());
-        System.out.println(LOCAL_PART_PATTERN.matcher("https://www.baidu.com").matches());
-        System.out.println(LOCAL_PART_PATTERN.matcher("www.baidu.com").matches());
-        System.out.println(LOCAL_PART_PATTERN.matcher("www.baiducom").matches());
-    }
+//    public static void main(String[] args) {
+//        System.out.println(LOCAL_PART_PATTERN.matcher("www").matches());
+//        System.out.println(LOCAL_PART_PATTERN.matcher("http://www").matches());
+//        System.out.println(LOCAL_PART_PATTERN.matcher("http://www.baidu.com").matches());
+//        System.out.println(LOCAL_PART_PATTERN.matcher("https://www.baidu.com").matches());
+//        System.out.println(LOCAL_PART_PATTERN.matcher("www.baidu.com").matches());
+//        System.out.println(LOCAL_PART_PATTERN.matcher("www.baiducom").matches());
+//    }
 
 }
