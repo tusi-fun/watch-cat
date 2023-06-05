@@ -23,6 +23,7 @@
         <module>sensitive-cat-spring-boot-starter</module>
         <module>signature-cat-spring-boot-starter</module>
         <module>watch-cat-converter</module>
+        <module>watch-cat-starters</module>
         <module>watch-cat-utils</module>
         <module>watch-cat-vaildator</module>
     </modules>
