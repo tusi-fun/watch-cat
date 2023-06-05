@@ -1,5 +1,7 @@
 package com.cat.vaildator;
 
+import com.cat.utils.StringUtils;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
@@ -19,20 +21,20 @@ public class DomainCheckerValidator implements ConstraintValidator<DomainChecker
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
 
-        if(value==null) {
+        if(!StringUtils.hasText(value)) {
             return true;
         }
 
         return LOCAL_PART_PATTERN.matcher(value).matches();
     }
 
-//    public static void main(String[] args) {
-//        System.out.println(LOCAL_PART_PATTERN.matcher("www").matches());
-//        System.out.println(LOCAL_PART_PATTERN.matcher("http://www").matches());
-//        System.out.println(LOCAL_PART_PATTERN.matcher("http://www.baidu.com").matches());
-//        System.out.println(LOCAL_PART_PATTERN.matcher("https://www.baidu.com").matches());
-//        System.out.println(LOCAL_PART_PATTERN.matcher("www.baidu.com").matches());
-//        System.out.println(LOCAL_PART_PATTERN.matcher("www.baidu.com").matches());
-//    }
+    public static void main(String[] args) {
+        System.out.println(LOCAL_PART_PATTERN.matcher("www").matches());
+        System.out.println(LOCAL_PART_PATTERN.matcher("http://www").matches());
+        System.out.println(LOCAL_PART_PATTERN.matcher("http://www.baidu.com").matches());
+        System.out.println(LOCAL_PART_PATTERN.matcher("https://www.baidu.com").matches());
+        System.out.println(LOCAL_PART_PATTERN.matcher("www.baidu.com").matches());
+        System.out.println(LOCAL_PART_PATTERN.matcher("www.baiducom").matches());
+    }
 
 }

@@ -32,7 +32,7 @@ public @interface EnumChecker {
      * String genderEnum;
      */
 
-    String message() default "{com.xx.validator.EnumChecker.message}";
+    String message() default "{com.cat.validator.EnumChecker.message}";
 
     Class<?>[] groups() default {};
 

@@ -45,6 +45,10 @@ public class EnumUtils {
 	}
 
 //	public static void main(String[] args) {
+//		System.out.println(EnumUtils.isValidEnumValue(ColorEnum.class, "desc", "蓝色"));
+//	}
+
+//	public static void main(String[] args) {
 //		System.out.println(EnumUtils.isValidEnumValue(GenderEnum.class, "code", -1));
 //		System.out.println(EnumUtils.isValidEnumValue(GenderEnum.class, "code", 0));
 //		System.out.println(EnumUtils.isValidEnumValue(GenderEnum.class, "code", 1));

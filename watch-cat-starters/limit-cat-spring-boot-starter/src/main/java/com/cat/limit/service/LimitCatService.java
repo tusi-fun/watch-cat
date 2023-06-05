@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 public class LimitCatService {
 
-    private final RedisTemplate wcRedisTemplate;
+    private final RedisTemplate redisTemplate;
     private final LimitCatProperties limitCatProperties;
 
     public static final String FREQUENCY_KEY = "watch-cat:limit:%s:%s:%s";
@@ -28,8 +28,8 @@ public class LimitCatService {
 //    DefaultRedisScript<Long> limitUpdateScript;
 //    DefaultRedisScript<Long> limitGetScript;
 
-    public LimitCatService(RedisTemplate wcRedisTemplate, LimitCatProperties limitCatProperties) {
-        this.wcRedisTemplate = wcRedisTemplate;
+    public LimitCatService(RedisTemplate redisTemplate, LimitCatProperties limitCatProperties) {
+        this.redisTemplate = redisTemplate;
         this.limitCatProperties = limitCatProperties;
     }
 
@@ -129,7 +129,7 @@ public class LimitCatService {
 
         String frequencyKey = String.format(FREQUENCY_KEY, scene, DigestUtils.md5DigestAsHex(key.getBytes()), duration.toString());
 
-        Object object = wcRedisTemplate.opsForValue().get(frequencyKey);
+        Object object = redisTemplate.opsForValue().get(frequencyKey);
 
         log.info("频率验证，scene：{}，key：{}，限制{}执行{}次，已执行{}次",scene, key, duration, frequency, object);
 
@@ -148,11 +148,11 @@ public class LimitCatService {
 
         String frequencyKey = String.format(FREQUENCY_KEY,scene, DigestUtils.md5DigestAsHex(key.getBytes()),duration.toString());
 
-        Long currentValue = wcRedisTemplate.opsForValue().increment(frequencyKey,1);
+        Long currentValue = redisTemplate.opsForValue().increment(frequencyKey,1);
 
         // 初次计数，设置 key 有效期
         if(currentValue==1) {
-            wcRedisTemplate.expire(frequencyKey,duration);
+            redisTemplate.expire(frequencyKey,duration);
         }
     }
 //

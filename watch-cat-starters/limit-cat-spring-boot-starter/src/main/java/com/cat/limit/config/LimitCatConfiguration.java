@@ -47,11 +47,11 @@ public class LimitCatConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "watchcat.limit", name = "enabled", havingValue = "true")
-    public LimitCatService limitCatService(RedisTemplate wcRedisTemplate, LimitCatProperties limitCatProperties) {
+    public LimitCatService limitCatService(RedisTemplate redisTemplate, LimitCatProperties limitCatProperties) {
 
         log.info("Initializing {} > {}", this.getClass().getSimpleName(), "limitCatService");
 
-        return new LimitCatService(wcRedisTemplate, limitCatProperties);
+        return new LimitCatService(redisTemplate, limitCatProperties);
     }
 
     /**

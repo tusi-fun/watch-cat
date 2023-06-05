@@ -25,7 +25,7 @@ public @interface PhoneChecker {
      * String phone;
      */
 
-    String message() default "{com.xx.validator.PhoneChecker.message}";
+    String message() default "{com.cat.validator.PhoneChecker.message}";
 
     Class<?>[] groups() default {};
 

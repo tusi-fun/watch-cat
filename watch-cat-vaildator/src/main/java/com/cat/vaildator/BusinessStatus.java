@@ -15,7 +15,7 @@ import static java.lang.annotation.ElementType.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(BusinessStatus.List.class)
 @Documented
-@Constraint(validatedBy = BusinessStatusValidator.class)
+@Constraint(validatedBy = BusinessStatusValidator4Integer.class)
 public @interface BusinessStatus {
 
     /**
@@ -25,7 +25,7 @@ public @interface BusinessStatus {
      * Integer gender;
      */
 
-    String message() default "{com.xx.validator.BusinessStatus.message}";
+    String message() default "{com.cat.validator.BusinessStatus.message}";
 
     Class<?>[] groups() default {};
 

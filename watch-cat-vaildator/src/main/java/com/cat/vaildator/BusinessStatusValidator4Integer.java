@@ -9,7 +9,7 @@ import java.util.Arrays;
  * @author hudongshan
  * @version 20210831
  */
-public class BusinessStatusValidator implements ConstraintValidator<BusinessStatus, Integer> {
+public class BusinessStatusValidator4Integer implements ConstraintValidator<BusinessStatus, Integer> {
 
     private int[] businessStatusList;
 

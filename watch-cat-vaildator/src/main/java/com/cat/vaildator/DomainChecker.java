@@ -27,7 +27,7 @@ public @interface DomainChecker {
      * String domain;
      */
 
-    String message() default "{com.xx.validator.DomainChecker.message}";
+    String message() default "{com.cat.validator.DomainChecker.message}";
 
     Class<?>[] groups() default {};
 

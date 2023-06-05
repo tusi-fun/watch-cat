@@ -15,10 +15,12 @@ import javax.validation.ConstraintValidatorContext;
 public class EnumCheckerValidatorForString implements ConstraintValidator<EnumChecker, String> {
 
     private Class<? extends Enum> enumClass;
+    private String enumField;
 
     @Override
     public void initialize(EnumChecker parameters) {
         enumClass = parameters.enumClass();
+        enumField = parameters.enumField();
     }
 
     @Override
@@ -28,6 +30,14 @@ public class EnumCheckerValidatorForString implements ConstraintValidator<EnumCh
             return true;
         }
 
-        return EnumUtils.anyMatch(enumClass, value);
+        // 使用 String 接收参数，可以比较枚举 name 或 指定字段比较。
+        // Long 或 Integer 类型则只能指定字段比较，因为枚举 name() 本身就为 String 类型
+        if(StringUtils.hasText(enumField)) {
+            return EnumUtils.isValidEnumValue(enumClass, enumField, value);
+        } else {
+            return EnumUtils.anyMatch(enumClass, value);
+        }
+
+
     }
 }
