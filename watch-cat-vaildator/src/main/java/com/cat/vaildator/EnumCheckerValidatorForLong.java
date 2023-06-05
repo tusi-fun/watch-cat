@@ -1,7 +1,7 @@
 package com.cat.vaildator;
 
-import com.cat.tool.EnumUtils;
-import com.cat.tool.StringUtils;
+import com.cat.utils.EnumUtils;
+import com.cat.utils.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

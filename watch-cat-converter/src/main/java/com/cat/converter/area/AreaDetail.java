@@ -1,11 +1,11 @@
 package com.cat.converter.area;
 
-import com.cat.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 
