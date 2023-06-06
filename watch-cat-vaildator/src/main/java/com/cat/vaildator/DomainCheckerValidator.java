@@ -34,7 +34,7 @@ public class DomainCheckerValidator implements ConstraintValidator<DomainChecker
 //        System.out.println(LOCAL_PART_PATTERN.matcher("http://www.baidu.com").matches());
 //        System.out.println(LOCAL_PART_PATTERN.matcher("https://www.baidu.com").matches());
 //        System.out.println(LOCAL_PART_PATTERN.matcher("www.baidu.com").matches());
-//        System.out.println(LOCAL_PART_PATTERN.matcher("www.baiducom").matches());
+//        System.out.println(LOCAL_PART_PATTERN.matcher("a.com").matches());
 //    }
 
 }
