@@ -1,4 +1,4 @@
-package com.cat.vaildator;
+package com.cat.validator;
 
 
 import com.cat.utils.EnumUtils;

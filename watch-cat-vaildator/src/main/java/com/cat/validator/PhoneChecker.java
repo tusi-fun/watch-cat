@@ -1,4 +1,4 @@
-package com.cat.vaildator;
+package com.cat.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -7,44 +7,39 @@ import java.lang.annotation.*;
 import static java.lang.annotation.ElementType.*;
 
 /**
- * 自定义参数校验器（验证业务状态、取值范围等）
+ * 自定义参数校验器（验证参数值是否为手机号格式）
  * @author hudongshan
  * @version 20210831
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(BusinessStatus.List.class)
+@Repeatable(PhoneChecker.List.class)
 @Documented
-@Constraint(validatedBy = BusinessStatusValidator4Integer.class)
-public @interface BusinessStatus {
+@Constraint(validatedBy = {PhoneCheckerValidatorForString.class})
+public @interface PhoneChecker {
 
     /**
      * 使用示例：
-     * @NotNull
-     * @BusinessStatus(value = {0,1})
-     * Integer gender;
+     * @NotBlank
+     * @PhoneChecker
+     * String phone;
      */
 
-    String message() default "{com.cat.validator.BusinessStatus.message}";
+    String message() default "{com.cat.validator.PhoneChecker.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
     /**
-     * @return date must in this value array
-     */
-    int[] value();
-
-    /**
-     * Defines several {@link BusinessStatus} annotations on the same element.
+     * Defines several {@link PhoneChecker} annotations on the same element.
      *
-     * @see BusinessStatus
+     * @see PhoneChecker
      */
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
     @interface List {
-        BusinessStatus[] value();
+        PhoneChecker[] value();
     }
 }

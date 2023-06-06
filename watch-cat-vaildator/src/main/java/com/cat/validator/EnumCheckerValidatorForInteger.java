@@ -1,4 +1,4 @@
-package com.cat.vaildator;
+package com.cat.validator;
 
 import com.cat.utils.EnumUtils;
 import com.cat.utils.StringUtils;
@@ -11,7 +11,7 @@ import javax.validation.ConstraintValidatorContext;
  * @author hudongshan
  * @version 20210831
  */
-public class EnumCheckerValidatorForLong implements ConstraintValidator<EnumChecker, Long> {
+public class EnumCheckerValidatorForInteger implements ConstraintValidator<EnumChecker, Integer> {
 
     private Class<? extends Enum> enumClass;
     private String enumField;
@@ -23,13 +23,13 @@ public class EnumCheckerValidatorForLong implements ConstraintValidator<EnumChec
     }
 
     @Override
-    public boolean isValid(Long value, ConstraintValidatorContext context) {
+    public boolean isValid(Integer value, ConstraintValidatorContext context) {
 
         if(value==null || !StringUtils.hasText(enumField)) {
             return true;
         }
 
         return EnumUtils.isValidEnumValue(enumClass, enumField, value);
-    }
 
+    }
 }
