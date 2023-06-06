@@ -31,10 +31,10 @@ public @interface LimitCat {
     Class<? extends RuntimeException>[] triggerFor() default {};
 
     /**
-     * 异常标记 字段（默认为getCode）
+     * 异常标记 字段（默认为code）
      * @return
      */
-    String triggerForCodeField() default "getCode";
+    String triggerForCodeField() default "code";
 
     /**
      * 指定的 Exception 且 异常标记（code、errcode、status等）满足等情况下执行频率计数

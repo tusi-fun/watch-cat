@@ -125,8 +125,6 @@ public class LimitCatService {
      */
     private void checkCache(String scene, String key, Duration duration, Long frequency, String msg) {
 
-        ;
-
         String frequencyKey = String.format(FREQUENCY_KEY, scene, DigestUtils.md5DigestAsHex(key.getBytes()), duration.toString());
 
         Object object = redisTemplate.opsForValue().get(frequencyKey);
