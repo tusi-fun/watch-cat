@@ -55,13 +55,15 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- 公司内部研发依赖分发的位置（私有仓库） -->
+    <!-- 私有依赖分发的位置（私有仓库） -->
     <distributionManagement>
+
         <repository>
-            <id>maven-releases</id>
-            <name>corp nexus-releases</name>
-            <url>http://wukong.tusi.fun:12881/repository/maven-releases/</url>
+            <id>wukong-mvn-repo-private</id>
+            <name>Reposilite Repository</name>
+            <url>http://wukong.tusi.fun:14545/private</url>
         </repository>
+
     </distributionManagement>
 
     <build>
