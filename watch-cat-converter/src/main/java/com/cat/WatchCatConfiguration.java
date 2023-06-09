@@ -4,7 +4,6 @@ import com.cat.converter.String2LocalDateConverter;
 import com.cat.converter.String2LocalDateTimeConverter;
 import com.cat.converter.String2LocalTimeConverter;
 import com.cat.converter.StringTrimConverter;
-import com.cat.converter.area.AreaDetailConverter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,16 +20,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class WatchCatConfiguration {
-
-    /**
-     * Tips：使用 @Component 方式注册，可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
-     * @return
-     */
-    @ConditionalOnWebApplication
-    @Bean
-    public AreaDetailConverter areaDetailConverter(){
-        return new AreaDetailConverter();
-    }
 
     /**
      * Tips：使用 @Component 方式注册，可能会因为 package 不一样，导致 Convert 无法被 Spring 自动扫描到
