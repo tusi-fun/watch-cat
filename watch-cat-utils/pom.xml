@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.cat</groupId>
         <artifactId>watch-cat</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.0-sb2</version>
     </parent>
 
     <properties>
@@ -16,27 +16,19 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.slf4j</groupId>-->
-<!--            <artifactId>slf4j-api</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--            <artifactId>jackson-databind</artifactId>-->
-<!--        </dependency>-->
-
         <!-- jackson LocalDateTime Serializer -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.cat</groupId>
         <artifactId>watch-cat</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.0-sb2</version>
     </parent>
 
     <properties>
