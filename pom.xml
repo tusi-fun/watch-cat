@@ -18,6 +18,7 @@
 
     <modules>
         <module>watch-cat-converter</module>
+        <module>watch-cat-starter-parent</module>
         <module>watch-cat-starters</module>
         <module>watch-cat-utils</module>
         <module>watch-cat-vaildator</module>
@@ -26,6 +27,8 @@
     <properties>
         <java.version>1.8</java.version>
         <hutool.version>5.8.19</hutool.version>
+        <watch-cat-utils.version>1.0.0-sb2</watch-cat-utils.version>
+        <watch-cat-starter-parent.version>1.0.0-sb2</watch-cat-starter-parent.version>
     </properties>
 
     <dependencyManagement>

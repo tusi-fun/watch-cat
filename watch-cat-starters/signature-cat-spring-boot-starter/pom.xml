@@ -16,44 +16,17 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <!-- 作用是编译时生成 spring-configuration-metadata.json，在IDE中编辑配置文件时，会出现提示 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
+            <groupId>com.cat</groupId>
+            <artifactId>watch-cat-starter-parent</artifactId>
+            <version>${watch-cat-starter-parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--            <artifactId>jackson-databind</artifactId>-->
-<!--        </dependency>-->
-
-<!--        &lt;!&ndash; jackson LocalDateTime Serializer &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.datatype</groupId>-->
-<!--            <artifactId>jackson-datatype-jsr310</artifactId>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>javax.validation</groupId>
@@ -70,11 +43,6 @@
             <artifactId>hutool-extra</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.cat</groupId>
-            <artifactId>watch-cat-utils</artifactId>
-            <version>1.0.0-sb2</version>
-        </dependency>
     </dependencies>
 
 </project>
