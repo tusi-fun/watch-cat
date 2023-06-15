@@ -13,5 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class LogCatProperties {
 
     private boolean enabled = false;
+    private String ipKey = "";
 
 }

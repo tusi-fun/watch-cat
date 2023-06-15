@@ -1,6 +1,7 @@
 package com.cat.log.aspect;
 
 import com.cat.log.annotation.LogCat;
+import com.cat.log.config.LogCatProperties;
 import com.cat.log.event.LogCatService;
 import com.cat.log.event.RequestInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,9 @@ public class LogCatAspect {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private LogCatProperties logCatProperties;
 
     @Pointcut("@annotation(logCat)")
     public void pointCut(LogCat logCat) {}
@@ -114,7 +118,7 @@ public class LogCatAspect {
                 .bid(StringUtils.hasText(logCat.bid())?getKey(joinPoint, logCat.bid()):null)
                 .actionGroup(logCat.actionGroup())
                 .action(logCat.action())
-                .ip(request.getRemoteAddr())
+                .ip(StringUtils.hasText(logCatProperties.getIpKey())?request.getHeader(logCatProperties.getIpKey()):request.getRemoteAddr())
                 .url(request.getRequestURL().toString())
                 .httpMethod(request.getMethod())
                 .requestHeaders(getRequestHeaders(request))
