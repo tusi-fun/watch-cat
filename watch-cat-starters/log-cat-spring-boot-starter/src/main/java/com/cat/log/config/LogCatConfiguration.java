@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 /**
  * watch-cat 配置
  * @author xy783
- * @version 2021/10/14
  *
  * - @ConditionalOnMissingBean
  * 修饰bean的注解，主要实现当bean被注册之后，再注册相同类型的bean，就不会成功，

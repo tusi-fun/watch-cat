@@ -26,10 +26,9 @@ import java.util.List;
  * jackson 工具类
  *
  * @author xy783
- * @version 20210524
  *
  * 实现功能点：
- * 1、实现普通 Bean、List集合 的Json序列化和反序列化
+ * 1、实现普通 Bean、List集合的Json序列化和反序列化
  * 2、实现泛型（List、Map、自定义泛型对象）的Json序列化和反序列化
  * 3、实现 LocalDateTime、LocalDate、LocalTime 类型的序列化和反序列化
  */

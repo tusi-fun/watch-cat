@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.time.Duration;
 
 /**
- * 用户登录会话缓存获取
+ * 签名工具服务
  * @author xy783
  */
 @Slf4j

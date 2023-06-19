@@ -1,9 +1,8 @@
 package com.cat.log.event;
 
-
 /**
+ * 日志持久化接口
  * @author xy783
- * @version 2021/12/9
  */
 public interface LogCatService {
 

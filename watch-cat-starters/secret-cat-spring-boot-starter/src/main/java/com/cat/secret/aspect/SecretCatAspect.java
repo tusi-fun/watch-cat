@@ -34,7 +34,6 @@ import java.util.Set;
  * 请求解密、响应加密控制切面
  *
  * @author xy783
- * @version 20200227
  *
  * 参考：https://blog.csdn.net/qq_15076569/article/details/100923074
  *

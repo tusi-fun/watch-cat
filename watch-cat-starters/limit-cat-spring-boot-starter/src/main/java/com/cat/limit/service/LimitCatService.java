@@ -15,7 +15,6 @@ import java.util.Map;
 /**
  * 业务调用流控
  * @author xy783
- * @version 20210425
  */
 @Slf4j
 public class LimitCatService {

@@ -12,7 +12,6 @@ import java.util.*;
 /**
  * 签名工具（适用于散列算法）
  * @author xy783
- * @version 20200929
  */
 @Slf4j
 public class ApiSignUtils4Sha {

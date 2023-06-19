@@ -10,12 +10,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * @author huyuyang@lxfintech.com
- * @Title: DesensitizedUtils
- * @Copyright: Copyright (c) 2016
- * @Description:
- * @Company: lxjr.com
- * @Created on 2017-06-07 15:04:33
+ * @author xy783
  */
 public class DesensitizedUtils {
 

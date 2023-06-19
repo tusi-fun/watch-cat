@@ -13,11 +13,7 @@ import java.util.*;
 
 /**
  * 签名工具（适用于非对称算法rsa、sm2等）
- * 1、参数为空，不参与签名
- * 2、使用sm2算法
- *
  * @author xy783
- * @version 20200803
  */
 @Slf4j
 public class ApiSignUtils4Asymmetric {

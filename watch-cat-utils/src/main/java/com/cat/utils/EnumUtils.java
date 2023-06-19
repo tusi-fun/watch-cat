@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 /**
  * @author xy783
- * @version 2023/6/5
  */
 public class EnumUtils {
 

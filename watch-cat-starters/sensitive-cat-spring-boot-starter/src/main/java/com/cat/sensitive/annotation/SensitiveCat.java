@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * api 响应脱敏标记注解
- * @author yangxiujun
+ * @author xy783
  */
 @Target({ ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

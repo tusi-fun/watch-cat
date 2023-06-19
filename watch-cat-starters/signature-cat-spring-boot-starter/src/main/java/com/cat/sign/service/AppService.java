@@ -1,8 +1,8 @@
 package com.cat.sign.service;
 
 /**
+ * 验签 AppSecret 接口
  * @author xy783
- * @version 2021/12/9
  */
 public interface AppService {
 

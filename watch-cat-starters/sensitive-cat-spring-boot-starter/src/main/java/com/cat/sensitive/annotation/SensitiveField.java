@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 敏感字段标记注解
- * @author yangxiujun
+ * @author xy783
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

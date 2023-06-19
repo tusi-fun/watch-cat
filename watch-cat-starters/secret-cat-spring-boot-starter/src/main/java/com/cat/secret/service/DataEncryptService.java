@@ -14,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 /**
  * 敏感数据加密处理入口
  * @author xy783
- * @version 20191218
  */
 @Slf4j
 public class DataEncryptService {
