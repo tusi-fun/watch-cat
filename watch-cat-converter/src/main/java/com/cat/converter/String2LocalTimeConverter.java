@@ -11,7 +11,6 @@ import java.time.ZoneOffset;
 /**
  * String类型时间戳格式参数 -> 接收对象中的 LocalTime
  * @author xy783
- * @version 20211211
  */
 @Slf4j
 public class String2LocalTimeConverter implements Converter<String, LocalTime>{

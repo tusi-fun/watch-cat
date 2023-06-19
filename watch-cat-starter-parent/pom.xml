@@ -27,7 +27,7 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-        <!-- 作用是编译时生成 spring-configuration-metadata.json，在IDE中编辑配置文件时，会出现提示 -->
+        <!-- 编译时生成 spring-configuration-metadata.json，在IDE中编辑配置文件时，会出现提示 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
