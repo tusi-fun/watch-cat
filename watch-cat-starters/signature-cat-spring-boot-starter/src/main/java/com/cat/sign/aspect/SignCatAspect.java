@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * 请求验签、响应加签控制切面
  *
- * @author hudongshan
+ * @author xy783
  * @version 20230424
  *
  * 参考：https://blog.csdn.net/qq_15076569/article/details/100923074

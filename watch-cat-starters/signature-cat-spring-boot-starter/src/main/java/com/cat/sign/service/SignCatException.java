@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 签名异常
- * @author hudongshan
+ * @author xy783
  */
 public class SignCatException extends RuntimeException implements Serializable {
 

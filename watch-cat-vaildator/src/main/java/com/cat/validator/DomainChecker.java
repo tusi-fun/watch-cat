@@ -9,7 +9,7 @@ import static java.lang.annotation.ElementType.*;
 /**
  * 自定义参数校验器（验证参数值是否为域名格式，不包含协议头）
  * www.xx.com
- * @author hudongshan
+ * @author xy783
  * @version 20210831
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})

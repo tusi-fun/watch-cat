@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * 接口签名验证参数配置（适用于非对称算法rsa、sm2 和 hash）
- * @author hudongshan
+ * @author xy783
  */
 @Data
 @ConfigurationProperties(prefix = "watchcat.sign")

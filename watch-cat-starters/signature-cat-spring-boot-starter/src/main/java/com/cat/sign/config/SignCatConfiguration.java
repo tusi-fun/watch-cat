@@ -23,7 +23,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * watch-cat 配置
- * @author hudongshan
+ * @author xy783
  * @version 2021/10/14
  *
  * - @ConditionalOnMissingBean

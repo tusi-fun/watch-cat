@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 参数加解密异常
- * @author hudongshan
+ * @author xy783
  */
 public class SecretCatException extends RuntimeException implements Serializable {
 

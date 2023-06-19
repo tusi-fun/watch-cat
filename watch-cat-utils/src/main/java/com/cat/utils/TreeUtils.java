@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * 集合转树形工具类（20220506，性能比自己封装的好）
  *
- * @author hudongshan
+ * @author xy783
  */
 public class TreeUtils<T> {
 

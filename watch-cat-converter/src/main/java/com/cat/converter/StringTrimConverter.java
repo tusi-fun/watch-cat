@@ -5,7 +5,7 @@ import org.springframework.core.convert.converter.Converter;
 
 /**
  * String 类型请求参数，去除前后空格
- * @author hudongshan
+ * @author xy783
  * @version 20220420
  */
 @Slf4j

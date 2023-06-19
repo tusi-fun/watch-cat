@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * 响应参数中的 LocalDateTime 类型 转换为指定格式（yyyy-MM-dd HH:mm:ss）的 String 字符串
- * @author hudongshan
+ * @author xy783
  * @version 20211211
  */
 @Configuration

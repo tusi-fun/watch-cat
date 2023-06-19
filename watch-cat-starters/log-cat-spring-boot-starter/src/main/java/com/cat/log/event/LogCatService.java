@@ -2,7 +2,7 @@ package com.cat.log.event;
 
 
 /**
- * @author hudongshan
+ * @author xy783
  * @version 2021/12/9
  */
 public interface LogCatService {

@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 
 /**
  * 自定义参数校验器（验证业务状态、取值范围等）
- * @author hudongshan
+ * @author xy783
  * @version 20210831
  */
 public class EnumCheckerValidatorForString implements ConstraintValidator<EnumChecker, String> {

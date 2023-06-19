@@ -9,7 +9,7 @@ import java.time.Duration;
 
 /**
  * 用户登录会话缓存获取
- * @author hudongshan
+ * @author xy783
  */
 @Slf4j
 public class SignCommonService {

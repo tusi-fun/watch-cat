@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * watch-cat 配置
- * @author hudongshan
+ * @author xy783
  * @version 2021/10/14
  *
  * - @ConditionalOnMissingBean

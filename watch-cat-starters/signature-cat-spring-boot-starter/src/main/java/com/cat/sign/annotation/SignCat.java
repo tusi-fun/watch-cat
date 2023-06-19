@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 请求验签，响应加签注解
- * @author hudongshan
+ * @author xy783
  * @version 20221018
  */
 @Target({ElementType.METHOD})

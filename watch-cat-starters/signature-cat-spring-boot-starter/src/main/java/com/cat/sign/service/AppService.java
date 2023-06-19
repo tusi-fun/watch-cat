@@ -1,7 +1,7 @@
 package com.cat.sign.service;
 
 /**
- * @author hudongshan
+ * @author xy783
  * @version 2021/12/9
  */
 public interface AppService {

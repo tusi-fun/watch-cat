@@ -3,24 +3,27 @@ package com.cat.utils;
 import java.math.BigDecimal;
 
 /**
- * @author hudongshan
+ * 金额处理工具类
+ * @author xy783
  */
 public class DecimalUtils {
 
     /**
-     * long 类型的分转 BigDecimal 类型的元
+     * Long分 > BigDecimal元
+     * @param fen
      * @return
      */
-    public static BigDecimal longFenToBigDecimalYuan(Long priceFen){
-        return BigDecimal.valueOf(priceFen).divide(BigDecimal.valueOf(100L));
+    public static BigDecimal longFenToBigDecimalYuan(Long fen){
+        return BigDecimal.valueOf(fen).divide(BigDecimal.valueOf(100L));
     }
 
     /**
-     * BigDecimal 类型的元转 long 类型的分
+     * BigDecimal元 > Long分
+     * @param yuan
      * @return
      */
-    public static Long bigDecimalYuanToLongFen(BigDecimal priceYuan){
-        BigDecimal priceFen = priceYuan.multiply(BigDecimal.valueOf(100L));
+    public static Long bigDecimalYuanToLongFen(BigDecimal yuan){
+        BigDecimal priceFen = yuan.multiply(BigDecimal.valueOf(100L));
         return priceFen.longValue();
     }
 }

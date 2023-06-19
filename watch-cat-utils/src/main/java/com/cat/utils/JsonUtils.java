@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * jackson 工具类
  *
- * @author hudongshan
+ * @author xy783
  * @version 20210524
  *
  * 实现功能点：

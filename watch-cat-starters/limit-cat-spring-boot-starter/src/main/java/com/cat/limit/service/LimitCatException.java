@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 流控异常
- * @author hudongshan
+ * @author xy783
  */
 public class LimitCatException extends RuntimeException implements Serializable {
 

@@ -2,7 +2,7 @@ package com.cat.utils;
 
 /**
  * 复制于 SpringBoot 自带 StringUtil
- * @author hudongshan
+ * @author xy783
  * @version 2022/5/12
  */
 
