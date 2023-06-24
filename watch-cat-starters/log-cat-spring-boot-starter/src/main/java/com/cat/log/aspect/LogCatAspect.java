@@ -4,6 +4,7 @@ import com.cat.log.annotation.LogCat;
 import com.cat.log.config.LogCatProperties;
 import com.cat.log.event.LogCatService;
 import com.cat.log.event.RequestInfo;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,7 +16,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -26,7 +27,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -251,7 +251,7 @@ public class LogCatAspect {
         Object[] args = joinPoint.getArgs();
 
         // 获取被拦截方法参数名列表(使用Spring支持类库)
-        LocalVariableTableParameterNameDiscoverer localVariableTable = new LocalVariableTableParameterNameDiscoverer();
+        DefaultParameterNameDiscoverer localVariableTable = new DefaultParameterNameDiscoverer();
         String[] paraNameArr = localVariableTable.getParameterNames(methodSignature.getMethod());
 
         // 使用SPEL进行key的解析

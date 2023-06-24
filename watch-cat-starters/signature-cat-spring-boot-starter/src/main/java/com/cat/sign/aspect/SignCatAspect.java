@@ -2,7 +2,7 @@ package com.cat.sign.aspect;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import cn.hutool.extra.servlet.ServletUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import com.cat.sign.annotation.SignCat;
 import com.cat.sign.config.SignProperties;
 import com.cat.sign.service.AppService;
@@ -10,6 +10,9 @@ import com.cat.sign.service.SignCatException;
 import com.cat.sign.service.SignCommonService;
 import com.cat.sign.util.ApiSignUtils4Sha;
 import com.cat.utils.JsonUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -26,9 +29,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -167,7 +167,7 @@ public class SignCatAspect {
         }
 
         // 获取json原文
-        String jsonData = ServletUtil.getBody(request);
+        String jsonData = JakartaServletUtil.getBody(request);
 
         log.info("SignCatAspect:验签，json原文:\n{}", jsonData);
 

@@ -3,16 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>watch-cat-converter</artifactId>
-	<version>1.0.0-sb2</version>
+	<version>1.0.0-sb3</version>
 
 	<parent>
 		<groupId>com.cat</groupId>
 		<artifactId>watch-cat</artifactId>
-		<version>1.0.0-sb2</version>
+		<version>1.0.0-sb3</version>
 	</parent>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 	</properties>
 
 	<dependencies>

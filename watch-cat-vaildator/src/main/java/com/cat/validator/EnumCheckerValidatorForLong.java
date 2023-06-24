@@ -2,9 +2,9 @@ package com.cat.validator;
 
 import com.cat.utils.EnumUtils;
 import com.cat.utils.StringUtils;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 /**
  * 自定义参数校验器（验证业务状态、取值范围等）
