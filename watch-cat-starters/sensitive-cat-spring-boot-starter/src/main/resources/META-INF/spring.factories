@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.cat.sensitive.config.SensitiveCatConfiguration
+  fun.tusi.sensitive.config.SensitiveCatConfiguration

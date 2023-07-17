@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.cat.sign.config.SignCatConfiguration
+  fun.tusi.sign.config.SignCatConfiguration

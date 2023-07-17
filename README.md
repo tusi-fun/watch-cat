@@ -11,7 +11,7 @@
 ### 引入依赖
 ```xml
 <dependency>
-    <groupId>com.cat</groupId>
+    <groupId>fun.tusi</groupId>
     <artifactId>spring-boot-starter-watch-cat</artifactId>
     <version>1.1.4</version>
 </dependency>
