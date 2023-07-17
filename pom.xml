@@ -27,9 +27,7 @@
     <properties>
         <java.version>17</java.version>
         <hutool.version>5.8.19</hutool.version>
-
         <watch-cat-starter-parent.version>1.0.0-sb3</watch-cat-starter-parent.version>
-
     </properties>
 
     <dependencyManagement>
