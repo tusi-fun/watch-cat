@@ -1,9 +1,9 @@
 package fun.tusi.sign.service;
 
 import cn.hutool.crypto.SecureUtil;
-import fun.tusi.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 
