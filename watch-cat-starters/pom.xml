@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 
 	<parent>
-		<groupId>com.cat</groupId>
+		<groupId>fun.tusi</groupId>
 		<artifactId>watch-cat</artifactId>
 		<version>1.0.0-sb2</version>
 	</parent>

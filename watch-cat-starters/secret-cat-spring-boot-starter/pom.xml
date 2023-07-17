@@ -6,7 +6,7 @@
 	<version>1.0.0-sb2</version>
 
 	<parent>
-		<groupId>com.cat</groupId>
+		<groupId>fun.tusi</groupId>
 		<artifactId>watch-cat-starters</artifactId>
 		<version>1.0.0-sb2</version>
 	</parent>
@@ -18,7 +18,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.cat</groupId>
+			<groupId>fun.tusi</groupId>
 			<artifactId>watch-cat-starter-parent</artifactId>
 			<version>${watch-cat-starter-parent.version}</version>
 		</dependency>
