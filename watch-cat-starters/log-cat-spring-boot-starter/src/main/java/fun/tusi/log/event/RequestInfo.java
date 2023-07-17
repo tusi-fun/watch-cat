@@ -1,8 +1,8 @@
 package fun.tusi.log.event;
 
-import fun.tusi.utils.StringUtils;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Map;
