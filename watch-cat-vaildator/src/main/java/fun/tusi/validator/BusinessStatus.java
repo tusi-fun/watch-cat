@@ -25,7 +25,7 @@ public @interface BusinessStatus {
      * Integer gender;
      */
 
-    String message() default "{com.cat.validator.BusinessStatus.message}";
+    String message() default "{fun.tusi.validator.BusinessStatus.message}";
 
     Class<?>[] groups() default {};
 
