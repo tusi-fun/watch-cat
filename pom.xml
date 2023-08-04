@@ -26,7 +26,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <hutool.version>5.8.19</hutool.version>
+        <hutool.version>5.8.21</hutool.version>
         <watch-cat-starter-parent.version>1.0.0-sb2</watch-cat-starter-parent.version>
     </properties>
 
@@ -60,10 +60,20 @@
     <!-- 私有依赖分发的位置（私有仓库） -->
     <distributionManagement>
 
+<!--        <repository>-->
+<!--            <id>wukong-mvn-repo-private</id>-->
+<!--            <name>Reposilite Repository</name>-->
+<!--            <url>http://wukong.tusi.fun:14545/private</url>-->
+<!--        </repository>-->
+
+        <snapshotRepository>
+            <id>maven-central-snapshots</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+
         <repository>
-            <id>wukong-mvn-repo-private</id>
-            <name>Reposilite Repository</name>
-            <url>http://wukong.tusi.fun:14545/private</url>
+            <id>maven-central-release</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
 
     </distributionManagement>
@@ -80,13 +90,30 @@
                 </configuration>
             </plugin>
 
-            <!-- 打包源代码 -->
+            <!-- gpg sign plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>gpg-sign</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- gen source plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
+                        <id>attach-sources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
@@ -94,6 +121,34 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- gen javadoc plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <show>package</show>
+                    <tags>
+                        <tag>
+                            <name>date</name>
+                        </tag>
+                    </tags>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 
         </plugins>
     </build>
