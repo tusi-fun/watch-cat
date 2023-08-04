@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>watch-cat-vaildator</artifactId>
-    <version>1.0.0-sb2</version>
+    <version>1.0.1-sb2</version>
 
     <parent>
         <groupId>fun.tusi</groupId>
