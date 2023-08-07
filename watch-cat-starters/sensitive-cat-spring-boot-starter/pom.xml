@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sensitive-cat-spring-boot-starter</artifactId>
-    <version>1.0.0-sb2</version>
+    <version>${sensitive-cat-spring-boot-starter.version}</version>
 
     <parent>
         <groupId>fun.tusi</groupId>
@@ -18,9 +18,31 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- 编译时生成 spring-configuration-metadata.json，在IDE中编辑配置文件时，会出现提示 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>fun.tusi</groupId>
-            <artifactId>watch-cat-starter-parent</artifactId>
-            <version>${watch-cat-starter-parent.version}</version>
+            <artifactId>watch-cat-utils</artifactId>
+            <version>${watch-cat-utils.version}</version>
         </dependency>
 
         <dependency>
