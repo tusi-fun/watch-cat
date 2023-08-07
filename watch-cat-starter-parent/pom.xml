@@ -42,7 +42,7 @@
         <dependency>
             <groupId>fun.tusi</groupId>
             <artifactId>watch-cat-utils</artifactId>
-            <version>1.0.0-sb3</version>
+            <version>1.0.1-sb3</version>
         </dependency>
 
     </dependencies>
