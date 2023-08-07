@@ -27,15 +27,15 @@
         <java.version>17</java.version>
         <hutool.version>5.8.21</hutool.version>
 
-        <limit-cat-spring-boot-starter.version>1.0.1-sb3</limit-cat-spring-boot-starter.version>
-        <log-cat-spring-boot-starter.version>1.0.1-sb3</log-cat-spring-boot-starter.version>
-        <secret-cat-spring-boot-starter.version>1.0.1-sb3</secret-cat-spring-boot-starter.version>
-        <sensitive-cat-spring-boot-starter.version>1.0.1-sb3</sensitive-cat-spring-boot-starter.version>
-        <signature-cat-spring-boot-starter.version>1.0.1-sb3</signature-cat-spring-boot-starter.version>
+        <limit-cat-spring-boot-starter.version>1.0.2-sb3</limit-cat-spring-boot-starter.version>
+        <log-cat-spring-boot-starter.version>1.0.2-sb3</log-cat-spring-boot-starter.version>
+        <secret-cat-spring-boot-starter.version>1.0.2-sb3</secret-cat-spring-boot-starter.version>
+        <sensitive-cat-spring-boot-starter.version>1.0.2-sb3</sensitive-cat-spring-boot-starter.version>
+        <signature-cat-spring-boot-starter.version>1.0.2-sb3</signature-cat-spring-boot-starter.version>
 
-        <watch-cat-converter.version>1.0.1-sb3</watch-cat-converter.version>
-        <watch-cat-vaildator.version>1.0.1-sb3</watch-cat-vaildator.version>
-        <watch-cat-utils.version>1.0.1-sb3</watch-cat-utils.version>
+        <watch-cat-converter.version>1.0.2-sb3</watch-cat-converter.version>
+        <watch-cat-vaildator.version>1.0.2-sb3</watch-cat-vaildator.version>
+        <watch-cat-utils.version>1.0.2-sb3</watch-cat-utils.version>
     </properties>
 
     <dependencyManagement>
