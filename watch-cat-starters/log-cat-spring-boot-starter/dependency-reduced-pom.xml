@@ -3,11 +3,11 @@
   <parent>
     <artifactId>watch-cat-starters</artifactId>
     <groupId>fun.tusi</groupId>
-    <version>1.0.0-sb2</version>
+    <version>1.0.2-sb2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>log-cat-spring-boot-starter</artifactId>
-  <version>1.0.0-sb2</version>
+  <version>${log-cat-spring-boot-starter.version}</version>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -33,12 +33,11 @@
       <artifactId>lombok</artifactId>
       <version>1.18.20</version>
       <scope>compile</scope>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fun.tusi</groupId>
       <artifactId>watch-cat-utils</artifactId>
-      <version>1.0.0-sb2</version>
+      <version>1.0.2-sb2</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

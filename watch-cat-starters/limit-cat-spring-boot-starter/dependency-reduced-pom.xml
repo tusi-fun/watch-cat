@@ -6,8 +6,8 @@
     <version>1.0.2-sb2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>sensitive-cat-spring-boot-starter</artifactId>
-  <version>${sensitive-cat-spring-boot-starter.version}</version>
+  <artifactId>limit-cat-spring-boot-starter</artifactId>
+  <version>${limit-cat-spring-boot-starter.version}</version>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -45,24 +45,6 @@
       <artifactId>spring-boot-starter-data-redis</artifactId>
       <version>2.3.12.RELEASE</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>cn.hutool</groupId>
-      <artifactId>hutool-crypto</artifactId>
-      <version>5.8.21</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>cn.hutool</groupId>
-      <artifactId>hutool-extra</artifactId>
-      <version>5.8.21</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
   <properties>
