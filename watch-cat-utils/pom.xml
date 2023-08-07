@@ -8,7 +8,7 @@
     <parent>
         <groupId>fun.tusi</groupId>
         <artifactId>watch-cat</artifactId>
-        <version>1.0.0-sb3</version>
+        <version>1.0.2-sb3</version>
     </parent>
 
     <properties>
