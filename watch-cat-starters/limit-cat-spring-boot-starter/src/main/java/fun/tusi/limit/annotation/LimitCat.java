@@ -46,7 +46,7 @@ public @interface LimitCat {
      * 频率超限提示内容
      * @return
      */
-    String msg() default "";
+    String message() default "";
 
     /**
      * 频率规则（使用代码指定，优先级最高）

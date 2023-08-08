@@ -17,14 +17,14 @@
 
 ### 参数清单
 
-| 参数          | 默认值     | 说明 |
-|-------------|--|---|
-| bid         | -       | 自定义参数（支持 SpEL）  |
-| actionGroup | default | 操作分组 |
-| action      | default | 操作 |
+| 参数          | 默认值     | 说明                 |
+|-------------|--|--------------------|
+| bid         | -       | 自定义参数（支持 SpEL）     |
+| actionGroup | default | 操作分组               |
+| action      | default | 操作                 |
 | callback    | false   | 是否启用日志通知（用于持久化日志等） |
-| print       | true    | 是否打印日志 |
-| printOrig   | true    | 是否在日志中打印原始请求 |
+| print       | true    | 是否打印日志             |
+| printOrig   | true    | 是否在日志中打印原始请求       |
 
 ### 引入依赖
 ```xml
@@ -50,22 +50,22 @@ public Result<AdminLoginPong> loginByAccount(@Valid AdminLoginPing adminLoginPin
 > api 访问频率限制（发送短信、登录失败重新尝试等场景）
 
 ### 参数清单
-| 参数                 | 默认值  | 说明                                |
+| 参数                  | 默认值  | 说明                                |
 |---------------------|------|-----------------------------------|
 | scene               | 方法名  | 频率限制场景                            |
 | key                 | -    | 频率 key（保证全局唯一，支持SpEL）             |
 | triggerFor          | -    | 触发频率限制的异常集合（RuntimeException 子类）  |
 | triggerForCodeField | code | 触发频率限制的异常字段（code、errcode、status等） |
 | triggerForCode      | -    | 触发频率限制的异常字段值集合（与 triggerFor 同时使用） |
-| msg                 | -    | 频率超限提示                            |
+| message             | -    | 频率超限提示                            |
 | rules               | -    | 使用代码配置规则（优先级：代码指定>配置文件指定）         |
 
 ### rules 参数清单
-| 参数        | 默认值  | 说明                                |
-|-----------|------|-----------------------------------|
+| 参数        | 默认值  | 说明                             |
+|-----------|------|--------------------------------|
 | interval  | -    | 周期（秒）                          |
-| frequency | -    | 允许执行次数            |
-| msg   | -    | 频率超限提示                            |
+| frequency | -    | 允许执行次数                         |
+| message   | -    | 频率超限提示                         |
 
 ### 引入依赖
 ```xml
@@ -129,7 +129,7 @@ public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCod
 }
 
 // 指定异常 + 指定异常Code
-@LimitCat(scene = "SMSCODE_FAIL", key = "#checkSmsCodePing.smsCode", triggerFor = BusinessException.class, triggerForCode = {"6000","6001"})
+@LimitCat(scene = "SMSCODE_FAIL", key = "#checkSmsCodePing.smsCode", triggerFor = BusinessException.class, triggerForCode = {"1000","1001"})
 public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
 
     return Result.ok().data(...);
@@ -142,8 +142,8 @@ public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCod
 // 指定异常触发
 @LimitCat(scene = "SMSCODE_FAIL", key = "#checkSmsCodePing.smsCode", triggerFor = BusinessException.class, 
         rules = {
-            @LimitCatRule(interval = 60 ,frequency = 1 ,message = "1分钟只能错误验证1次"),
-            @LimitCatRule(interval = 300,frequency = 10,message = "5分钟只能错误验证10次")
+            @LimitCatRule(interval = 60 , frequency = 1 , message = "1分钟只能错误验证1次"),
+            @LimitCatRule(interval = 300, frequency = 10, message = "5分钟只能错误验证10次")
         }
 )
 public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
