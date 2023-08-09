@@ -16,6 +16,14 @@ public class LimitCatProperties {
 
     private boolean enabled = false;
 
-    private Map<String,Map<Duration,Long>> scenes;
+    private Map<String, Map<Duration, LimitRule>> scenes;
+
+    @Data
+    public static class LimitRule {
+
+        private Long frequency;
+
+        private String message;
+    }
 
 }

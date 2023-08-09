@@ -65,14 +65,14 @@ public class LimitCatService {
 
             log.info("频率验证(规则由配置指定)，scene：{}，key：{}",scene,key);
 
-            Map<Duration,Long> frequencySceneList = limitCatProperties.getScenes().get(scene);
+            Map<Duration, LimitCatProperties.LimitRule> frequencySceneList = limitCatProperties.getScenes().get(scene);
 
             if(frequencySceneList==null || frequencySceneList.isEmpty()) {
                 throw new LimitCatException("频率限制场景"+scene+"不存在或未配置");
             }
 
-            for (Map.Entry<Duration, Long> entry : frequencySceneList.entrySet()) {
-                checkCache(scene, key, entry.getKey(), entry.getValue(),limitCat.message());
+            for (Map.Entry<Duration, LimitCatProperties.LimitRule> entry : frequencySceneList.entrySet()) {
+                checkCache(scene, key, entry.getKey(), entry.getValue().getFrequency(), limitCat.message());
             }
         }
     }
@@ -97,20 +97,20 @@ public class LimitCatService {
 
             log.info("频率更新(规则由配置指定)，scene：{}，key：{}",scene,key);
 
-            Map<String,Map<Duration,Long>> scenes = limitCatProperties.getScenes();
+            Map<String, Map<Duration, LimitCatProperties.LimitRule>> scenes = limitCatProperties.getScenes();
 
             if(scenes==null || scenes.isEmpty()) {
                 throw new LimitCatException("频率限制场景不存在或未正确配置");
             }
 
-            Map<Duration,Long> frequencySceneList = scenes.get(scene);
+            Map<Duration, LimitCatProperties.LimitRule> frequencySceneList = scenes.get(scene);
 
             if(frequencySceneList==null || frequencySceneList.isEmpty()) {
                 throw new LimitCatException("频率限制场景"+scene+"不存在或未正确配置");
             }
 
-            for (Map.Entry<Duration, Long> entry : frequencySceneList.entrySet()) {
-                updateCache(scene,key,entry.getKey());
+            for (Map.Entry<Duration, LimitCatProperties.LimitRule> entry : frequencySceneList.entrySet()) {
+                updateCache(scene, key, entry.getKey());
             }
         }
     }

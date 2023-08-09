@@ -1,11 +1,27 @@
 # @SignCat 注解
 > api 请求和响应日志打印、持久化。「 _参数验证、类型转换等异常无法获取日志_ 」
-
-## @SignCat 注解说明
+---
+## 注解参数
 | 参数          | 默认值    | 说明            |
 |-------------|--------|---------------|
 | checkSign         | true   | 是否启用签名验证      |
 | jsonTarget | Object | json 提交时的接收对象 |
+
+## 配置参数
+```properties
+watchcat.sign.enabled = true
+
+# 非对称签名算法
+watchcat.sign.symmetric.algorithm =
+watchcat.sign.symmetric.tolerant =
+watchcat.sign.symmetric.publicKey =
+watchcat.sign.symmetric.privateKey =
+
+# sha签名算法
+watchcat.sign.sha.enabled =
+watchcat.sign.sha.algorithm =
+watchcat.sign.sha.tolerant =
+```
 
 ## 引入依赖
 ```xml
@@ -25,11 +41,6 @@ watchcat.sign.symmetric.algorithm =
 watchcat.sign.symmetric.tolerant =
 watchcat.sign.symmetric.publicKey =
 watchcat.sign.symmetric.privateKey =
-
-# sha签名算法
-watchcat.sign.sha.enabled =
-watchcat.sign.sha.algorithm =
-watchcat.sign.sha.tolerant =
 ```
 
 ## 在代码中使用
