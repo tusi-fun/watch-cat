@@ -1,4 +1,4 @@
-# @SignCat 注解
+# @SignatureCat 注解
 > api 请求和响应日志打印、持久化。「 _参数验证、类型转换等异常无法获取日志_ 」
 
 ## 注解参数
@@ -46,7 +46,7 @@ watchcat.sign.symmetric.privateKey =
 
 ### 3. 使用注解
 ```java
-@SignCat
+@SignatureCat
 @PostMapping("login")
 public Result<AdminLoginPong> loginByAccount(@Valid AdminLoginPing adminLoginPing) {
 

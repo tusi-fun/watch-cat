@@ -8,4 +8,4 @@
 | @LimitCat     | api 频率限制（成功调用、失败尝试等） | [@LimitCat](docs/LIMIT-CAT.md) |
 | @SecretCat    | api 请求解密 和 响应加密      | 文档完善中                       |
 | @SensitiveCat | api 响应中的敏感参数脱敏       | 文档完善中                           |
-| @SignCat      | api 验签加签             | [@SignCat](docs/SIGN-CAT.md)   |
+| @SignatureCat      | api 验签加签             | [@SignatureCat](docs/SIGN-CAT.md)   |

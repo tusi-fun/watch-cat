@@ -3,7 +3,7 @@ package fun.tusi.sign.util;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import fun.tusi.sign.service.SignCatException;
+import fun.tusi.sign.service.SignatureCatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -79,15 +79,15 @@ public class ApiSignUtils4Sha {
         log.info("ApiSignUtils4Sha > 验签参数 secret=" + secret + ", algorithm=" + algorithm + ", params=" + params + ", sign=" + sign + ", nonce=" + nonce + ", timestamp=" + timestamp);
 
         if(algorithm==null) {
-            throw new SignCatException("验证签名：未找到签名算法为"+algorithm+"的配置");
+            throw new SignatureCatException("验证签名：未找到签名算法为"+algorithm+"的配置");
         }
 
         if(!StringUtils.hasText(sign)) {
-            throw new SignCatException("验证签名："+ SIGN_KEY +"不合法");
+            throw new SignatureCatException("验证签名："+ SIGN_KEY +"不合法");
         }
 
         if(!StringUtils.hasText(nonce)) {
-            throw new SignCatException("验证签名："+ NONCE_KEY +"不合法");
+            throw new SignatureCatException("验证签名："+ NONCE_KEY +"不合法");
         }
 
         Map<String, String> signBody = new HashMap(params);

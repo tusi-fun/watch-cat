@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
-import fun.tusi.sign.aspect.SignCatAspect;
+import fun.tusi.sign.aspect.SignatureCatAspect;
 import fun.tusi.sign.service.SignCommonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,16 +28,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties({
-        SignProperties.class
+        SignatureCatProperties.class
 })
-public class SignCatConfiguration {
+public class SignatureCatConfiguration {
 
     @ConditionalOnWebApplication
     @ConditionalOnProperty(prefix = "watchcat.sign", name = "enabled", havingValue = "true")
     @Bean
-    public SignCatAspect signCatAspect() {
-        log.info("Initializing {} > {}", this.getClass().getSimpleName(), "signCatAspect");
-        return new SignCatAspect();
+    public SignatureCatAspect signatureCatAspect() {
+        log.info("Initializing {} > {}", this.getClass().getSimpleName(), "signatureCatAspect");
+        return new SignatureCatAspect();
     }
 
     @ConditionalOnWebApplication
