@@ -1,8 +1,7 @@
-
-## @LimitCat 注解
+# @LimitCat 注解
 > api 访问频率限制（发送短信、登录失败重新尝试等场景）
 
-### 参数清单
+## @LimitCat 注解说明
 | 参数                  | 默认值  | 说明                                |
 |---------------------|------|-----------------------------------|
 | scene               | 方法名  | 频率限制场景                            |
@@ -13,14 +12,14 @@
 | message             | -    | 频率超限提示                            |
 | rules               | -    | 使用代码配置规则（优先级：代码指定>配置文件指定）         |
 
-### rules 参数清单
+## rules 参数清单
 | 参数        | 默认值  | 说明                             |
 |-----------|------|--------------------------------|
 | interval  | -    | 周期（秒）                          |
 | frequency | -    | 允许执行次数                         |
 | message   | -    | 频率超限提示                         |
 
-### 引入依赖
+## 引入依赖
 ```xml
 <dependency>
     <groupId>fun.tusi</groupId>
@@ -29,7 +28,7 @@
 </dependency>
 ```
 
-### 方式一：配置文件指定规则
+## 方式一：配置文件指定规则
 
 ```properties
 # ----------------------------------------------------------------------
@@ -37,7 +36,6 @@
 # ----------------------------------------------------------------------
 
 
-# -----------------------------------
 # 场景一：获取短信验证码频率限制
 # -----------------------------------
 
@@ -49,7 +47,7 @@ watchcat.limit.scenes.GET_SMSCODE.1h=10
 watchcat.limit.scenes.GET_SMSCODE.1d=15
 
 
-# -----------------------------------
+
 # 场景二：短信验证码验证失败频率限制
 # -----------------------------------
 # 5分钟 5次
@@ -60,7 +58,7 @@ watchcat.limit.scenes.SMSCODE_FAIL.1h=10
 watchcat.limit.scenes.SMSCODE_FAIL.1d=15
 
 ```
-#### 代码中使用
+### 代码中使用
 
 ```java
 // 场景一：获取短信验证码频率限制
@@ -90,7 +88,7 @@ public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCod
 }
 ```
 
-### 方式二：代码方式指定规则（不需要在配置文件编写配置）
+## 方式二：代码方式指定规则（不需要在配置文件编写配置）
 ```java
 // 指定异常触发
 @LimitCat(scene = "SMSCODE_FAIL", key = "#checkSmsCodePing.smsCode", triggerFor = BusinessException.class, 
