@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface SignCat {
+public @interface SignatureCat {
 
 	/**
 	 * 是否启用签名验证

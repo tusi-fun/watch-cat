@@ -12,7 +12,7 @@ import java.util.Map;
  */
 @Data
 @ConfigurationProperties(prefix = "watchcat.sign")
-public class SignProperties {
+public class SignatureCatProperties {
 
     private boolean enabled = false;
 

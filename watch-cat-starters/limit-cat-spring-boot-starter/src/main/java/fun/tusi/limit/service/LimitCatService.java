@@ -72,7 +72,7 @@ public class LimitCatService {
             }
 
             for (Map.Entry<Duration, LimitCatProperties.LimitRule> entry : frequencySceneList.entrySet()) {
-                checkCache(scene, key, entry.getKey(), entry.getValue().getFrequency(), limitCat.message());
+                checkCache(scene, key, entry.getKey(), entry.getValue().getFrequency(), entry.getValue().getMessage());
             }
         }
     }
