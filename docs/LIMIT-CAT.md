@@ -9,7 +9,6 @@
 | triggerFor          | Class<? extends RuntimeException>[] | -    | 触发频率限制的异常集合（RuntimeException 子类）  |
 | triggerForCodeField | String                              | code | 触发频率限制的异常字段（code、errcode、status等） |
 | triggerForCode      | String[]                            | -    | 触发频率限制的异常字段值集合（与 triggerFor 同时使用） |
-| message             | String                              | -    | 频率超限提示                            |
 | rules               | LimitCatRule[]                      | -    | 使用代码配置规则（优先级：代码指定>配置文件指定）|
 
 ## LimitCatRule 注解参数

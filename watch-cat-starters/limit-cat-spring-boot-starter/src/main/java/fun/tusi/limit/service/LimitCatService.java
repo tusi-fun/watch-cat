@@ -72,7 +72,7 @@ public class LimitCatService {
             }
 
             for (Map.Entry<Duration, LimitCatProperties.LimitRule> entry : frequencySceneList.entrySet()) {
-                checkCache(scene, key, entry.getKey(), entry.getValue().getFrequency(), limitCat.message());
+                checkCache(scene, key, entry.getKey(), entry.getValue().getFrequency(), entry.getValue().getMessage());
             }
         }
     }
@@ -131,7 +131,7 @@ public class LimitCatService {
         log.info("频率验证，scene：{}，key：{}，限制{}执行{}次，已执行{}次",scene, key, duration, frequency, object);
 
         if(object!=null && Long.parseLong(object.toString())>=frequency) {
-            throw new LimitCatException(StringUtils.hasText(msg)?msg:String.format("操作太频繁，请稍后再试。（场景 %s 限制%s执行%s次）",scene, duration, frequency));
+            throw new LimitCatException(StringUtils.hasText(msg)?msg:String.format("操作太频繁，请稍后再试。（场景%s限制%s执行%s次）",scene, duration, frequency));
         }
     }
 
