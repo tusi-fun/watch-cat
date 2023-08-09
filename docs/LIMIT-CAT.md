@@ -34,7 +34,7 @@ watchcat.limit.scenes.xxx.5m.frequency=5
 watchcat.limit.scenes.xxx.5m.message="操作太快，休息一会儿吧（5分钟内限制操作5次）"
 ```
 
-## 使用示例（方式一：配置文件指定规则）
+## 使用示例一：配置文件指定规则
 ### 1. 引入依赖
 ```xml
 <dependency>
@@ -108,7 +108,7 @@ public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCod
 }
 ```
 
-## 使用示例（方式二：代码方式指定规则（不需要在配置文件编写配置））
+## 使用示例二：代码方式指定规则（不需要在配置文件编写配置）
 ### 1. 引入依赖
 ```xml
 <dependency>
