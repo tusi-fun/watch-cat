@@ -1,11 +1,11 @@
 # @SignCat 注解
 > api 请求和响应日志打印、持久化。「 _参数验证、类型转换等异常无法获取日志_ 」
----
+
 ## 注解参数
-| 参数          | 默认值    | 说明            |
-|-------------|--------|---------------|
-| checkSign         | true   | 是否启用签名验证      |
-| jsonTarget | Object | json 提交时的接收对象 |
+| 参数          | 类型      | 默认值    | 说明            |
+|-------------|---------|--------|---------------|
+| checkSign    | Boolean | true   | 是否启用签名验证      |
+| jsonTarget | Class   | Object | json 提交时的接收对象 |
 
 ## 配置参数
 ```properties
@@ -23,7 +23,8 @@ watchcat.sign.sha.algorithm =
 watchcat.sign.sha.tolerant =
 ```
 
-## 引入依赖
+## 使用示例
+### 1. 引入依赖
 ```xml
 <dependency>
     <groupId>fun.tusi</groupId>
@@ -32,7 +33,7 @@ watchcat.sign.sha.tolerant =
 </dependency>
 ```
 
-## 添加配置
+### 2. 添加配置
 ```properties
 watchcat.sign.enabled = true
 
@@ -43,7 +44,7 @@ watchcat.sign.symmetric.publicKey =
 watchcat.sign.symmetric.privateKey =
 ```
 
-## 在代码中使用
+### 3. 使用注解
 ```java
 @SignCat
 @PostMapping("login")
