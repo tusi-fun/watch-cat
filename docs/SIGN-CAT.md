@@ -1,6 +1,11 @@
 # @SignatureCat 注解
 > api 请求和响应日志打印、持久化。「 _参数验证、类型转换等异常无法获取日志_ 」
 
+- 支持Hash 和 非对称算法验证签名
+- 支持对响应数据做签名，并使用配置文件做成动态开关
+- 支持使用外部接口方式获取 签名和验签密钥
+- 使用配置文件方式，支持
+
 ## 注解参数
 | 参数          | 类型      | 默认值    | 说明            |
 |-------------|---------|--------|---------------|
@@ -9,18 +14,27 @@
 
 ## 配置参数
 ```properties
-watchcat.sign.enabled = true
+watchcat.signature.enabled = true
+watchcat.signature.scenes.AAA.algorithm =
+watchcat.signature.scenes.AAA.tolerant =
+watchcat.signature.scenes.AAA.publicKey =
+watchcat.signature.scenes.AAA.privateKey =
+
+watchcat.signature.scenes.BBB.algorithm =
+watchcat.signature.scenes.BBB.tolerant =
+watchcat.signature.scenes.BBB.appid =
+watchcat.signature.scenes.BBB.secret =
 
 # 非对称签名算法
-watchcat.sign.symmetric.algorithm =
-watchcat.sign.symmetric.tolerant =
-watchcat.sign.symmetric.publicKey =
-watchcat.sign.symmetric.privateKey =
+watchcat.signature.symmetric.algorithm =
+watchcat.signature.symmetric.tolerant =
+watchcat.signature.symmetric.publicKey =
+watchcat.signature.symmetric.privateKey =
 
 # sha签名算法
-watchcat.sign.sha.enabled =
-watchcat.sign.sha.algorithm =
-watchcat.sign.sha.tolerant =
+watchcat.signature.sha.enabled =
+watchcat.signature.sha.algorithm =
+watchcat.signature.sha.tolerant =
 ```
 
 ## 使用示例
@@ -35,13 +49,13 @@ watchcat.sign.sha.tolerant =
 
 ### 2. 添加配置
 ```properties
-watchcat.sign.enabled = true
+watchcat.signature.enabled = true
 
 # 非对称签名算法
-watchcat.sign.symmetric.algorithm =
-watchcat.sign.symmetric.tolerant =
-watchcat.sign.symmetric.publicKey =
-watchcat.sign.symmetric.privateKey =
+watchcat.signature.symmetric.algorithm =
+watchcat.signature.symmetric.tolerant =
+watchcat.signature.symmetric.publicKey =
+watchcat.signature.symmetric.privateKey =
 ```
 
 ### 3. 使用注解

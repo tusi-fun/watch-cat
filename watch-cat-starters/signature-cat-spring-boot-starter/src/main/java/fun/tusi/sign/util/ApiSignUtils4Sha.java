@@ -7,7 +7,10 @@ import fun.tusi.sign.service.SignatureCatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import static fun.tusi.sign.util.ApiSignUtils.buildSignPlaintext;
 
 /**
  * 签名工具（适用于散列算法）
@@ -38,10 +41,10 @@ public class ApiSignUtils4Sha {
      */
     public static Map<String, String> sign(String appid, String secret, HmacAlgorithm algorithm, String method, String path, Map<String, String> requestParams) {
 
-        log.info("ApiSignUtils4Sha > 签名参数 appid=" + appid + ", secret=" + secret + ", algorithm=" + algorithm + ", method=" + method + ", path=" + path + ", requestParams=" + requestParams);
+        log.info("ApiSignUtils4Sha > sign > 入参：appid=" + appid + ", secret=" + secret + ", algorithm=" + algorithm + ", method=" + method + ", path=" + path + ", requestParams=" + requestParams);
 
-        String timestamp = String.valueOf(System.currentTimeMillis()/1000L);
-        String nonce = RandomUtil.randomString(16);
+        String timestamp = String.valueOf(System.currentTimeMillis()/1000L),
+               nonce = RandomUtil.randomString(16);
 
         // 构建签名体
         Map<String,String> signBody = requestParams!=null ? new HashMap(requestParams) : new HashMap();
@@ -74,9 +77,9 @@ public class ApiSignUtils4Sha {
 	 * @param timestamp unix 时间戳
 	 * @return
      */
-    public static boolean verify(String secret, HmacAlgorithm algorithm, Map<String, String> params, String sign, String nonce, String timestamp) {
+    public static boolean verify(String secret, HmacAlgorithm algorithm, String sign, String nonce, String timestamp, Map<String, String> params) {
 
-        log.info("ApiSignUtils4Sha > 验签参数 secret=" + secret + ", algorithm=" + algorithm + ", params=" + params + ", sign=" + sign + ", nonce=" + nonce + ", timestamp=" + timestamp);
+        log.info("ApiSignUtils4Sha > verify > 入参：secret=" + secret + ", algorithm=" + algorithm + ", params=" + params + ", sign=" + sign + ", nonce=" + nonce + ", timestamp=" + timestamp);
 
         if(algorithm==null) {
             throw new SignatureCatException("验证签名：未找到签名算法为"+algorithm+"的配置");
@@ -104,38 +107,5 @@ public class ApiSignUtils4Sha {
         return sign.equals(_sign);
     }
 
-    /**
-     * 构建签名原文
-     * @param signBody
-     * @return
-     */
-    private static String buildSignPlaintext(Map<String,String> signBody) {
-
-        // 移除签名体中已有的 sign 参数（如果存在）
-        signBody.remove(SIGN_KEY);
-
-        // 获取 signBody 中的 key 集合
-        List<String> keyList = new ArrayList(signBody.keySet());
-
-        // 排序
-        Collections.sort(keyList);
-
-        // 构建签名内容
-        StringBuilder sb = new StringBuilder();
-
-        for (String key : keyList) {
-
-            String value = signBody.get(key);
-
-            if(StringUtils.hasText(value)) {
-
-                sb.append(key).append(value);
-            }
-        }
-
-        log.info("ApiSignUtils4Sha > 签名原文 = {}",sb);
-
-        return sb.toString();
-    }
 
 }

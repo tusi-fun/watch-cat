@@ -140,7 +140,7 @@ public class SignatureCatAspect {
                 throw new SignatureCatException(ApiSignUtils4Sha.SECRET_KEY+" 获取失败");
             }
 
-            Boolean isPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256, signDataMap, sign, nonce, timestamp);
+            Boolean isPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256, sign, nonce, timestamp, signDataMap);
 
             if(!isPassed) {
                 throw new SignatureCatException(ApiSignUtils4Sha.SIGN_KEY + " 验证失败");

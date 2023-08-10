@@ -11,10 +11,33 @@ import java.util.Map;
  * @author xy783
  */
 @Data
-@ConfigurationProperties(prefix = "watchcat.sign")
+@ConfigurationProperties(prefix = "watchcat.signature")
 public class SignatureCatProperties {
 
     private boolean enabled = false;
+
+    private Map<String, Map<Duration, SignatureCatRule>> scenes;
+
+    @Data
+    public static class SignatureCatRule {
+
+        /**
+         * 签名算法
+         */
+        private String algorithm;
+
+        /**
+         * 前后宽容时间
+         */
+        private Duration tolerant;
+    }
+
+
+
+
+
+
+
 
     private Map<String,SymmetricSignProvider> symmetric;
 
