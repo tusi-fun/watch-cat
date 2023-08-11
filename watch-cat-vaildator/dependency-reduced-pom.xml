@@ -3,11 +3,11 @@
   <parent>
     <artifactId>watch-cat</artifactId>
     <groupId>fun.tusi</groupId>
-    <version>1.0.0-sb2</version>
+    <version>1.0.2-sb2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>watch-cat-vaildator</artifactId>
-  <version>1.0.0-sb2</version>
+  <version>${watch-cat-vaildator.version}</version>
   <build>
     <plugins>
       <plugin>
@@ -22,7 +22,7 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>com.cat:watch-cat-utils</include>
+                  <include>fun.tusi:watch-cat-utils</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -41,7 +41,7 @@
     <dependency>
       <groupId>fun.tusi</groupId>
       <artifactId>watch-cat-utils</artifactId>
-      <version>1.0.0-sb2</version>
+      <version>1.0.2-sb2</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
