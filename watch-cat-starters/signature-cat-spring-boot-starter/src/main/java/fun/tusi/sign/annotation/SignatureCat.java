@@ -12,12 +12,6 @@ import java.lang.annotation.*;
 public @interface SignatureCat {
 
 	/**
-	 * 是否启用签名验证
-	 * @return
-	 */
-	boolean checkSign() default true;
-
-	/**
 	 * json 请求接收对象
 	 *
 	 * @return

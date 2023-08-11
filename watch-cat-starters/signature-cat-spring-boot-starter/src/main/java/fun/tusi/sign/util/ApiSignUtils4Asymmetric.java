@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 /**
- * 签名工具（适用于非对称算法rsa、sm2等）
+ * 接口加签、验签工具（适用于非对称算法RSA、SM2等）
  * @author xy783
  */
 @Slf4j
@@ -33,14 +33,9 @@ public class ApiSignUtils4Asymmetric {
      * @param path
      * @return
      */
-    public Map<String, String> sign(String publicKey,
-                                    String privateKey,
-                                    SignAlgorithm signAlgorithm,
-                                    String method,
-                                    String path,
-                                    Map<String, String> requestParams) {
+    public Map<String, String> sign(String publicKey, String privateKey, SignAlgorithm algorithm, String method, String path, Map<String, String> requestParams) {
 
-        log.info("计算签名: method = " + method + ", path = " + path + ", requestParams = " + requestParams);
+        log.info("ApiSignUtils4Asymmetric > sign > 入参 publicKey=" + publicKey + ", privateKey=" + privateKey + ", algorithm=" + algorithm + ", method=" + method + ", path=" + path + ", requestParams=" + requestParams);
 
         // 请求签名后的返回内容
         Map<String,String> signResult = new HashMap();
@@ -52,24 +47,19 @@ public class ApiSignUtils4Asymmetric {
         signBody.putAll(signResult);
         signBody.put(METHOD_KEY,method);
         signBody.put(PATH_KEY,path);
-        signResult.put(SIGN_KEY, genSign(publicKey,privateKey,signAlgorithm,signBody));
+        signResult.put(SIGN_KEY, genSign(publicKey,privateKey,algorithm,signBody));
 
         return signResult;
     }
 
     /**
      * 校验签名
-     * @param requestParams 请求参数
+     * @param params 请求参数
      * @return
      */
-    public Boolean verify(String publicKey,
-                          SignAlgorithm signAlgorithm,
-                          String sign,
-                          String nonce,
-                          String timestamp,
-                          Map<String, String> requestParams) {
+    public Boolean verify(String publicKey, SignAlgorithm algorithm, String sign, String nonce, String timestamp, Map<String, String> params) {
 
-        log.info("验证签名: sign = " + sign + ", nonce = " + nonce + ", timestamp = " + timestamp + ", requestParams = " + requestParams);
+        log.info("验证签名: sign = " + sign + ", nonce = " + nonce + ", timestamp = " + timestamp + ", params = " + params);
 
         // 验证公钥提供者
 //        SymmetricSignProvider symmetricSignProvider = platformSymmetricProperties.getSymmetric().get(pulicKeyProvider);
@@ -84,12 +74,12 @@ public class ApiSignUtils4Asymmetric {
 //        // 验证签名值是否被使用过，存在则抛异常
 //        Assert.isTrue(cacheService.cacheSign(sign,symmetricSignProvider.getTolerant()),"验证签名: sign 已经使用过");
 
-        Map<String, String> signBody = new HashMap(requestParams);
+        Map<String, String> signBody = new HashMap(params);
         signBody.put(NONCE_KEY,nonce);
         signBody.put(TIMESTAMP_KEY,timestamp);
 
         // 构建签名体
-        String signStr = buildSignBody(signBody);
+        String signStr = buildSignPlaintext(signBody);
 
 //        SignAlgorithm signAlgorithm = null;
 //
@@ -102,7 +92,7 @@ public class ApiSignUtils4Asymmetric {
 //        }
 //        Assert.notNull(signAlgorithm,"验证签名: 签名算法无效");
 
-        Sign rsaSign = SecureUtil.sign(signAlgorithm,null,publicKey);
+        Sign rsaSign = SecureUtil.sign(algorithm,null, publicKey);
 
         try {
 
@@ -125,7 +115,7 @@ public class ApiSignUtils4Asymmetric {
 
         log.info("计算签名: signBody = " + signBody);
 
-        String signStr = buildSignBody(signBody);
+        String signStr = buildSignPlaintext(signBody);
 
         // 生成 Sign 值
 //        SymmetricSignProvider symmetricSignProvider = platformSymmetricProperties.getSymmetric().get(pulicKeyProvider);
@@ -153,7 +143,12 @@ public class ApiSignUtils4Asymmetric {
         return HexUtil.encodeHexStr(sign.sign(signStr.getBytes()));
     }
 
-    private String buildSignBody(Map<String,String> signBody) {
+    /**
+     * 构建签名原文
+     * @param signBody
+     * @return
+     */
+    public static String buildSignPlaintext(Map<String,String> signBody) {
 
         // 移除签名体中已有的 sign 参数（如果存在的话）
         signBody.remove(SIGN_KEY);
@@ -167,19 +162,21 @@ public class ApiSignUtils4Asymmetric {
         // 构建签名内容
         StringBuilder sb = new StringBuilder();
 
-        for (String key:keyList) {
+        for (String key : keyList) {
+
             String value = signBody.get(key);
+
+            // 移除空値
             if(StringUtils.hasText(value)) {
+
                 sb.append(key).append(value);
             }
         }
 
-        log.info("构建签名体：签名原文 = {}",sb);
+        log.info("ApiSignUtils > buildSignPlaintext = {}", sb);
 
         return sb.toString();
-
     }
-
 
 //    public static void main(String[] args) {
 //

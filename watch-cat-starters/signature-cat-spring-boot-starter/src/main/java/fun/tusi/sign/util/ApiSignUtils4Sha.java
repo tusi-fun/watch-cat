@@ -3,14 +3,13 @@ package fun.tusi.sign.util;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import fun.tusi.sign.service.SignatureCatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 
 /**
- * 签名工具（适用于散列算法）
+ * 接口加签、验签工具（适用于散列算法）
  * @author xy783
  */
 @Slf4j
@@ -38,10 +37,10 @@ public class ApiSignUtils4Sha {
      */
     public static Map<String, String> sign(String appid, String secret, HmacAlgorithm algorithm, String method, String path, Map<String, String> requestParams) {
 
-        log.info("ApiSignUtils4Sha > 签名参数 appid=" + appid + ", secret=" + secret + ", algorithm=" + algorithm + ", method=" + method + ", path=" + path + ", requestParams=" + requestParams);
+        log.info("[签名][appid=" + appid + ", secret=" + secret + ", algorithm=" + algorithm + ", method=" + method + ", path=" + path + ", requestParams=" + requestParams+"]");
 
-        String timestamp = String.valueOf(System.currentTimeMillis()/1000L);
-        String nonce = RandomUtil.randomString(16);
+        String timestamp = String.valueOf(System.currentTimeMillis()/1000L),
+               nonce = RandomUtil.randomString(16);
 
         // 构建签名体
         Map<String,String> signBody = requestParams!=null ? new HashMap(requestParams) : new HashMap();
@@ -59,63 +58,85 @@ public class ApiSignUtils4Sha {
         signResult.put(APPID_KEY, appid);
         signResult.put(NONCE_KEY, nonce);
         signResult.put(TIMESTAMP_KEY, timestamp);
-        signResult.put(SIGN_KEY, mac.digestHex(buildSignPlaintext(signBody)));
+
+        String signPlaintext = buildSignPlaintext(signBody);
+        log.info("[签名]signPlaintext = {}", signPlaintext);
+
+        signResult.put(SIGN_KEY, mac.digestHex(signPlaintext));
 
         return signResult;
     }
 
-	/**
-	 * 校验签名
+    /**
+     * 验签
      * @param secret    签名密钥
-	 * @param algorithm 签名算法
-     * @param params    业务参数
-	 * @param sign      签名值
-	 * @param nonce     随机数
-	 * @param timestamp unix 时间戳
-	 * @return
+     * @param algorithm 签名算法
+     * @param params    业务参数 （已经包含 nonce、timestamp 等签名元参数）
+     * @param outSign   签名值
+     * @return
      */
-    public static boolean verify(String secret, HmacAlgorithm algorithm, Map<String, String> params, String sign, String nonce, String timestamp) {
+    public static boolean verify(String secret, HmacAlgorithm algorithm, String outSign, Map<String, String> params) {
 
-        log.info("ApiSignUtils4Sha > 验签参数 secret=" + secret + ", algorithm=" + algorithm + ", params=" + params + ", sign=" + sign + ", nonce=" + nonce + ", timestamp=" + timestamp);
-
-        if(algorithm==null) {
-            throw new SignatureCatException("验证签名：未找到签名算法为"+algorithm+"的配置");
-        }
-
-        if(!StringUtils.hasText(sign)) {
-            throw new SignatureCatException("验证签名："+ SIGN_KEY +"不合法");
-        }
-
-        if(!StringUtils.hasText(nonce)) {
-            throw new SignatureCatException("验证签名："+ NONCE_KEY +"不合法");
-        }
+        log.info("[验签][secret=" + secret + ", algorithm=" + algorithm + ", outSign=" + outSign + ", params=" + params +"]");
 
         Map<String, String> signBody = new HashMap(params);
-        signBody.put(NONCE_KEY,nonce);
-        signBody.put(TIMESTAMP_KEY,timestamp);
 
         // 验证签名
         HMac mac = new HMac(algorithm, secret.getBytes());
 
-        String _sign = mac.digestHex(buildSignPlaintext(signBody));
+        String signPlaintext = buildSignPlaintext(signBody);
 
-        log.info("ApiSignUtils4Sha > 签名结果 = {}", _sign);
+        log.info("[验签]signPlaintext = {}", signPlaintext);
 
-        return sign.equals(_sign);
+        String _sign = mac.digestHex(signPlaintext);
+
+        log.info("[验签]outSign = {}", outSign);
+        log.info("[验签]sign = {}", _sign);
+
+        return outSign.equals(_sign);
     }
+
+//	/**
+//	 * 校验签名
+//     * @param secret    签名密钥
+//	 * @param algorithm 签名算法
+//     * @param params    业务参数
+//	 * @param outSign   签名值
+//	 * @param nonce     随机数
+//	 * @param timestamp unix 时间戳
+//	 * @return
+//     */
+//    public static boolean verify(String secret, HmacAlgorithm algorithm, String outSign, String nonce, String timestamp, Map<String, String> params) {
+//
+//        log.info("> verify[secret=" + secret + ", algorithm=" + algorithm + ", params=" + params + ", outSign=" + outSign + ", nonce=" + nonce + ", timestamp=" + timestamp+"]");
+//
+//        Map<String, String> signBody = new HashMap(params);
+//        signBody.put(NONCE_KEY,nonce);
+//        signBody.put(TIMESTAMP_KEY,timestamp);
+//
+//        // 验证签名
+//        HMac mac = new HMac(algorithm, secret.getBytes());
+//
+//        String _sign = mac.digestHex(buildSignPlaintext(signBody));
+//
+//        log.info("> outSign = {}", outSign);
+//        log.info(">    sign = {}", _sign);
+//
+//        return outSign.equals(_sign);
+//    }
 
     /**
      * 构建签名原文
-     * @param signBody
-     * @return
+     * @param signBodyMap
+     * @return signBody
      */
-    private static String buildSignPlaintext(Map<String,String> signBody) {
+    public static String buildSignPlaintext(Map<String,String> signBodyMap) {
 
-        // 移除签名体中已有的 sign 参数（如果存在）
-        signBody.remove(SIGN_KEY);
+        // 移除参与签名参数中已有的 sign 参数（如果存在）
+        signBodyMap.remove(SIGN_KEY);
 
         // 获取 signBody 中的 key 集合
-        List<String> keyList = new ArrayList(signBody.keySet());
+        List<String> keyList = new ArrayList(signBodyMap.keySet());
 
         // 排序
         Collections.sort(keyList);
@@ -125,15 +146,14 @@ public class ApiSignUtils4Sha {
 
         for (String key : keyList) {
 
-            String value = signBody.get(key);
+            String value = signBodyMap.get(key);
 
+            // 移除空値
             if(StringUtils.hasText(value)) {
 
                 sb.append(key).append(value);
             }
         }
-
-        log.info("ApiSignUtils4Sha > 签名原文 = {}",sb);
 
         return sb.toString();
     }
