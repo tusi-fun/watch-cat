@@ -9,32 +9,22 @@
 ## 注解参数
 | 参数          | 类型      | 默认值    | 说明            |
 |-------------|---------|--------|---------------|
-| checkSign    | Boolean | true   | 是否启用签名验证      |
 | jsonTarget | Class   | Object | json 提交时的接收对象 |
 
 ## 配置参数
 ```properties
+# 是否启用签名验证，默认 true
 watchcat.signature.enabled = true
-watchcat.signature.scenes.AAA.algorithm =
-watchcat.signature.scenes.AAA.tolerant =
-watchcat.signature.scenes.AAA.publicKey =
-watchcat.signature.scenes.AAA.privateKey =
 
-watchcat.signature.scenes.BBB.algorithm =
-watchcat.signature.scenes.BBB.tolerant =
-watchcat.signature.scenes.BBB.appid =
-watchcat.signature.scenes.BBB.secret =
+# 签名算法，默认 HmacSHA256
+watchcat.signature.digest.algorithm = HmacSHA256
 
-# 非对称签名算法
-watchcat.signature.symmetric.algorithm =
-watchcat.signature.symmetric.tolerant =
-watchcat.signature.symmetric.publicKey =
-watchcat.signature.symmetric.privateKey =
+# 时间戳前后宽容时间，默认 300s
+watchcat.signature.digest.tolerant = 300s
 
-# sha签名算法
-watchcat.signature.sha.enabled =
-watchcat.signature.sha.algorithm =
-watchcat.signature.sha.tolerant =
+# 应用列表
+watchcat.signature.digest.apps.appidA = secretA
+watchcat.signature.digest.apps.appidB = secretB
 ```
 
 ## 使用示例
@@ -51,18 +41,29 @@ watchcat.signature.sha.tolerant =
 ```properties
 watchcat.signature.enabled = true
 
-# 非对称签名算法
-watchcat.signature.symmetric.algorithm =
-watchcat.signature.symmetric.tolerant =
-watchcat.signature.symmetric.publicKey =
-watchcat.signature.symmetric.privateKey =
+watchcat.signature.digest.apps.appidA = secretA
 ```
 
 ### 3. 使用注解
 ```java
+
+/**
+ * 表单方式提交
+ */
 @SignatureCat
-@PostMapping("login")
-public Result<AdminLoginPong> loginByAccount(@Valid AdminLoginPing adminLoginPing) {
+@PostMapping("form")
+public Result<Object> formSubmit(@Valid AdminLoginPing adminLoginPing) {
+
+        return Result.ok().data(...);
+
+}
+
+/**
+ * json方式提交（注意：不能使用 @RequestBody 和 @Valid 注解）
+ */
+@SignatureCat(jsonTarget = SignCatObjPing.class)
+@PostMapping("json")
+public Result<Object> jsonSubmit(SignCatObjPing signCatObjPing) {
 
         return Result.ok().data(...);
 

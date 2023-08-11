@@ -1,85 +1,45 @@
 package fun.tusi.sign.config;
 
+import cn.hutool.crypto.digest.HmacAlgorithm;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 接口签名验证参数配置（适用于非对称算法rsa、sm2 和 hash）
+ * 接口签名验证参数配置
  * @author xy783
  */
 @Data
 @ConfigurationProperties(prefix = "watchcat.signature")
 public class SignatureCatProperties {
 
-    private boolean enabled = false;
+    /**
+     * 是否启用签名验证
+     */
+    private boolean enabled = true;
 
-    private Map<String, Map<Duration, SignatureCatRule>> scenes;
+    private DigestSignProvider digest;
 
     @Data
-    public static class SignatureCatRule {
+    public static class DigestSignProvider {
 
         /**
          * 签名算法
          */
-        private String algorithm;
+        private HmacAlgorithm algorithm = HmacAlgorithm.HmacSHA256;
 
         /**
          * 前后宽容时间
          */
-        private Duration tolerant;
-    }
-
-
-
-
-
-
-
-
-    private Map<String,SymmetricSignProvider> symmetric;
-
-    private ShaSignProvider sha;
-
-    @Data
-    public static class SymmetricSignProvider {
-        /**
-         * 签名算法
-         */
-        private String algorithm;
+        private Duration tolerant = Duration.ofSeconds(300);
 
         /**
-         * 前后宽容时间(s)
+         * 应用
          */
-        private Long tolerant;
-
-        /**
-         * 公钥
-         */
-        private String publicKey;
-
-        /**
-         * 私钥
-         */
-        private String privateKey;
-    }
-
-    @Data
-    public static class ShaSignProvider {
-
-        private boolean enabled = false;
-
-        /**
-         * 签名算法
-         */
-        private String algorithm;
-
-        /**
-         * 前后宽容时间
-         */
-        private Duration tolerant;
+        private Map<String, String> apps = new HashMap<>();
 
     }
 

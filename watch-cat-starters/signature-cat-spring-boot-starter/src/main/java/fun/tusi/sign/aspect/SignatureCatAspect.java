@@ -1,7 +1,6 @@
 package fun.tusi.sign.aspect;
 
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import fun.tusi.sign.annotation.SignatureCat;
 import fun.tusi.sign.config.SignatureCatProperties;
@@ -69,7 +68,7 @@ public class SignatureCatAspect {
         HttpServletRequest request = attributes.getRequest();
 
         if(!StringUtils.hasText(request.getContentType())) {
-            throw new SignatureCatException("ContentType 不能为空");
+            throw new SignatureCatException("签名验证失败，ContentType 获取失败");
         }
 
         MediaType mediaType;
@@ -77,74 +76,79 @@ public class SignatureCatAspect {
         try {
             mediaType = MediaType.parseMediaType(request.getContentType());
         } catch (InvalidMediaTypeException e) {
-            throw new SignatureCatException("ContentType = "+request.getContentType()+"，解析失败");
+            throw new SignatureCatException("签名验证失败，ContentType = "+request.getContentType()+"，解析失败");
         }
 
-        if(signatureCat.checkSign()) {
+        // 获取签名元参数（appid、nonce、timestamp、sign）
+        String appId = request.getHeader(ApiSignUtils4Sha.APPID_KEY),
+               nonce = request.getHeader(ApiSignUtils4Sha.NONCE_KEY),
+               timestamp = request.getHeader(ApiSignUtils4Sha.TIMESTAMP_KEY),
+               sign = request.getHeader(ApiSignUtils4Sha.SIGN_KEY),
+               method = request.getMethod(),
+               path = request.getServletPath();
 
-            // 获取签名元参数（appid、nonce、timestamp、sign）
-            String appId = request.getHeader(ApiSignUtils4Sha.APPID_KEY),
-                   nonce = request.getHeader(ApiSignUtils4Sha.NONCE_KEY),
-                   timestamp = request.getHeader(ApiSignUtils4Sha.TIMESTAMP_KEY),
-                   sign = request.getHeader(ApiSignUtils4Sha.SIGN_KEY),
-                   method = request.getMethod(),
-                   path = request.getServletPath();
+        // 验证 appId、nonce、timestamp、sign 是否传递
+        if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
+            throw new SignatureCatException("签名验证失败，签名元参数（"+ApiSignUtils4Sha.APPID_KEY+"、"+ApiSignUtils4Sha.NONCE_KEY+"、"+ApiSignUtils4Sha.TIMESTAMP_KEY+"、"+ApiSignUtils4Sha.SIGN_KEY+"）获取失败");
+        }
 
-            // 验证 appId、nonce、timestamp、sign 是否传递
-            if(!(StringUtils.hasText(appId) && StringUtils.hasText(nonce) && StringUtils.hasText(timestamp) && StringUtils.hasText(sign))) {
-                throw new SignatureCatException("签名参数（"+ApiSignUtils4Sha.APPID_KEY+"、"+ApiSignUtils4Sha.NONCE_KEY+"、"+ApiSignUtils4Sha.TIMESTAMP_KEY+"、"+ApiSignUtils4Sha.SIGN_KEY+"）不能为空");
-            }
+        // 验证 timestamp 是否在宽容时间内
+        if(!signCommonService.checkTimestampTolerant(timestamp, signatureCatProperties.getDigest().getTolerant())) {
+            throw new SignatureCatException("签名验证失败，" + ApiSignUtils4Sha.TIMESTAMP_KEY + " 无效");
+        }
 
-            // 验证 timestamp 是否在宽容时间内
-            if(!signCommonService.checkTimestampTolerant(timestamp, signatureCatProperties.getSha().getTolerant())) {
-                throw new SignatureCatException(ApiSignUtils4Sha.TIMESTAMP_KEY + " 验证失败");
-            }
+        // 验证 sign 在一定周期内是否已经使用
+        if(!signCommonService.checkSign(sign, signatureCatProperties.getDigest().getTolerant())) {
+            throw new SignatureCatException("签名验证失败，" + ApiSignUtils4Sha.SIGN_KEY + " 无效");
+        }
 
-            // 验证 sign 在一定周期内是否被使用过
-            if(!signCommonService.checkSign(sign, signatureCatProperties.getSha().getTolerant())) {
-                throw new SignatureCatException(ApiSignUtils4Sha.SIGN_KEY + " 已使用");
-            }
+        // 获取业务参数
+        Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
+                Collectors.toMap(
+                        item -> item.getKey(),
+                        item -> item.getValue()!=null && item.getValue().length>0 ? item.getValue()[0] : ""
+                )
+        );
 
-            // 获取业务参数
-            Map<String, String> signDataMap = request.getParameterMap().entrySet().stream().collect(
-                    Collectors.toMap(
-                            item -> item.getKey(),
-                            item -> item.getValue()!=null && item.getValue().length>0?item.getValue()[0]:""
-                    )
-            );
+        // 填充元参数
+        signDataMap.put(ApiSignUtils4Sha.APPID_KEY, appId);
+        signDataMap.put(ApiSignUtils4Sha.METHOD_KEY, method);
+        signDataMap.put(ApiSignUtils4Sha.PATH_KEY, path);
+        signDataMap.put(ApiSignUtils4Sha.NONCE_KEY, nonce);
+        signDataMap.put(ApiSignUtils4Sha.TIMESTAMP_KEY, timestamp);
 
-            signDataMap.put(ApiSignUtils4Sha.APPID_KEY, appId);
-            signDataMap.put(ApiSignUtils4Sha.METHOD_KEY, method);
-            signDataMap.put(ApiSignUtils4Sha.PATH_KEY, path);
-            signDataMap.put(ApiSignUtils4Sha.NONCE_KEY, nonce);
-            signDataMap.put(ApiSignUtils4Sha.TIMESTAMP_KEY, timestamp);
+        // application/json 方式，获取 jsonContentMd5
+        if(mediaType.includes(MediaType.APPLICATION_JSON)) {
+            String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signatureCat.jsonTarget());
+            signDataMap.put(ApiSignUtils4Sha.CONTENT_MD5_KEY, jsonContentMd5);
+        }
 
-            // application/json 方式，获取 jsonContentMd5
-            if(mediaType.includes(MediaType.APPLICATION_JSON)) {
-                String jsonContentMd5 = checkJson(request, proceedingJoinPoint.getArgs(), signatureCat.jsonTarget());
-                signDataMap.put(ApiSignUtils4Sha.CONTENT_MD5_KEY, jsonContentMd5);
-            }
+        log.info("[验签]signDataMap = {}",signDataMap);
 
-            log.info("SignatureCatAspect:验签，签名参数={}",signDataMap);
+        // 获取 secret
+        String appSecret = signatureCatProperties.getDigest().getApps().get(appId);
+
+        if(!StringUtils.hasText(appSecret)) {
 
             AppService appService = null;
+
             try {
                 appService = applicationContext.getBean(AppService.class);
             } catch (NoSuchBeanDefinitionException e) {
-                throw new SignatureCatException("未提供 "+ AppService.class.getName() +" 接口实现类");
+                throw new SignatureCatException("签名验证失败，未提供 "+ AppService.class.getName() +" 接口实现类");
             }
 
-            String appSecret = appService.getAppSecret(appId);
+            appSecret = appService.getAppSecret(appId);
+        }
 
-            if(!StringUtils.hasText(appSecret)) {
-                throw new SignatureCatException(ApiSignUtils4Sha.SECRET_KEY+" 获取失败");
-            }
+        if(!StringUtils.hasText(appSecret)) {
+            throw new SignatureCatException("签名验证失败，" + ApiSignUtils4Sha.SECRET_KEY+"获取失败（请使用 配置文件 或 实现AppService接口 的方式配置）");
+        }
 
-            Boolean isPassed = ApiSignUtils4Sha.verify(appSecret, HmacAlgorithm.HmacSHA256, sign, nonce, timestamp, signDataMap);
+        Boolean isPassed = ApiSignUtils4Sha.verify(appSecret, signatureCatProperties.getDigest().getAlgorithm(), sign, signDataMap);
 
-            if(!isPassed) {
-                throw new SignatureCatException(ApiSignUtils4Sha.SIGN_KEY + " 验证失败");
-            }
+        if(!isPassed) {
+            throw new SignatureCatException("签名验证失败，" + ApiSignUtils4Sha.SIGN_KEY + " 验证失败");
         }
 
         log.info("<SignatureCat doAround out>");
@@ -159,28 +163,31 @@ public class SignatureCatAspect {
      */
     private String checkJson(HttpServletRequest request, Object[] args, Class jsonTarget) {
 
-        String contentMd5 = request.getHeader(ApiSignUtils4Sha.CONTENT_MD5_KEY);
+        String outJsonContentMd5 = request.getHeader(ApiSignUtils4Sha.CONTENT_MD5_KEY);
 
-        // 验证提交Json内容时，是否传递 contentMd5
-        if (!StringUtils.hasText(contentMd5)) {
-            throw new SignatureCatException("签名参数不完整（json类型参数，需提交 " + ApiSignUtils4Sha.CONTENT_MD5_KEY + " 参数）");
+        // 验证提交Json内容时，是否传递 outJsonContentMd5
+        if (!StringUtils.hasText(outJsonContentMd5)) {
+            throw new SignatureCatException("签名验证失败，Content-Type=application/json 时，需传递 " + ApiSignUtils4Sha.CONTENT_MD5_KEY + " 参数");
         }
 
         // 获取json原文
         String jsonData = JakartaServletUtil.getBody(request);
 
-        log.info("SignatureCatAspect:验签，json原文:\n{}", jsonData);
+        log.info("[验签]jsonData = \n{}", jsonData);
 
-        String realContentMd5 = SecureUtil.md5(jsonData);
+        String jsonContentMd5 = SecureUtil.md5(jsonData);
+
+        log.info("[验签]outJsonContentMd5 = {}", jsonContentMd5);
 
         // 验证json原文MD5 和 提交的contentMd5是否一致
-        if (!realContentMd5.equals(contentMd5)) {
+        if (!jsonContentMd5.equals(outJsonContentMd5)) {
 
-            log.info("SignatureCatAspect:验签，json原文Md5={}", realContentMd5);
+            log.warn("[验签]md5不一致，jsonContentMd5 = {},outJsonContentMd5 = {}", jsonContentMd5, outJsonContentMd5);
 
-            throw new SignatureCatException(ApiSignUtils4Sha.CONTENT_MD5_KEY + " 和提交内容的md5值不一致");
+            throw new SignatureCatException("签名验证失败，" + ApiSignUtils4Sha.CONTENT_MD5_KEY + " 和提交内容的md5值不一致");
         }
 
+        // 验证 Json 参数
         for (int i=0;i<args.length;i++) {
 
             Object o = args[i];
@@ -204,7 +211,7 @@ public class SignatureCatAspect {
             }
         }
 
-        return realContentMd5;
+        return outJsonContentMd5;
 
     }
 

@@ -9,13 +9,10 @@ import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static fun.tusi.sign.util.ApiSignUtils.buildSignPlaintext;
+import java.util.*;
 
 /**
- * 签名工具（适用于非对称算法RSA、SM2等）
+ * 接口加签、验签工具（适用于非对称算法RSA、SM2等）
  * @author xy783
  */
 @Slf4j
@@ -146,7 +143,40 @@ public class ApiSignUtils4Asymmetric {
         return HexUtil.encodeHexStr(sign.sign(signStr.getBytes()));
     }
 
+    /**
+     * 构建签名原文
+     * @param signBody
+     * @return
+     */
+    public static String buildSignPlaintext(Map<String,String> signBody) {
 
+        // 移除参与签名参数中已有的 sign 参数（如果存在）
+        signBody.remove(SIGN_KEY);
+
+        // 获取 signBody 中的 key 集合
+        List<String> keyList = new ArrayList(signBody.keySet());
+
+        // 排序
+        Collections.sort(keyList);
+
+        // 构建签名内容
+        StringBuilder sb = new StringBuilder();
+
+        for (String key : keyList) {
+
+            String value = signBody.get(key);
+
+            // 移除空値
+            if(StringUtils.hasText(value)) {
+
+                sb.append(key).append(value);
+            }
+        }
+
+        log.info("ApiSignUtils > buildSignPlaintext = {}", sb);
+
+        return sb.toString();
+    }
 
 //    public static void main(String[] args) {
 //
