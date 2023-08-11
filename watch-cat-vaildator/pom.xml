@@ -45,7 +45,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.cat:watch-cat-utils</include>
+                                    <include>fun.tusi:watch-cat-utils</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

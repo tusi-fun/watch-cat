@@ -33,7 +33,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class SignatureCatConfiguration {
 
     @ConditionalOnWebApplication
-    @ConditionalOnProperty(prefix = "watchcat.sign", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "watchcat.signature", name = "enabled", havingValue = "true")
     @Bean
     public SignatureCatAspect signatureCatAspect() {
         log.info("Initializing {} > {}", this.getClass().getSimpleName(), "signatureCatAspect");
@@ -41,7 +41,7 @@ public class SignatureCatConfiguration {
     }
 
     @ConditionalOnWebApplication
-    @ConditionalOnProperty(prefix = "watchcat.sign", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "watchcat.signature", name = "enabled", havingValue = "true")
     @Bean
     public SignCommonService cacheService(RedisTemplate redisTemplate) {
         log.info("Initializing {} > {}", this.getClass().getSimpleName(), "cacheService");
@@ -55,7 +55,7 @@ public class SignatureCatConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "watchcat.sign", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "watchcat.signature", name = "enabled", havingValue = "true")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 
         log.info("Initializing {} > {}", this.getClass().getSimpleName(), "redisTemplate");

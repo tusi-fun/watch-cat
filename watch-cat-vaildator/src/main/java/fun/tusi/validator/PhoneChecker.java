@@ -1,5 +1,6 @@
 package fun.tusi.validator;
 
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;

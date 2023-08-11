@@ -150,7 +150,7 @@ public class ApiSignUtils4Asymmetric {
      */
     public static String buildSignPlaintext(Map<String,String> signBody) {
 
-        // 移除签名体中已有的 sign 参数（如果存在的话）
+        // 移除参与签名参数中已有的 sign 参数（如果存在）
         signBody.remove(SIGN_KEY);
 
         // 获取 signBody 中的 key 集合

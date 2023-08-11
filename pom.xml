@@ -68,11 +68,11 @@
     <!-- 私有依赖分发的位置（私有仓库） -->
     <distributionManagement>
 
-<!--        <repository>-->
-<!--            <id>wukong-mvn-repo-private</id>-->
-<!--            <name>Reposilite Repository</name>-->
-<!--            <url>http://wukong.tusi.fun:14545/private</url>-->
-<!--        </repository>-->
+        <!--        <repository>-->
+        <!--            <id>wukong-mvn-repo-private</id>-->
+        <!--            <name>Reposilite Repository</name>-->
+        <!--            <url>http://wukong.tusi.fun:14545/private</url>-->
+        <!--        </repository>-->
 
         <snapshotRepository>
             <id>maven-central-snapshots</id>
@@ -97,6 +97,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
 
             <!-- gpg sign plugin-->
             <plugin>

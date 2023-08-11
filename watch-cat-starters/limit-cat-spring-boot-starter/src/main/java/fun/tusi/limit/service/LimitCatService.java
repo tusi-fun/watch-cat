@@ -97,7 +97,7 @@ public class LimitCatService {
 
             log.info("频率更新(规则由配置指定)，scene：{}，key：{}",scene,key);
 
-            Map<String,Map<Duration, LimitCatProperties.LimitRule>> scenes = limitCatProperties.getScenes();
+            Map<String, Map<Duration, LimitCatProperties.LimitRule>> scenes = limitCatProperties.getScenes();
 
             if(scenes==null || scenes.isEmpty()) {
                 throw new LimitCatException("频率限制场景不存在或未正确配置");
@@ -110,7 +110,7 @@ public class LimitCatService {
             }
 
             for (Map.Entry<Duration, LimitCatProperties.LimitRule> entry : frequencySceneList.entrySet()) {
-                updateCache(scene,key,entry.getKey());
+                updateCache(scene, key, entry.getKey());
             }
         }
     }
@@ -131,7 +131,7 @@ public class LimitCatService {
         log.info("频率验证，scene：{}，key：{}，限制{}执行{}次，已执行{}次",scene, key, duration, frequency, object);
 
         if(object!=null && Long.parseLong(object.toString())>=frequency) {
-            throw new LimitCatException(StringUtils.hasText(msg)?msg:String.format("操作太频繁，请稍后再试。（场景 %s 限制%s执行%s次）",scene, duration, frequency));
+            throw new LimitCatException(StringUtils.hasText(msg)?msg:String.format("操作太频繁，请稍后再试。（场景%s限制%s执行%s次）",scene, duration, frequency));
         }
     }
 
