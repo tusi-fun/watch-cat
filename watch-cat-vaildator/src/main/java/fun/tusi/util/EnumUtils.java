@@ -1,4 +1,4 @@
-package fun.tusi.utils;
+package fun.tusi.util;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

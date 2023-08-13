@@ -34,7 +34,6 @@
 
         <watch-cat-converter.version>1.0.2-sb2</watch-cat-converter.version>
         <watch-cat-vaildator.version>1.0.2-sb2</watch-cat-vaildator.version>
-        <watch-cat-utils.version>1.0.2-sb2</watch-cat-utils.version>
     </properties>
 
     <dependencyManagement>

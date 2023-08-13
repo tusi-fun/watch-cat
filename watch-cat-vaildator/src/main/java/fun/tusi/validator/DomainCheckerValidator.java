@@ -1,6 +1,6 @@
 package fun.tusi.validator;
 
-import fun.tusi.utils.StringUtils;
+import fun.tusi.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

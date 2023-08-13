@@ -1,4 +1,4 @@
-package fun.tusi.utils;
+package fun.tusi.util;
 
 /**
  * 复制于 SpringBoot 自带 StringUtil

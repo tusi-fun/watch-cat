@@ -1,4 +1,4 @@
-package fun.tusi.sensitive.utils;
+package fun.tusi.sensitive.util;
 
 import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.ObjectUtil;

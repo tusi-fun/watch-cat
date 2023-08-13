@@ -1,7 +1,7 @@
 package fun.tusi.sensitive.aspect;
 
 import fun.tusi.sensitive.annotation.SensitiveCat;
-import fun.tusi.sensitive.utils.DesensitizedUtils;
+import fun.tusi.sensitive.util.DesensitizedUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
