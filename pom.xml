@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fun.tusi</groupId>
     <artifactId>watch-cat</artifactId>
-    <version>1.0.2-sb2</version>
+    <version>1.0.3-sb2</version>
     <name>watch-cat</name>
     <packaging>pom</packaging>
     <description>watch-cat</description>
@@ -26,14 +26,14 @@
         <java.version>1.8</java.version>
         <hutool.version>5.8.21</hutool.version>
 
-        <limit-cat-spring-boot-starter.version>1.0.2-sb2</limit-cat-spring-boot-starter.version>
-        <log-cat-spring-boot-starter.version>1.0.2-sb2</log-cat-spring-boot-starter.version>
-        <secret-cat-spring-boot-starter.version>1.0.2-sb2</secret-cat-spring-boot-starter.version>
-        <sensitive-cat-spring-boot-starter.version>1.0.2-sb2</sensitive-cat-spring-boot-starter.version>
-        <signature-cat-spring-boot-starter.version>1.0.2-sb2</signature-cat-spring-boot-starter.version>
+        <limit-cat-spring-boot-starter.version>1.0.3-sb2</limit-cat-spring-boot-starter.version>
+        <log-cat-spring-boot-starter.version>1.0.3-sb2</log-cat-spring-boot-starter.version>
+        <secret-cat-spring-boot-starter.version>1.0.3-sb2</secret-cat-spring-boot-starter.version>
+        <sensitive-cat-spring-boot-starter.version>1.0.3-sb2</sensitive-cat-spring-boot-starter.version>
+        <signature-cat-spring-boot-starter.version>1.0.3-sb2</signature-cat-spring-boot-starter.version>
 
-        <watch-cat-converter.version>1.0.2-sb2</watch-cat-converter.version>
-        <watch-cat-vaildator.version>1.0.2-sb2</watch-cat-vaildator.version>
+        <watch-cat-converter.version>1.0.3-sb2</watch-cat-converter.version>
+        <watch-cat-vaildator.version>1.0.3-sb2</watch-cat-vaildator.version>
     </properties>
 
     <dependencyManagement>
