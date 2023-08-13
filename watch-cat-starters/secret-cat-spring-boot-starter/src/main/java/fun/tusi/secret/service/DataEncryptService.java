@@ -7,7 +7,7 @@ import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import fun.tusi.secret.config.SecretCatProperties;
-import fun.tusi.utils.JsonUtils;
+import fun.tusi.secret.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 

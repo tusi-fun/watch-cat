@@ -40,12 +40,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>fun.tusi</groupId>
-			<artifactId>watch-cat-utils</artifactId>
-			<version>${watch-cat-utils.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>

@@ -39,12 +39,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>fun.tusi</groupId>
-            <artifactId>watch-cat-utils</artifactId>
-            <version>${watch-cat-utils.version}</version>
-        </dependency>
-
     </dependencies>
 
 </project>

@@ -3,7 +3,7 @@ package fun.tusi.secret.aspect;
 import fun.tusi.secret.annotation.SecretCat;
 import fun.tusi.secret.service.DataEncryptService;
 import fun.tusi.secret.service.SecretCatException;
-import fun.tusi.utils.JsonUtils;
+import fun.tusi.secret.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
