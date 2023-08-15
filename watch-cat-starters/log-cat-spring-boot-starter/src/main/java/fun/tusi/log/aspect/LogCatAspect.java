@@ -71,7 +71,7 @@ public class LogCatAspect {
 
         log.info("<LogCat doAround in>");
 
-        // 20230309 System.currentTimeMillis() 方法的性能比 LocalDateTime.now() 方法要快大约 50 倍。但这个结果并不是绝对的，具体的性能差距会因环境和实现而异
+        // 20230309 System.currentTimeMillis() 方法的性能比 LocalDateTime.now() 方法要快大约 50 倍。这个结果并不是绝对的，具体的性能差距会因环境和实现而异
         startTime.set(System.currentTimeMillis());
 
         requestId.set(UUID.randomUUID().toString().replaceAll("-",""));
@@ -79,6 +79,7 @@ public class LogCatAspect {
         // 执行业务方法
         Object retult = proceedingJoinPoint.proceed();
 
+        // 构建日志
         buildLog(proceedingJoinPoint, logCat,false, retult);
 
         log.info("<LogCat doAround out>");
@@ -102,7 +103,7 @@ public class LogCatAspect {
     /**
      * 构建日志
      */
-    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object data) {
+    private void buildLog(JoinPoint joinPoint, LogCat logCat, boolean isError, Object retultData) {
 
         Long endTime = System.currentTimeMillis();
 
@@ -123,8 +124,8 @@ public class LogCatAspect {
                 .requestHeaders(getRequestHeaders(request))
                 .requestParams(getParameters(joinPoint))
                 .classMethod(String.format("%s.%s", methodSignature.getDeclaringTypeName(), methodSignature.getName()))
-                .exception(isError?String.valueOf(data):null)
-                .result(isError?null:data)
+                .exception(isError?String.valueOf(retultData):null)
+                .result(isError?null:retultData)
                 .endTime(endTime)
                 .timeCost(endTime-startTime.get())
                 .build();
@@ -201,11 +202,29 @@ public class LogCatAspect {
 
             Object arg = args[i];
 
-            if(arg instanceof MultipartFile) {
-                MultipartFile file = (MultipartFile)arg;
-                requestParams.put(parameterNames[i],String.format("%s(%d bytes)",file.getOriginalFilename(),file.getSize()));
+            if(arg.getClass().isArray()) {
+
+                if(arg.getClass().getComponentType().isAssignableFrom(MultipartFile.class)) {
+
+                    MultipartFile[] files = (MultipartFile[]) arg;
+
+                    String fileInfo = Arrays.stream(files)
+                            .map(file -> file.getOriginalFilename() + "(" + file.getSize() + " bytes)")
+                            .reduce((file1, file2) -> file1 + ", " + file2)
+                            .orElse("");
+
+                    requestParams.put(parameterNames[i], fileInfo);
+                } else {
+                    requestParams.put(parameterNames[i], Arrays.toString((Object[]) arg));
+                }
+
             } else {
-                requestParams.put(parameterNames[i],arg);
+                if(arg instanceof MultipartFile) {
+                    MultipartFile file = (MultipartFile)arg;
+                    requestParams.put(parameterNames[i], String.format("%s(%d bytes)",file.getOriginalFilename(),file.getSize()));
+                } else {
+                    requestParams.put(parameterNames[i], arg);
+                }
             }
         }
         return requestParams;
