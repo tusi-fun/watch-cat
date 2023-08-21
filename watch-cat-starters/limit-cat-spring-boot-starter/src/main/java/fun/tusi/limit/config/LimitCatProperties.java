@@ -15,6 +15,7 @@ import java.util.Map;
 public class LimitCatProperties {
 
     private boolean enabled = false;
+    private String defaultMessage = "操作太频繁，请稍后再试。（场景%s限制%s执行%s次）";
 
     private Map<String, Map<Duration, LimitRule>> scenes;
 
