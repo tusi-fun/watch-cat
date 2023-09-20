@@ -92,7 +92,7 @@ public Result<GetSmsCodePong> getSmsCode(@Valid GetSmsCodePing getSmsCodePing) {
 // 场景二：短信验证码验证失败频率限制
 // 指定异常
 @LimitCat(scene = "SMSCODE_FAIL", key = "#checkSmsCodePing.smsCode", triggerFor = BusinessException.class)
-public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
+public Result<CheckSmsCodePong> checkSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
 
     return Result.ok().data(...);
 
@@ -100,7 +100,7 @@ public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCod
 
 // 指定异常 + 指定异常Code
 @LimitCat(scene = "SMSCODE_FAIL", key = "#checkSmsCodePing.smsCode", triggerFor = BusinessException.class, triggerForCode = {"1000","1001"})
-public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
+public Result<CheckSmsCodePong> checkSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
 
     return Result.ok().data(...);
 
@@ -132,7 +132,7 @@ watchcat.limit.enabled = true
             @LimitCatRule(interval = 300, frequency = 10, message = "5分钟只能错误验证10次")
         }
 )
-public Result<CheckSmsCodePong> CheckSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
+public Result<CheckSmsCodePong> checkSmsCode(@Valid CheckSmsCodePing checkSmsCodePing) {
 
         return Result.ok().data(...);
 
